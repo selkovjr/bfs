@@ -1,0 +1,22 @@
+<div id="{{mojit_view_id}}" class="mojit">
+  <div class="mod" id="samples">
+    <h3>
+      <strong>{{title}} ({{nsamples}})</strong>
+      <a title="refresh module" class="refresh" href="#">⟲</a>
+      <a title="minimize module" class="min" href="#">-</a>
+      <a title="close module" class="close" href="#">x</a>
+    </h3>
+    <div class="inner" id="samples-table"> </div>
+    <div class="yui3-pagview-bar" id="samples-paginator"></div>
+  </div>
+</div>
+
+<!--       SCRIPT template content     -->
+<script type="text/x-template" id="paginator-bar-template">
+  <img src="/static/bfs/assets/images/glyphicons_170_step_backward.png" class="pgControls {pageLinkClass}" data-pglink="first" title="First Page" border="0" />
+  <img src="/static/bfs/assets/images/glyphicons_173_backTES.png" class="pgControls {pageLinkClass}" data-pglink="prev" title="Prior Page" border="0" />
+  {inputPage} of {totalPages}
+  <img src="/static/bfs/assets/images/glyphicons_173_play.png" class="pgControls {pageLinkClass}" data-pglink="next" title="Next Page" border="0" />
+  <img src="/static/bfs/assets/images/glyphicons_178_step_forward.png" class="pgControls {pageLinkClass}" data-pglink="last" title="Last Page" border="0" />
+  <span style="float:right;margin-right:50px;">Rows per Page: {selectRowsPerPage}</span>
+</script>

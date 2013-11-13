@@ -1,0 +1,25 @@
+.yui3-datatable-table {
+  font-size: small;
+  white-space: nowrap;
+}
+
+/*  CSS for Paginator View container - A "bar" type view */
+#samples-paginator {
+  font-size:  12px;
+  vertical-align: middle;
+  padding:    4px 0;
+}
+
+#samples-paginator img.pgControls {
+  width:  auto;
+  height: 12px;
+  padding: 0 4px 0 4px;
+  border: none;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+#samples-paginator img.yui3-pagview-disabled {
+  cursor: default;
+  opacity: 0.2;
+}

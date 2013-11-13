@@ -1,0 +1,82 @@
+[
+  {
+    "settings": [ "master" ],
+    "appPort": "5900",
+    "yui": {
+      "showConsoleInClient": true,
+      "dependencyCalculations": "precomputed+ondemand",
+      "config": {
+        "debug": true,
+        "logLevel": "info",
+        "fetchCSS": true,
+        "combine": false,
+        "throwFail": true,
+        "filter": "raw",
+        "filters": {
+          "datatable-core": "debug",
+          "datatable-body": "debug",
+          "datatable-table": "debug",
+          "datatable-base": "debug",
+          "datatable-datasource": "debug",
+          "gallery-datatable-paginator": "debug",
+          "gallery-paginator-view": "debug"
+        }
+      }
+    },
+    "specs": {
+      "tribframe": {
+        "type": "HTMLFrameMojit",
+        "config": {
+          "deploy": true,
+          "title": "application title",
+          "child": {
+            "type": "PageLayout",
+            "config": {
+              "children": {
+                "header": {
+                  "type": "Header"
+                },
+                "body": {
+                  "type": "Body",
+                  "config": {
+                    "children": {
+                      "samples": {
+                        "type":"Samples"
+                      }
+                    }
+                  }
+                },
+                "footer": {
+                  "type": "Footer"
+                }
+              }
+            }
+          },
+          "assets": {
+            "top": {
+              "css": [
+                "/static/bfs/assets/trib.css",
+                "http://yui.yahooapis.com/3.13.0/build/cssgrids/cssgrids-min.css"
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  {
+    "settings": [ "runtime:client" ],
+    "yui": {
+      "config": {
+        "logLevel": "debug"
+      }
+    }
+  },
+
+  {
+    "settings": [ "environment:development" ],
+    "staticHandling": {
+      "forceUpdate": true
+    }
+  }
+]

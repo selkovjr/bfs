@@ -1,0 +1,9 @@
+check host pgrest-bsf with address 127.0.0.1
+    # Forking bash with a -c command makes start-up problems easier to debug.
+    #start program = "/bin/bash -c '/usr/local/bin/node /usr/local/bin/pgrest --db tcp://postgres@localhost/bfs --port 3030 --host localhost >& /tmp/bfs.out'"
+    start program = "/usr/local/bin/node /usr/local/bin/pgrest --db tcp://postgres@localhost/bfs --port 3030 --host localhost"
+    stop program  = "/usr/bin/pkill -f 'node /usr/local/bin/pgrest'"
+    if failed port 3030 protocol HTTP
+        request /
+        with timeout 10 seconds
+        then restart

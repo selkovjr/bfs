@@ -1,0 +1,17 @@
+{
+  "name": "bfs",
+  "description": "My Mojito application",
+  "version": "0.0.1",
+  "author": "",
+  "contributors": [],
+  "dependencies": {
+      "mojito": ">0.6"
+  },
+  "engines": {
+      "node": ">0.8"
+  },
+  "optionalDependencies": {
+    "yahoo-arrow": "~0.0.77",
+    "phantomjs": ">=1.8.0"
+  }
+}
