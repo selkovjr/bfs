@@ -145,6 +145,13 @@ while (<BIRDS>) {
   $birdByName{lc $f[4]} = $f[0] if $f[4] and $f[4] ne '\N';
   $birdByCommonName{lc $f[5]} = $f[0] if $f[5];
 }
+open BIRDS, "<domestic_birds.tab" or die "can't open domestic_birds.tab: $!";
+while (<BIRDS>) {
+  chomp;
+  @f = split "\t";
+  $birdByName{lc $f[4]} = $f[0] if $f[4] and $f[4] ne '\N';
+  $birdByCommonName{lc $f[5]} = $f[0] if $f[5];
+}
 
 open SAMPLE, ">samples.tab" or die "can't open samples.tab: $!";
 open DIAG, ">diagnostics.tab" or die "can't open diagnostics.tab: $!";
@@ -185,7 +192,9 @@ while (<>) {
       $text = 'eurasian woodcock' if $text eq 'woodcock';
       $text = 'european bee-eater' if $text eq 'bee-eater';
       $text = 'greater white-fronted Goose' if $text eq 'white-fronted goose';
-      $text = 'mallard' if $text eq 'domestic duck';
+      #$text = 'mallard' if $text eq 'domestic duck';
+      # 'domestic duck' needs to be kept this way; a few more domestic birds
+      # have now been added to taxonomy
       $text = 'northern pintail' if $text eq 'pintail';
       $text = 'northern shoveler' if $text eq 'shoveler';
       $text = 'red-throated loon' if $text eq 'red-throated diver';

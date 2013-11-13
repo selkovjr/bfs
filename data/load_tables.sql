@@ -1,3 +1,4 @@
+\copy birds from domestic_birds.tab
 \copy birds from birds.tab
 \copy samples from samples.tab
 \copy diagnostics from diagnostics.tab
