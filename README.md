@@ -1,4 +1,4 @@
-# BFS database and fornt end
+# BFS database and front end
 
 This is the beginning of a modelling effort to launch a web-based interface to
 the Bird Flu Sampling database.

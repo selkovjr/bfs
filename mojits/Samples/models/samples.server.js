@@ -28,9 +28,10 @@ YUI.add('SamplesModel', function (Y, NAME) {
     getData: function (arg, callback) {
       console.log(arguments);
       var
-        uri = "http://localhost:3030/collections/samples",
+        // uri = "http://localhost:3030/collections/samples",
+        uri = "http://localhost:3030/collections/v_samples_birds_cn",
         params = {
-          q: '{"id":{"$matches":"217-..?$"}}',
+          // q: '{"id":{"$matches":"217-..?$"}}',
           sk: arg.sk || 0,
           // s: '{"date": 1, "type": -1}',
           l: arg.l || 30

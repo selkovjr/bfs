@@ -370,5 +370,21 @@ CREATE EXTENSION SEG;
   </constraints>
   <functions>
 ALTER SEQUENCE location_id_seq RESTART WITH 22;
+
+CREATE VIEW v_samples_birds_cn AS
+  SELECT s.id,
+         s.emc_id,
+         s.date,
+         b.common_name AS bird,
+         s.age,
+         s.sex,
+         s.ring,
+         s.clin_st,
+         s.vital_st,
+         s.capture_method,
+         s.location,
+         s.type
+    FROM samples s, birds b
+   WHERE b.id = s.species;
   </functions>
 </metadata>
