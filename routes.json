@@ -4,7 +4,7 @@
     "samples": {
       "verbs": ["get"],
       "path": "/",
-      "call": "tribframe.index"
+      "call": "pageframe.index"
     }
   }
 ]
