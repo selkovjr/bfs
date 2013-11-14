@@ -14,18 +14,18 @@ YUI.add('datatable-paginator', function (Y, NAME) {
 
    <h4>Usage</h4>
 
-       var dtable = new Y.DataTable({
-           columns:    [ 'firstName','lastName','state','age', 'grade' ],
-           data:       enrollment.records,
-           scrollable: 'y',
-           height:     '450px',
-           sortBy:     [{lastName:'asc'}, {grade:-1}],
-           paginator:  new PaginatorView({
-              model:      new PaginatorModel({itemsPerPage:50, page:3}),
-              container:  '#pagContA'
-           }),
-           resizePaginator: true
-       });
+     var dtable = new Y.DataTable({
+         columns:    [ 'firstName','lastName','state','age', 'grade' ],
+         data:       enrollment.records,
+         scrollable: 'y',
+         height:     '450px',
+         sortBy:     [{lastName:'asc'}, {grade:-1}],
+         paginator:  new PaginatorView({
+            model:      new PaginatorModel({itemsPerPage:50, page:3}),
+            container:  '#pagContA'
+         }),
+         resizePaginator: true
+     });
 
    <h4>Client OR Server Pagination</h4>
 
@@ -91,8 +91,7 @@ YUI.add('datatable-paginator', function (Y, NAME) {
 
   function DtPaginator() {}
 
-
-  DtPaginator.ATTRS = {
+DtPaginator.ATTRS = {
 
     /**
      * Adds a paginator view (specifically Y.PaginatorView) instance to the DataTable.
@@ -291,7 +290,6 @@ YUI.add('datatable-paginator', function (Y, NAME) {
      * @chainable
      */
     initializer: function () {
-      Y.log('Paginator.initializer()');
       //
       // Setup listeners on PaginatorModel and DT changes ...
       //   Only do these if the "paginator" ATTR is set
@@ -303,7 +301,6 @@ YUI.add('datatable-paginator', function (Y, NAME) {
 
         // If PaginatorModel exists, set listeners for "change" events ...
         if ( this.paginator.get('model') ) {
-          Y.log(['model exists', this.paginator.get('model')]);
           this.pagModel = this.get('paginator').get('model');
           this._evtHandlesPag.push(
             this.pagModel.after('pageChange', Y.bind(this._pageChangeListener,this) ),
@@ -341,7 +338,7 @@ YUI.add('datatable-paginator', function (Y, NAME) {
     destructor: function () {
       // Clear up the listeners that were defined ...
 
-      Y.Array.each( this._evtHandlesPag,function(item){
+      Y.Array.each(this._evtHandlesPag, function (item) {
         if (!item) {
           return;
         }
@@ -384,7 +381,6 @@ YUI.add('datatable-paginator', function (Y, NAME) {
      *  @return nothing
      */
     processPageRequest: function(page_no, pag_state) {
-      Y.log('processPageRequest');
       var
         rdata = this._mlistArray,
         pagv  = this.get('paginator'),
@@ -405,7 +401,6 @@ YUI.add('datatable-paginator', function (Y, NAME) {
         iend = istart + rpp - 1;
         iend = ( rdata && iend > rdata.length ) ? rdata.length : iend;
       }
-      Y.log(['istart', istart, 'iend', iend]);
       //
       //  Store the translated replacement object for the request converted
       //  from `serverPaginationMap` (or defaults if none) to a "normalized" format
@@ -425,7 +420,6 @@ YUI.add('datatable-paginator', function (Y, NAME) {
 
       // mix-in the model ATTRS with the url_obj
       url_obj = Y.merge(this.get('paginationState'), url_obj);
-      Y.log(url_obj);
 
       //
       //  This is the main guts of retrieving the records,
@@ -436,7 +430,6 @@ YUI.add('datatable-paginator', function (Y, NAME) {
       //
       switch (this._pagDataSrc) {
         case 'ds':
-          Y.log('  Paginator._pagDataSrc: ' + this._pagDataSrc);
           // fire off a request to DataSource, mixing in as the request string
           //  with ATTR `requestStringTemplate` with the "url_obj" map
           rqst_str = this.get('requestStringTemplate') || '';
@@ -444,14 +437,12 @@ YUI.add('datatable-paginator', function (Y, NAME) {
           break;
 
         case 'mlist':
-          Y.log('  Paginator._pagDataSrc: ' + this._pagDataSrc);
           // fire off a ModelSync.REST load "read" request, note that it mixes
           //   the ModelList ATTRS with 'url_obj' in creating the request
           this.paginatorMLRequest(url_obj);
           break;
 
         case 'local':
-          Y.log('  Paginator._pagDataSrc: ' + this._pagDataSrc);
           //this.paginatorLocalRequest(page_no,istart,iend);
           this.paginatorLocalRequest(url_obj);
           break;
@@ -496,8 +487,6 @@ YUI.add('datatable-paginator', function (Y, NAME) {
      * @public
      */
     paginatorMLRequest: function(url_object){
-      Y.log('---------- paginatorMLRequest ----------');
-      Y.log(this.data);
       this.data.load(url_object);
     },
 
@@ -615,15 +604,17 @@ YUI.add('datatable-paginator', function (Y, NAME) {
         rdata.sort(function(a,b){
           var rtn,atime,btime;
 
-          if(Y.Lang.isNumber(a[sortKey])) {
+          if (Y.Lang.isNumber(a[sortKey])) {
 
             rtn = (a[sortKey]-b[sortKey]<0) ? -sortDir : sortDir;
 
-          } else if(Y.Lang.isString(a[sortKey])){
+          }
+          else if (Y.Lang.isString(a[sortKey])) {
 
             rtn = ( a[sortKey]<b[sortKey] ) ? -sortDir : sortDir;
 
-          } else if(Y.Lang.isDate(a[sortKey]) ){
+          }
+          else if (Y.Lang.isDate(a[sortKey])) {
 
             atime = a[sortKey];
             btime = b[sortKey];
@@ -808,7 +799,8 @@ YUI.add('datatable-paginator', function (Y, NAME) {
       else if (this.datasource && !this.data.url && this._pagDataSrc === null) {
         // or With a DS defined and no "url" static property of the Data  ===>> DataSource
         localPagDataSrc = 'ds';
-      } else {
+      }
+      else {
         // ... or finally, assume "local" data
         localPagDataSrc = 'local';
       }
@@ -848,7 +840,6 @@ YUI.add('datatable-paginator', function (Y, NAME) {
           this._setLocalData(o);
           break;
       }
-      Y.log('_afterDataReset(): this._pagDataSrc = ' + this._pagDataSrc, 'warn');
     }, // _afterDataReset()
 
     /**
@@ -1110,35 +1101,26 @@ YUI.add('datatable-paginator', function (Y, NAME) {
         totalItemProp = this.get('serverPaginationMap').totalItems || null,
         respItemTotal = (totalItemProp && resp.meta && resp.meta[totalItemProp] !== undefined) ? resp.meta[totalItemProp]: null;
 
-        Y.log('------response------');
-        Y.log(resp);
       // Process through the "response", checking the "totalItems" returned
       //   ... if no "totalItems" was included in the response, then set the response to "local" data
       if ( resp.results ) {
         if ( totalItemProp && respItemTotal !== null ) {
-
           // The response included totalItems:0 ... special case of a null set
           if( respItemTotal === 0) {
-
             this.pagModel.set('totalItems', 0 );
             this.pagModel.set('page',1);
             this.data.reset( null, {silent:true} );
             this.syncUI();
             this.paginator.render();
-
-          } else {
-
-            this.pagModel.set('totalItems', respItemTotal);
-
           }
-
-        } else {
-
+          else {
+            this.pagModel.set('totalItems', respItemTotal);
+          }
+        }
+        else {
           this._setLocalData(resp.results);
         }
       }
-      console.log('-----------------paginator-----------------');
-      console.log(this);
       this.resizePaginator();
     },
 
@@ -1219,17 +1201,14 @@ YUI.add('datatable-paginator', function (Y, NAME) {
      * @private
      */
     _syncPaginatorSize: function() {
-      return false; // something else does the syncing
+        var tblCols = this.get('boundingBox').one('.'+this.getClassName('columns'));
+        if ( !tblCols ) {
+            return false;
+        }
 
-      // var tblCols = this.get('boundingBox').one('.' + this.getClassName('columns'));
-
-      // if ( !tblCols ) {
-      //   return false;
-      // }
-
-      // this.paginator.get('container').setStyle('width', tblCols.getComputedStyle('width'));
-      // this.fire('paginatorResize');
-      // return true;
+        this.paginator.get('container').setStyle('width',tblCols.getComputedStyle('width'));
+        this.fire('paginatorResize');
+        return true;
     },
 
     /**

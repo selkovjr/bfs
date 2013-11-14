@@ -1,4 +1,4 @@
-/*jslint anon:true, sloppy:true, nomen:true*/
+/*jslint anon: true, sloppy: true, nomen: true */
 YUI.add('SamplesBinderIndex', function (Y, NAME) {
 /**
  * The SamplesBinderIndex module.
@@ -145,7 +145,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
     bind: function (node) {
       var
         mp = this.mojitProxy,
-        table;
+        table,
+        sizeSyncMethod = '_syncPaginatorSize';
 
       Y.on('domready', function(){
         Y.one('body').addClass('yui3-skin-sam');
@@ -171,7 +172,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           data: sampleList,
           scrollable: 'xy',
           sortable: true,
-          height: '280px',
+          height: '290px',
           width: Y.one('#samples').getComputedStyle('width'),
           sortBy: [{date: 1}, {type: 1}],
 
@@ -197,6 +198,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           selectionMode: 'row',
           selectionMulti: false
         });
+
+        table[sizeSyncMethod] = function() {return false;};
 
         table.render('#samples-table');
         table.processPageRequest(1);
@@ -232,7 +235,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
     'datasource-io',
     'datasource-jsonschema',
     'gallery-datatable-selection',
-    'datatable-paginator',
-    'paginator-view'
+    'gallery-datatable-paginator',
+    'gallery-paginator-view'
   ]
 });
