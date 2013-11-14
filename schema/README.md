@@ -4,6 +4,8 @@ This is a poor man's IDE for developing database schemata. It uses an SGML
 docmuent as a source, visualised as an HTML-mapped image. It also generates
 loadable SQL to initialise the database.
 
+[Browse the schema](https://rawgithub.com/selkovjr/bfs/master/schema/bfs-schema.html)
+
 ## Requirements:
 
 * **nsgmls** (part of **opensp**)
