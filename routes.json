@@ -5,6 +5,11 @@
       "verbs": ["get"],
       "path": "/",
       "call": "pageframe.index"
+    },
+    "data": {
+      "verbs": ["get"],
+      "path": "/",
+      "call": "data.index"
     }
   }
 ]

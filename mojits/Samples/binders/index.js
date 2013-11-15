@@ -206,7 +206,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
         table.on('selection', function (e) {
           Y.log(['selection', e]);
-          mp.broadcast('row-selected', {row: e.rows});
+          mp.broadcast('row-selected', {row: e.rows[0]});
         });
 
       }); // on domready
