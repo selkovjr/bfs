@@ -1,3 +1,4 @@
+/*global YUI, console*/
 /*jslint anon:true, sloppy:true, nomen:true*/
 YUI.add('LabDataModel', function(Y, NAME) {
 
@@ -32,3 +33,4 @@ YUI.add('LabDataModel', function(Y, NAME) {
     };
 
 }, '0.0.1', {requires: []});
+
