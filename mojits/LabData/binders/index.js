@@ -1,5 +1,5 @@
+/*global YUI: false, console: false */
 /*jslint anon:true, sloppy:true, nomen:true */
-/*global YUI: false */
 YUI.add('LabDataBinderIndex', function(Y, NAME) {
 /**
  * The LabDataBinderIndex module.

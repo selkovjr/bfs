@@ -1,3 +1,4 @@
+/*global YUI, console */
 /*jslint anon:true, sloppy:true, nomen:true, indent:2*/
 YUI.add('SamplesModel', function (Y, NAME) {
 

@@ -1,8 +1,10 @@
+/*global YUI, console*/
+/*jslint anon:true, sloppy:true, nomen:true*/
 YUI.add('Samples', function (Y, NAME) {
 
   Y.namespace('mojito.controllers')[NAME] = {
     index: function (ac) {
-      var model = ac.models.get('SamplesModel');
+      var model = ac.models.get('samples');
       model.getData(ac.command.params.body, function (err, data) {
         if (err) {
           console.log('error condition');
@@ -20,7 +22,7 @@ YUI.add('Samples', function (Y, NAME) {
 
     data: function (ac) {
       console.log(ac.command.params.body);
-      var model = ac.models.get('SamplesModel');
+      var model = ac.models.get('samples');
       model.getData(ac.command.params.body, function (err, data) {
         if (err) {
           console.log('error condition');

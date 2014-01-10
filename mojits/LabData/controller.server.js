@@ -1,3 +1,4 @@
+/*global YUI, console*/
 /*jslint anon:true, sloppy:true, nomen:true*/
 YUI.add('LabData', function(Y, NAME) {
 
@@ -22,7 +23,7 @@ YUI.add('LabData', function(Y, NAME) {
      *        to the Mojito API.
      */
     index: function(ac) {
-      ac.models.get('LabDataModel').getData(function(err, data) {
+      ac.models.get('labdata').getData(function(err, data) {
         console.log('controller index');
         console.log(data);
         if (err) {
