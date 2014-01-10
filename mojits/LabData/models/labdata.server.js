@@ -8,29 +8,28 @@ YUI.add('LabDataModel', function(Y, NAME) {
  * @module LabData
  */
 
+  /**
+   * Constructor for the LabDataModel class.
+   *
+   * @class LabDataModel
+   * @constructor
+   */
+  Y.namespace('mojito.models')[NAME] = {
+    init: function(config) {
+      this.config = config;
+    },
+
     /**
-     * Constructor for the LabDataModel class.
+     * Method that will be invoked by the mojit controller to obtain data.
      *
-     * @class LabDataModel
-     * @constructor
+     * @param callback {function(err,data)} The callback function to call when the
+     *        data has been retrieved.
      */
-    Y.namespace('mojito.models')[NAME] = {
-
-        init: function(config) {
-            this.config = config;
-        },
-
-        /**
-         * Method that will be invoked by the mojit controller to obtain data.
-         *
-         * @param callback {function(err,data)} The callback function to call when the
-         *        data has been retrieved.
-         */
-        getData: function(callback) {
-            callback(null, { some: 'data' });
-        }
-
-    };
-
+    getData: function(arg, callback) {
+      callback(null, {
+        id: arg.id
+      });
+    }
+  };
 }, '0.0.1', {requires: []});
 

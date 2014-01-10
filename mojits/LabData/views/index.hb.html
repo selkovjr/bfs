@@ -1,5 +1,7 @@
 <div id="{{mojit_view_id}}" class="mojit">
-  <div class="mod">
-    Getting data for row {{{row_number}}}
+  <div class="mod" id="lab-data">
+    {{#if id }}
+    Retrived data for record id {{id}}
+    {{/if}}
   </div>
 </div>

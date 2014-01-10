@@ -23,7 +23,8 @@ YUI.add('LabData', function(Y, NAME) {
      *        to the Mojito API.
      */
     index: function(ac) {
-      ac.models.get('labdata').getData(function(err, data) {
+      console.log(ac.command.params.body);
+      ac.models.get('labdata').getData(ac.command.params.body, function (err, data) {
         console.log('controller index');
         console.log(data);
         if (err) {
@@ -31,10 +32,7 @@ YUI.add('LabData', function(Y, NAME) {
           return;
         }
         ac.assets.addCss('./index.css');
-        ac.done({
-          status: 'Mojito is working.',
-          data: data
-        });
+        ac.done(data);
       });
     }
 

@@ -20,6 +20,7 @@ YUI.add('LabDataBinderIndex', function(Y, NAME) {
      * have been constructed.
      */
     init: function(mojitProxy) {
+      Y.log('******** LabData binder index.js init()');
       this.mojitProxy = mojitProxy;
     },
 
@@ -31,42 +32,23 @@ YUI.add('LabDataBinderIndex', function(Y, NAME) {
      */
     bind: function(node) {
       Y.log('-------- bind ---------');
-      Y.log(node);
       var me = this;
       this.node = node;
 
-      this.mojitProxy.listen('row-selected', Y.bind(function(payload) {
-        var
-          urlParams = Y.mojito.util.copy(this.mojitProxy.context),
-          routeParams,
-          options = {
-            params: {
-              body: {
-                id: 'record id'
-              }
-            }
-          };
-
+      this.mojitProxy.listen('row-selected', Y.bind(function(e) {
         Y.log('broadcast event received', 'info', NAME);
-        Y.log(payload);
+        Y.log(e);
 
-        routeParams = {
-          row: payload.data.row
-        };
-        this.mojitProxy.invoke('index', options, function (err, data) {
-          if (err) {
-            console.log('server transaction error: ' + err);
-          }
-          else {
-            node.replace(data);
-          }
+        node.one('#lab-data').setContent('getting data ...');
+        this.mojitProxy.refreshView({
+          params: {
+            body: {
+              id: e.data.row.record.get('id'),
+              row: 132
+            }
+          },
+          rpc: true
         });
-        // mojitProxy.refreshView({
-        //   params: {
-        //     url: urlParams,
-        //     route: routeParams
-        //   }
-        // });
       }, this));
     }
   };
