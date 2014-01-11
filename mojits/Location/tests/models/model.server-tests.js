@@ -1,5 +1,5 @@
 
-YUI.add('BodyModel-tests', function(Y, NAME) {
+YUI.add('LocationModel-tests', function(Y, NAME) {
     
     var suite = new YUITest.TestSuite(NAME),
         model = null,
@@ -7,10 +7,10 @@ YUI.add('BodyModel-tests', function(Y, NAME) {
     
     suite.add(new YUITest.TestCase({
         
-        name: 'BodyModel user tests',
+        name: 'LocationModel user tests',
         
         setUp: function() {
-            model = Y.mojito.models.BodyModel;
+            model = Y.mojito.models.LocationModel;
         },
         tearDown: function() {
             model = null;
@@ -40,4 +40,4 @@ YUI.add('BodyModel-tests', function(Y, NAME) {
     
     YUITest.TestRunner.add(suite);
     
-}, '0.0.1', {requires: ['mojito-test', 'BodyModel']});
+}, '0.0.1', {requires: ['mojito-test', 'LocationModel']});

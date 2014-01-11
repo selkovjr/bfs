@@ -1,16 +1,16 @@
 /*jslint anon:true, sloppy:true, nomen:true*/
-YUI.add('BodyModel', function(Y, NAME) {
+YUI.add('LocationModel', function(Y, NAME) {
 
 /**
- * The BodyModel module.
+ * The LocationModel module.
  *
- * @module Body
+ * @module Location
  */
 
     /**
-     * Constructor for the BodyModel class.
+     * Constructor for the LocationModel class.
      *
-     * @class BodyModel
+     * @class LocationModel
      * @constructor
      */
     Y.namespace('mojito.models')[NAME] = {

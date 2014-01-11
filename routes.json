@@ -10,6 +10,11 @@
       "verbs": ["get"],
       "path": "/",
       "call": "data.index"
+    },
+    "location": {
+      "verbs": ["get"],
+      "path": "/",
+      "call": "location.index"
     }
   }
 ]

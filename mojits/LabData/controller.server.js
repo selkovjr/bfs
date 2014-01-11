@@ -23,6 +23,7 @@ YUI.add('LabData', function(Y, NAME) {
      *        to the Mojito API.
      */
     index: function(ac) {
+      console.log("LabData - controller.server.js index called");
       console.log(ac.command.params.body);
       ac.models.get('labdata').getData(ac.command.params.body, function (err, data) {
         console.log('controller index');

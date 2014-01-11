@@ -27,7 +27,6 @@ YUI.add('SamplesModel', function (Y, NAME) {
      *        data has been retrieved.
      */
     getData: function (arg, callback) {
-      console.log(arguments);
       var
         // uri = "http://localhost:3030/collections/samples",
         uri = "http://localhost:3030/collections/v_samples_birds_cn",

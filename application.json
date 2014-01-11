@@ -43,8 +43,18 @@
                       "samples": {
                         "type":"Samples"
                       },
-                      "data": {
-                        "type":"LabData"
+                      "diagnostics": {
+                        "type": "Diagnostics",
+                        "config": {
+                          "children": {
+                            "data": {
+                              "type":"LabData"
+                            },
+                            "location": {
+                              "type":"Location"
+                            }
+                          }
+                        }
                       }
                     }
                   }
