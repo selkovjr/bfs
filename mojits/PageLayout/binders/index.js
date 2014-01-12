@@ -40,7 +40,8 @@ YUI.add('PageLayoutBinderIndex', function(Y, NAME) {
         Y.log(e);
         if (!this.ancestor('div').hasClass('collapse')) {
           this.ancestor('div').addClass('collapse');
-        } else {
+        }
+        else {
           this.ancestor('div').removeClass('collapse');
         }
       }, 'a.min'); // Delegate click events to <a class="min">
