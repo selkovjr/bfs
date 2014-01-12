@@ -1,6 +1,6 @@
-/*global YUI, console*/
-/*jslint anon:true, sloppy:true, nomen:true*/
-YUI.add('LabDataModel', function(Y, NAME) {
+/*global YUI, console */
+/*jslint sloppy: true, nomen: true, indent: 2 */
+YUI.add('LabDataModel', function (Y, NAME) {
 
 /**
  * The LabDataModel module.
@@ -15,7 +15,7 @@ YUI.add('LabDataModel', function(Y, NAME) {
    * @constructor
    */
   Y.namespace('mojito.models')[NAME] = {
-    init: function(config) {
+    init: function (config) {
       this.config = config;
     },
 
@@ -25,25 +25,31 @@ YUI.add('LabDataModel', function(Y, NAME) {
      * @param callback {function(err,data)} The callback function to call when the
      *        data has been retrieved.
      */
-    getData: function(arg, callback) {
-      // var
-      //   // uri = "http://localhost:3030/collections/samples",
-      //   uri = "http://localhost:3030/collections/diagnostics",
-      //   params = {
-      //     q: '{"id": ' + arg.id + '}'
-      //   },
-      //   rkey = '_resp'; // hide from jslint
+    getData: function (arg, callback) {
+      var
+        uri = "http://localhost:3030/collections/diagnostics",
+        params = {
+          q: '{"sample": "' + arg.id + '"}'
+        },
+        rkey = '_resp'; // hide from jslint
 
-      // Y.mojito.lib.REST.GET(uri, params, null, function (err, response) {
-      //   if (err) {
-      //     callback(err);
-      //   }
-      //   callback(null, Y.JSON.parse(response[rkey].responseText));
-      // });
+      Y.mojito.lib.REST.GET(uri, params, null, function (err, response) {
+        var data;
 
-      callback(null, {
-        id: arg.id
+        if (err) {
+          callback(err);
+        }
+
+        data = Y.JSON.parse(response[rkey].responseText).entries[0];
+        if (data) {
+          data.date = data.date.substr(0, 10); // chop the timezone
+        }
+        callback(null, data);
       });
+
+      // callback(null, {
+      //   id: arg.id
+      // });
     }
   };
 }, '0.0.1', {requires: []});

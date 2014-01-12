@@ -30,26 +30,26 @@ YUI.add('LabDataBinderIndex', function(Y, NAME) {
      *
      * @param node {Node} The DOM node to which this mojit is attached.
      */
-    bind: function(node) {
-      Y.log('-------- bind ---------');
-      var me = this;
-      this.node = node;
+    // bind: function(node) {
+    //   Y.log('-------- bind ---------');
+    //   var me = this;
+    //   this.node = node;
 
-      this.mojitProxy.listen('row-selected', Y.bind(function(e) {
-        Y.log('broadcast event received', 'info', NAME);
-        Y.log(e);
+    //   this.mojitProxy.listen('row-selected', Y.bind(function(e) {
+    //     Y.log('broadcast event received', 'info', NAME);
+    //     Y.log(e);
 
-        node.one('#lab-data').setContent('getting data ...');
-        this.mojitProxy.refreshView({
-          params: {
-            body: {
-              id: e.data.row.record.get('id'),
-              row: 132
-            }
-          },
-          rpc: true
-        });
-      }, this));
-    }
+    //     node.one('#lab-data').setContent('getting data ...');
+    //     this.mojitProxy.refreshView({
+    //       params: {
+    //         body: {
+    //           id: e.data.row.record.get('id'),
+    //           row: 132
+    //         }
+    //       },
+    //       rpc: true
+    //     });
+    //   }, this));
+    // }
   };
 }, '0.0.1', {requires: ['event-mouseenter', 'mojito-client']});

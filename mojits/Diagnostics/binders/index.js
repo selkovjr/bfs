@@ -36,7 +36,8 @@ YUI.add('DiagnosticsBinderIndex', function(Y, NAME) {
         this.mojitProxy.refreshView({
           params: {
             body: {
-              id: e.data.row.record.get('id')
+              id: e.data.row.record.get('id'),
+              location: e.data.row.record.get('location')
             }
           },
           rpc: true

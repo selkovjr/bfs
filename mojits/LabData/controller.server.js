@@ -26,7 +26,7 @@ YUI.add('LabData', function(Y, NAME) {
       console.log("LabData - controller.server.js index called");
       console.log(ac.command.params.body);
       ac.models.get('labdata').getData(ac.command.params.body, function (err, data) {
-        console.log('controller index');
+        console.log('LabData model called from controller index');
         console.log(data);
         if (err) {
           ac.error(err);

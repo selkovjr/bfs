@@ -1,7 +1,46 @@
 <div id="{{mojit_view_id}}" class="mojit">
   <div class="mod" id="lab-data">
-    {{#if id }}
-    Retrived data for record id {{id}}
-    {{/if}}
+    <table>
+      <tr>
+        <td style="vertical-align: top">
+          <table>
+            <tr>
+              <td style="vertical-align: top">
+                <b>PCR pool</b> {{pool}}<br>
+                {{date}}
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td style="vertical-align: top; padding-left: 2em;">
+          <table class="diagnostics-table">
+            <tr>
+              <td> ma_status </td>
+              <td> ma_ct </td>
+              <td> h5_status </td>
+              <td> h5_ct </td>
+              <td> h5_pt </td>
+              <td> h7_status </td>
+              <td> h7_ct </td>
+              <td> h7_pt </td>
+              <td> h9_status </td>
+              <td> h9_ct </td>
+            </tr>
+            <tr>
+              <td> {{ma_status}} </td>
+              <td> {{ma_ct}} </td>
+              <td> {{h5_status}} </td>
+              <td> {{h5_ct}} </td>
+              <td> {{h5_pt}} </td>
+              <td> {{h7_status}} </td>
+              <td> {{h7_ct}} </td>
+              <td> {{h7_pt}} </td>
+              <td> {{h9_status}} </td>
+              <td> {{h9_ct}} </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </div>
 </div>
