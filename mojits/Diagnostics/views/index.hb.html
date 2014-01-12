@@ -1,18 +1,32 @@
 <div id="{{mojit_view_id}}" class="mojit">
+{{#if id}}
   <div class="mod" id="diagnostics">
+{{else}}
+  <div class="mod collapse" id="diagnostics">
+{{/if}}
     <h3>
-      <strong>Diagnostics for <span id="diagnostics-sample-id"></span></strong>
+{{#if id}}
+      <strong>Sample details, {{id}}</strong>
+{{else}}
+      <strong>Sample details</strong>
+{{/if}}
       <a title="refresh module" class="refresh" href="#">⟲</a>
       <a title="minimize module" class="min"
         href="#">-</a>
     </h3>
     <div class="inner" id="diagnostics-inner">
+{{#if id}}
       <div class="yui3-u-3-4">
         {{{location}}}
       </div>
       <div class="yui3-u-3-4">
         {{{data}}}
       </div>
+{{else}}
+      <div id="diagnostics-message" class="yui3-u-3-4">
+        Click on a sample in the table to see its details.
+      </div>
+{{/if}}
     </div>
   </div>
 </div>

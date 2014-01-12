@@ -26,6 +26,21 @@ YUI.add('LabDataModel', function(Y, NAME) {
      *        data has been retrieved.
      */
     getData: function(arg, callback) {
+      // var
+      //   // uri = "http://localhost:3030/collections/samples",
+      //   uri = "http://localhost:3030/collections/diagnostics",
+      //   params = {
+      //     q: '{"id": ' + arg.id + '}'
+      //   },
+      //   rkey = '_resp'; // hide from jslint
+
+      // Y.mojito.lib.REST.GET(uri, params, null, function (err, response) {
+      //   if (err) {
+      //     callback(err);
+      //   }
+      //   callback(null, Y.JSON.parse(response[rkey].responseText));
+      // });
+
       callback(null, {
         id: arg.id
       });

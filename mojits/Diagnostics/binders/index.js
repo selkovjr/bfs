@@ -24,16 +24,24 @@ YUI.add('DiagnosticsBinderIndex', function(Y, NAME) {
      * @param node {Node} The DOM node to which this mojit is attached.
      */
     bind: function(node) {
-      var me = this;
-      this.node = node;
-
-      this.mojitProxy.listen('row-selected', function (e) {
+      this.mojitProxy.listen('row-selected', Y.bind(function (e) {
         Y.log('broadcast event received in Diagnostics', 'info', NAME);
-        node.one('#diagnostics-sample-id').setContent(e.data.row.record.get('id'));
-        if (me.node.one('#diagnostics').hasClass('collapse')) {
-          me.node.one('#diagnostics').removeClass('collapse');
+
+        if (node.one('#diagnostics').hasClass('collapse')) {
+          node.one('#diagnostics').removeClass('collapse');
         }
-      });
+
+        node.one('#diagnostics-message').setContent('Loading data...');
+
+        this.mojitProxy.refreshView({
+          params: {
+            body: {
+              id: e.data.row.record.get('id')
+            }
+          },
+          rpc: true
+        });
+      }, this));
     }
 
   };
