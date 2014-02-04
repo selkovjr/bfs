@@ -129,3 +129,109 @@ div.mod.collapse div.inner {
   top: 0px;
   right: 0px;
 }
+
+/* gallery-datatable-editable, gallery-datatable-celleditor-inline */
+
+.yui3-skin-sam .yui3-datatable td.yui3-datatable-sel-highlighted,.yui3-skin-sam .yui3-datatable td.yui3-datatable-sorted.yui3-datatable-sel-highlighted,.yui3-skin-sam .yui3-datatable tr.yui3-datatable-sel-highlighted td,.yui3-skin-sam .yui3-datatable tr.yui3-datatable-sel-highlighted td.yui3-datatable-sorted {
+    background-color: #f0db5c;
+}
+
+.yui3-skin-sam .yui3-datatable td.yui3-datatable-sel-selected,.yui3-skin-sam .yui3-datatable td.yui3-datatable-sorted.yui3-datatable-sel-selected,.yui3-skin-sam .yui3-datatable tr.yui3-datatable-sel-selected td,.yui3-skin-sam .yui3-datatable tr.yui3-datatable-sel-selected td.yui3-datatable-sorted {
+    background-color: #90ee90;
+}
+
+#yui3-css-stamp.skin-sam-gallery-datatable-selection {
+    display: none;
+}
+
+.yui3-datatable-col-editable {
+    cursor: pointer;
+}
+
+.yui3-datatable-col-editable {
+    cursor: pointer;
+}
+
+#yui3-css-stamp.skin-sam-gallery-datatable-editable {
+    display: none;
+}
+
+.yui3-datatable-inline-input:focus {
+    outline: 0;
+}
+
+.yui3-datatable-inline-input {
+    border: 1px solid #cbcbcb;
+    background-color: #fffebb;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding-left: 9px;
+    z-index: 999;
+}
+
+#yui3-css-stamp.skin-sam-gallery-datatable-celleditor-inline {
+    display: none;
+}
+
+.yui3-pagview-link-page {
+    border: 1px solid #b0c4de;
+    color: blue;
+    padding: 5px;
+    text-decoration: none;
+}
+
+.yui3-pagview-link-page a {
+    border: 1px solid #324759;
+    color: #324759;
+    height: 35px;
+    margin: 5px 3px;
+    padding: 5px;
+    text-align: center;
+    text-decoration: none;
+    width: 35px;
+}
+
+.yui3-pagview-bar {
+    background-image: -webkit-linear-gradient(transparent 40%,rgba(0,0,0,0.21));
+    background-image: -moz-linear-gradient(top,transparent 40%,rgba(0,0,0,0.21));
+    background-image: -ms-linear-gradient(transparent 40%,rgba(0,0,0,0.21));
+    background-image: -o-linear-gradient(transparent 40%,rgba(0,0,0,0.21));
+    background-image: linear-gradient(transparent 40%,rgba(0,0,0,0.21));
+    border: 1px solid #cbcbcb;
+    vertical-align: middle;
+}
+
+.yui3-pagview-link-page-list {
+    margin: 0 2px;
+    width: 10px;
+}
+
+.yui3-pagview-container {
+    outline: 0 none;
+}
+
+.yui3-pagview-link-page-active {
+    background-color: #90ee90;
+    color: black;
+}
+
+.yui3-pagview-disabled {
+    cursor: default;
+    opacity: .2;
+}
+
+.yui3-pagview-hide {
+    display: none;
+}
+
+.yui3-pagview-input-page {
+    height: 13px;
+    text-align: center;
+    width: 15px;
+}
+
+#yui3-css-stamp.skin-sam-gallery-paginator-view {
+    display: none;
+}
+

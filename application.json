@@ -13,13 +13,17 @@
         "throwFail": true,
         "filter": "raw",
         "filters": {
+          "mojito-client": "raw",
+          "mojito-dispatcher": "raw",
           "datatable-core": "debug",
           "datatable-body": "debug",
           "datatable-table": "debug",
           "datatable-base": "debug",
           "datatable-datasource": "debug",
-          "gallery-datatable-paginator": "debug",
-          "gallery-paginator-view": "debug"
+          "gallery-datatable-editable": "debug",
+          "gallery-datatable-celleditor-inline": "debug",
+          "gallery-datatable-paginator": "raw",
+          "gallery-paginator-view": "raw"
         }
       }
     },

@@ -157,9 +157,47 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           columns: [
             {key: 'id', label: 'ID', sortable: true, className: 'nowrap'},
             {key: 'emc_id', label: 'EMC ID'},
-            {key: 'date', label: 'Date', formatter: function (o) {return o.value.replace(/T.+$/, '');}},
+            {
+              key: 'date',
+              label: 'Date',
+              editor: 'inlineDate',
+              editorConfig: {
+                // For some resone, setting format here is not enough. It only
+                // works the first time, then the cell editor reverts to YY/dd/mm.
+                dateformat: '%Y-%m-%d'
+              },
+              prepFn: function (v) {
+                var dfmt = "%Y-%m-%d";
+                return Y.DataType.Date.format(v, {format: dfmt});
+              },
+              formatter: function (o) {
+                return o.value &&
+                  Y.DataType.Date.format(o.value, {format: "%Y-%m-%d"});
+              }
+            },
             {key: 'bird', label: 'Bird'},
-            'age',
+            {
+              key: 'age',
+              label: 'Age',
+              editor: 'inlineAC',
+              editorConfig: {
+                autocompleteConfig: {
+                  source: [
+                    'adult',
+                    'subadult',
+                    'juvenile',
+                    'first year',
+                    'second year'
+                  ],
+                  on: {
+                    select: function(r) {
+                      var val = r.result.display;
+                      this.editor.saveEditor(val);
+                    }
+                  }
+                }
+              }
+            },
             'sex',
             'ring',
             'clin_st',
@@ -196,7 +234,11 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
           highlightMode: 'row',
           selectionMode: 'row',
-          selectionMulti: false
+          selectionMulti: false,
+
+          editable:      true,
+          // defaultEditor: 'inlineAC',
+          editOpenType:  'dblclick'
         });
 
         table[sizeSyncMethod] = function() {return false;};
@@ -209,7 +251,24 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           mp.broadcast('row-selected', {row: e.rows[0]});
         });
 
+        //
+        //  Set a listener to DT's cell editor save event so that we can synchronize
+        //  changes with a remote server (i.e. DataSource)
+        //
+        table.after('cellEditorSave', function (e) {
+          var dfmt = "%Y-%m-%d";
+          Y.log(Y.DataType.Date.format(e.newVal, {format: dfmt}));
+          Y.log('Editor: ' + e.editorName + ' saved newVal=' + e.newVal + ' oldVal=' + e.prevVal + ' colKey=' + e.colKey);
+        });
+
+        table.after('editorShow', function (e) {
+          var inputNode = e.inputNode;
+          Y.log('--------------editorCreated------------');
+          Y.log(inputNode);
+        });
+
       }); // on domready
+
 
       // Refresh the content when user clicks refresh button.
       Y.one('#samples').delegate('click', function (e) {
@@ -236,6 +295,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
     'datasource-io',
     'datasource-jsonschema',
     'gallery-datatable-selection',
+    'gallery-datatable-editable',
+    'gallery-datatable-celleditor-inline',
     'gallery-datatable-paginator',
     'gallery-paginator-view'
   ]
