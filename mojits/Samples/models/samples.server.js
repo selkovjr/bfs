@@ -28,6 +28,7 @@ YUI.add('SamplesModel', function (Y, NAME) {
      */
     getData: function (arg, callback) {
       var
+        filteredResponse,
         // uri = "http://localhost:3030/collections/samples",
         uri = "http://localhost:3030/collections/v_samples_birds_cn",
         params = {
@@ -46,7 +47,8 @@ YUI.add('SamplesModel', function (Y, NAME) {
         if (err) {
           callback(err);
         }
-        callback(null, Y.JSON.parse(response[rkey].responseText));
+        filteredResponse = response[rkey].responseText.replace(/T00:00:00\.000Z/g, '');
+        callback(null, Y.JSON.parse(filteredResponse));
       });
     }
   };
