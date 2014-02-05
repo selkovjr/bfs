@@ -95,13 +95,14 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
      * have been constructed.
      */
     init: function (mojitProxy) {
+      Y.log('calling binder.init()');
+
       this.mojitProxy = mojitProxy;
 
       // This function is an adapter between mojitProxy and ModelList.
       sampleList.sync = function (action, arg, callback) {
         var
           order,
-          options = {},
           response;
 
         if (action === 'read') {
@@ -136,6 +137,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           callback('Unsupported sync action: ' + action);
         }
       };
+
     },  // init()
 
     /**
@@ -148,149 +150,154 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       var
         mp = this.mojitProxy,
         table,
+        acOptions,
         sizeSyncMethod = '_syncPaginatorSize';
 
-      Y.on('domready', function () {
+      Y.on('domready', Y.bind(function () {
         Y.one('body').addClass('yui3-skin-sam');
 
-        table = new Y.DataTable({
-          columns: [
-            {key: 'id', label: 'ID', sortable: true, className: 'nowrap'},
-            {key: 'emc_id', label: 'EMC ID'},
-            {
-              key: 'date',
-              label: 'Date',
-              editor: 'inlineDate',
-              editorConfig: {
-                // For some resone, setting format here is not enough. It only
-                // works the first time, then the cell editor reverts to YY/dd/mm.
-                dateFormat: '%Y-%m-%d'
-              },
-              prepFn: function (v) {
-                var dfmt = "%Y-%m-%d";
-                return Y.DataType.Date.format(v, {format: dfmt});
-              },
-              formatter: function (o) {
-                return o.value &&
-                  Y.DataType.Date.format(o.value, {format: "%Y-%m-%d"});
-              }
-            },
-            {key: 'bird', label: 'Bird'},
-            {
-              key: 'age',
-              label: 'Age',
-              editor: 'inlineAC',
-              editorConfig: {
-                autocompleteConfig: {
-                  source: [
-                    'adult',
-                    'subadult',
-                    'juvenile',
-                    'first year',
-                    'second year'
-                  ],
-                  resultHighlighter: 'phraseMatch',
-                  on: {
-                    select: function(r) {
-                      var val = r.result.display;
-                      this.editor.saveEditor(val);
+        // Get the list of autocomplete options
+        mp.invoke('autocomplete', null, function (err, data) {
+          if (err) {
+            Y.log('server transaction error: ' + err, 'error', 'Samples binder');
+          }
+          else {
+            acOptions = Y.JSON.parse(data);
+
+            table = new Y.DataTable({
+              columns: [
+                {key: 'id', label: 'ID', sortable: true, className: 'nowrap'},
+                {key: 'emc_id', label: 'EMC ID'},
+                {
+                  key: 'date',
+                  label: 'Date',
+                  editor: 'inlineDate',
+                  editorConfig: {
+                    // For some resone, setting format here is not enough. It only
+                    // works the first time, then the cell editor reverts to YY/dd/mm.
+                    dateFormat: '%Y-%m-%d'
+                  },
+                  prepFn: function (v) {
+                    var dfmt = "%Y-%m-%d";
+                    return Y.DataType.Date.format(v, {format: dfmt});
+                  },
+                  formatter: function (o) {
+                    return o.value &&
+                      Y.DataType.Date.format(o.value, {format: "%Y-%m-%d"});
+                  }
+                },
+                {key: 'bird', label: 'Bird'},
+                {
+                  key: 'age',
+                  label: 'Age',
+                  editor: 'inlineAC',
+                  editorConfig: {
+                    autocompleteConfig: {
+                      source: acOptions.age,
+                      resultHighlighter: 'phraseMatch',
+                      on: {
+                        select: function(r) {
+                          var val = r.result.display;
+                          this.editor.saveEditor(val);
+                        }
+                      }
                     }
                   }
-                }
-              }
-            },
-            'sex',
-            'ring',
-            'clin_st',
-            'vital_st',
-            'capture_method',
-            'location',
-            'type'
-          ],
+                },
+                'sex',
+                'ring',
+                'clin_st',
+                'vital_st',
+                'capture_method',
+                'location',
+                'type'
+              ],
 
-          data: sampleList,
-          scrollable: 'xy',
-          sortable: true,
-          height: '290px',
-          width: Y.one('#samples').getComputedStyle('width'),
-          sortBy: [{date: 1}, {type: 1}],
+              data: sampleList,
+              scrollable: 'xy',
+              sortable: true,
+              height: '290px',
+              width: Y.one('#samples').getComputedStyle('width'),
+              sortBy: [{date: 1}, {type: 1}],
 
-          paginator: new Y.PaginatorView({
-            model: new Y.PaginatorModel({
-              itemsPerPage: 10
-            }),
-            container:         '#samples-paginator',
-            paginatorTemplate:  Y.one('#paginator-bar-template').getHTML(),
-            pageOptions:        [10, 25, 50, 100, 'All']
-          }),
+              paginator: new Y.PaginatorView({
+                model: new Y.PaginatorModel({
+                  itemsPerPage: 10
+                }),
+                container:         '#samples-paginator',
+                paginatorTemplate:  Y.one('#paginator-bar-template').getHTML(),
+                pageOptions:        [10, 25, 50, 100, 'All']
+              }),
 
-          paginatorResize:    true,
-          paginationSource:  'server',
+              paginatorResize:    true,
+              paginationSource:  'server',
 
-          serverPaginationMap: {
-            totalItems:     'count',
-            itemsPerPage:   'l',
-            itemIndexStart: 'sk'
-          },
-
-          highlightMode: 'row',
-          selectionMode: 'row',
-          selectionMulti: false,
-
-          editable:      true,
-          // defaultEditor: 'inlineAC',
-          editOpenType:  'dblclick'
-        });
-
-        table[sizeSyncMethod] = function() {return false;};
-
-        table.render('#samples-table');
-        table.processPageRequest(1);
-
-        table.on('selection', function (e) {
-          Y.log(['selection', e]);
-          mp.broadcast('row-selected', {row: e.rows[0]});
-        });
-
-        //
-        //  Set a listener to DT's cell editor save event so that we can synchronize
-        //  changes with a remote server (i.e. DataSource)
-        //
-        table.after('cellEditorSave', function (e) {
-          var
-            options,
-            dfmt = "%Y-%m-%d",
-            newVal = e.newVal,
-            id = e.record.get('id');
-
-          if (e.colKey === 'date') {
-            newVal = Y.DataType.Date.format(e.newVal, {format: dfmt});
-          }
-          if (newVal !== e.prevVal) {
-            Y.log(e);
-            Y.log('Editor: ' + e.editorName + 'in sample ' + id + ' saved newVal=' + newVal + ' oldVal=' + e.prevVal + ' colKey=' + e.colKey);
-            options = {
-              params: {
-                body: {
-                  id: id,
-                  attr: e.colKey,
-                  value: newVal
-                }
+              serverPaginationMap: {
+                totalItems:     'count',
+                itemsPerPage:   'l',
+                itemIndexStart: 'sk'
               },
-              rpc: true
-            };
-            mp.invoke('update', options, function (err, data) {
-              if (err) {
-                Y.log('update failed');
+
+              highlightMode: 'row',
+              selectionMode: 'row',
+              selectionMulti: false,
+
+              editable:      true,
+              // defaultEditor: 'inlineAC',
+              editOpenType:  'dblclick'
+            }); // new DataTable
+
+            table[sizeSyncMethod] = function() {return false;};
+
+            table.render('#samples-table');
+            table.processPageRequest(1);
+
+            table.on('selection', function (e) {
+              Y.log(['selection', e]);
+              mp.broadcast('row-selected', {row: e.rows[0]});
+            });
+
+            //
+            //  Set a listener to DT's cell editor save event so that we can synchronize
+            //  changes with a remote server (i.e. DataSource)
+            //
+            table.after('cellEditorSave', function (e) {
+              var
+                options,
+                dfmt = "%Y-%m-%d",
+                newVal = e.newVal,
+                id = e.record.get('id');
+
+              if (e.colKey === 'date') {
+                newVal = Y.DataType.Date.format(e.newVal, {format: dfmt});
               }
-              else {
-                Y.log('update successful');
+              if (newVal !== e.prevVal) {
+                Y.log(e);
+                Y.log('Editor: ' + e.editorName + 'in sample ' + id + ' saved newVal=' + newVal + ' oldVal=' + e.prevVal + ' colKey=' + e.colKey);
+                options = {
+                  params: {
+                    body: {
+                      id: id,
+                      attr: e.colKey,
+                      value: newVal
+                    }
+                  },
+                  rpc: true
+                };
+                mp.invoke('update', options, function (err, data) {
+                  if (err) {
+                    Y.log('update failed');
+                  }
+                  else {
+                    Y.log('update successful');
+                  }
+                });
               }
             });
-          }
-        });
 
-      }); // on domready
+          } // got autocomplete options
+        }); // invoke autocomplete data
+      }, this)); // on domready
 
 
       // Refresh the content when user clicks refresh button.

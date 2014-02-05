@@ -19,6 +19,7 @@ YUI.add('SamplesModel', function (Y, NAME) {
     init: function (config) {
       this.config = config;
       this.pg = require('pg');
+      this.pgClient = new this.pg.Client('postgres://postgres:@localhost/bfs');
     },
 
     /**
@@ -54,29 +55,50 @@ YUI.add('SamplesModel', function (Y, NAME) {
       });
     },
 
-    update: function (arg, callback) {
-      var
-        conString = 'postgres://postgres:@localhost/bfs',
-        client = new this.pg.Client(conString),
-        response;
-
-      client.connect(function (err) {
+    autocomplete: function (arg, callback) {
+      this.pgClient.connect(Y.bind(function (err) {
         if(err) {
           return console.error('could not connect to postgres', err);
         }
-        client.query(
-          Y.substitute("UPDATE samples SET {attr} = '{value}' WHERE id = '{id}'", arg),
-          function(err, result) {
+        this.pgClient.query(
+          'SELECT "attr", "val", "desc" FROM "ac" WHERE "class" = \'samples\' ORDER BY "ord"',
+          Y.bind(function(err, result) {
+            var ac = {};
             if(err) {
-              return console.error('error running query', err);
+              return console.error('error running autocomplete query', err);
+            }
+            this.pgClient.end();
+            Y.each(result.rows, function (option) {
+              if (ac[option.attr] === undefined) {
+                ac[option.attr] = [];
+              }
+              // ac[option.attr].push({val: option.val, desc: option.desc});
+              ac[option.attr].push(option.val);
+            });
+            callback(null, ac);
+          }, this)
+        );
+      }, this));
+    },
+
+    update: function (arg, callback) {
+      this.pgClient.connect(Y.bind(function (err) {
+        if(err) {
+          return console.error('could not connect to postgres', err);
+        }
+        this.pgClient.query(
+          Y.substitute("UPDATE samples SET {attr} = '{value}' WHERE id = '{id}'", arg),
+          Y.bind(function(err, result) {
+            if(err) {
+              return console.error('error running update query', err);
             }
             console.log('update successful');
             console.log(result);
-            client.end();
-            callback(null, response);
-          }
+            this.pgClient.end();
+            callback(null, result);
+          }, this)
         );
-      });
+      }, this));
     }
   };
 }, '0.0.1', {requires: ['mojito', 'mojito-rest-lib', 'json', 'substitute']});

@@ -33,6 +33,18 @@ YUI.add('Samples', function (Y, NAME) {
       });
     },
 
+    autocomplete: function (ac) {
+      var model = ac.models.get('samples');
+      model.autocomplete(ac.command.params.body, function (err, data) {
+        if (err) {
+          console.log('error condition');
+          ac.error(err);
+          return;
+        }
+        ac.done(Y.JSON.stringify(data), 'json');
+      });
+    },
+
     update: function (ac) {
       console.log(ac.command.params.body);
       var model = ac.models.get('samples');
