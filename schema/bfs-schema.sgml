@@ -177,6 +177,10 @@ other
         <description>sample id</description>
         <source>user input</source>
       </attribute>
+      <attribute name="rec_date" type="date">
+        <description>Date when the sample arrives in the lab</description>
+        <source>user input</source>
+      </attribute>
       <attribute name="date" type="date">
         <description>TaqMan date</description>
         <source>user input</source>
