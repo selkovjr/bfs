@@ -1076,8 +1076,7 @@ YUI.add('gallery-datatable-celleditor-inline', function (Y, NAME) {
      * @type String
      * @default "%D"
      */
-    // dateFormat: "%D",
-    dateFormat: "%Y-%m-%d",
+    dateFormat: "%D",
 
     keyFiltering:   /\/|\d|\-/,
 
@@ -1198,12 +1197,15 @@ YUI.add('gallery-datatable-celleditor-inline', function (Y, NAME) {
       //     configure the Y.Plugin.AutoComplete as a plugin to the editor INPUT node
       //---------
       editorCreated: function (o) {
+        Y.log('------------ AC editorCreated -----------');
         var
           inputNode = o.inputNode,
           // Get the users's editorConfig "autocompleteConfig" settings
           acConfig = this.get('autocompleteConfig') || {},
           editor = this;
 
+        Y.log(acConfig);
+        Y.log(Y.Plugin.AutoComplete);
         if (inputNode && Y.Plugin.AutoComplete) {
           // merge user settings with these required settings ...
           acConfig = Y.merge(acConfig, {
@@ -1211,6 +1213,8 @@ YUI.add('gallery-datatable-celleditor-inline', function (Y, NAME) {
             render: true
           });
           // plug in the autocomplete and we're done ...
+          Y.log('-------------- plugging autocomplete ------------');
+          Y.log(Y.Plugin.AutoComplete);
           inputNode.plug(Y.Plugin.AutoComplete, acConfig);
 
           // add this View class as a static prop on the ac plugin

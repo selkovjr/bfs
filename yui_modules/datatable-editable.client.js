@@ -317,7 +317,7 @@ YUI.add('gallery-datatable-editable', function (Y, NAME) {
       this._unbindEditable();
     },
 
-//==========================  PUBLIC METHODS  =============================
+    //==========================  PUBLIC METHODS  =============================
 
     /**
      * Opens the given TD eventfacade or Node with it's assigned cell editor.
@@ -749,7 +749,7 @@ YUI.add('gallery-datatable-editable', function (Y, NAME) {
      * @method _buildColumnEditors
      * @private
      */
-    _buildColumnEditors: function(){
+    _buildColumnEditors: function () {
        var
          cols = this.get('columns'),
          defEditr = this.get('defaultEditor'),
@@ -757,7 +757,7 @@ YUI.add('gallery-datatable-editable', function (Y, NAME) {
          colKey,
          editorInstance;
 
-      if( !Y.DataTable.EditorOptions ) {
+      if (!Y.DataTable.EditorOptions) {
         return;
       }
 
@@ -776,7 +776,7 @@ YUI.add('gallery-datatable-editable', function (Y, NAME) {
       //
       //  Loop over all DT columns ....
       //
-      Y.Array.each(cols,function(c){
+      Y.Array.each(cols, function (c) {
         if (!c) {
           return;
         }
@@ -786,6 +786,7 @@ YUI.add('gallery-datatable-editable', function (Y, NAME) {
         // An editor was defined (in column) and doesn't yet exist ...
         if (colKey && c.editable !== false) {
           edName = c.editor || defEditr;
+          Y.log('editor: ' + edName);
 
           // This is an editable column, update the TD's for the editable column
           this._updateEditableColumnCSS(colKey, true);
@@ -802,6 +803,7 @@ YUI.add('gallery-datatable-editable', function (Y, NAME) {
 
             if (c.editorConfig && Y.Lang.isObject(c.editorConfig)) {
 
+              Y.log('config exists, creating ...');
               editorInstance = this._createCellEditorInstance(edName, c);
 
               this._columnEditors[colKey] = editorInstance || null;
@@ -817,6 +819,8 @@ YUI.add('gallery-datatable-editable', function (Y, NAME) {
           }
         }
       }, this);
+      Y.log('------ column editors ------');
+      Y.log(this._columnEditors);
     },
 
     /**
@@ -840,6 +844,7 @@ YUI.add('gallery-datatable-editable', function (Y, NAME) {
 
       if (column.editorConfig && Y.Lang.isObject(column.editorConfig)) {
         conf_obj = Y.merge(conf_obj, column.editorConfig);
+        Y.log(['_createCellEditorInstance()', conf_obj]);
 
         if (column.editorConfig.overlayConfig) {
           conf_obj.overlayConfig = Y.merge(conf_obj.overlayConfig || {}, column.editorConfig.overlayConfig);
