@@ -1,4 +1,4 @@
-/*jslint anon: true, sloppy: true, nomen: true */
+/*jslint anon: true, sloppy: true, nomen: true, regexp: true */
 /*global YUI: false */
 YUI.add('SamplesBinderIndex', function (Y, NAME) {
 /**
@@ -197,7 +197,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                       resultHighlighter: 'phraseMatch',
                       on: {
                         select: function(r) {
-                          var val = r.result.display;
+                          // highlights do not always get cleaned
+                          var val = r.result.display.replace(/<[^>]+>/g, '');
                           this.editor.saveEditor(val);
                         }
                       }
