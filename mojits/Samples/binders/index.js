@@ -164,7 +164,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
               editorConfig: {
                 // For some resone, setting format here is not enough. It only
                 // works the first time, then the cell editor reverts to YY/dd/mm.
-                dateformat: '%Y-%m-%d'
+                dateFormat: '%Y-%m-%d'
               },
               prepFn: function (v) {
                 var dfmt = "%Y-%m-%d";
@@ -189,6 +189,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                     'first year',
                     'second year'
                   ],
+                  resultHighlighter: 'phraseMatch',
                   on: {
                     select: function(r) {
                       var val = r.result.display;
@@ -305,6 +306,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
   };
 }, '0.0.1', {
   requires: [
+    'autocomplete',
+    'autocomplete-highlighters',
     'event-mouseenter',
     'mojito-client',
     'node-base',

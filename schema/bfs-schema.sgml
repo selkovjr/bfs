@@ -270,8 +270,8 @@ unidentifiable
       </attribute>
       <attribute name="id" type="text">
         <description>AHVLA id</description>
-        <source>user input</source>
         <comment>AHVLA is the lab that does culture tests</comment>
+        <source>user input</source>
       </attribute>
       <attribute name="e1" type="text">
         <description>First egg passage</description>
@@ -364,6 +364,32 @@ NS
       <attribute name="common_name" type="text">
         <description>Common name</description>
         <source>NFB-DB_SpecList_final.tab</source>
+      </attribute>
+    </class>
+
+    <!-- *********************** A C ************************** -->
+    <class name="ac" group="reference">
+      <description>Autocomplete values for the GUI</description>
+      <source>schema</source>
+      <attribute name="class" type="text">
+        <description>Database class (table)</description>
+        <source>schema</source>
+      </attribute>
+      <attribute name="attr" type="text">
+        <description>Class attribute</description>
+        <source>schema</source>
+      </attribute>
+      <attribute name="ord" type="int">
+        <description>Ordinal number in the list of values</description>
+        <source>schema</source>
+      </attribute>
+      <attribute name="val" type="text">
+        <description>Autocomplete option</description>
+        <source>schema</source>
+      </attribute>
+      <attribute name="desc" type="text">
+        <description>Human-readable description of the option</description>
+        <source>schema</source>
       </attribute>
     </class>
   </entities>

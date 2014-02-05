@@ -41,9 +41,6 @@ YUI.add('LabDataModel', function (Y, NAME) {
         }
 
         data = Y.JSON.parse(response[rkey].responseText).entries[0];
-        if (data) {
-          data.date = data.date.substr(0, 10); // chop the timezone
-        }
         callback(null, data);
       });
 

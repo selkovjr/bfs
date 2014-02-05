@@ -14,12 +14,12 @@ loadable SQL to initialise the database.
 ## Synopsis:
 
 * Run `make`
-* Point your browser at `bsf-schema.html`
+* Point your browser at `bfs-schema.html`
 * Initialise the database:
 
     ```sh
-    createdb bsf
-    psql bsf < bsf-schema.sql
+    createdb bfs
+    psql bfs < bfs-schema.sql
     ```
 
 ## Developing the schema

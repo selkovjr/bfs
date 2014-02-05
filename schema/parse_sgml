@@ -375,7 +375,8 @@ END
         $content =~ s/\\\\N/\\N/gm;
         if ( $gi =~ /example|format/i ) {
           $content = "<code>$content</code>";
-        } elsif ( $gi =~ /values/i ) {
+        }
+        elsif ( $gi =~ /values/i ) {
           my $val_table = <<END
                 <table border="0" cellborder="1" cellspacing="0">
 END
@@ -394,7 +395,8 @@ END
 END
             ;
           $content = $val_table;
-        } else {
+        }
+        else {
           $content =~ s/([\n\t ]|\\n|\\011)+/ /mg;
         }
 
@@ -737,13 +739,59 @@ END
     }
   }
 
+  # collect autocomplete values
+  my $ac = '';
+  foreach my $class (sort
+                     {
+                       $a->attr->{GROUP}->val cmp $b->attr->{GROUP}->val}
+                     ($self->{root}->elements)[0]->elements
+                    ) {
+
+    my $classname = $class->attr->{NAME}->val;
+    my @att_list = grep {$_->gi eq 'ATTRIBUTE'} $class->elements;
+
+    foreach my $attribute ( @att_list ) {
+      my $attrname = my $attrlabel = $attribute->attr->{NAME}->val;
+      my $type = $attribute->attr->{TYPE}->val;
+      my $length = $attribute->attr->{LENGTH} ? $attribute->attr->{LENGTH}->val : '&nbsp;';
+      foreach my $item ( $attribute->elements ) {
+        my $gi = ucfirst lc $item->gi;
+        my $content =  $item->elements ? ($item->elements)[0]->content : '';
+        $content =~ s/^([\n\t ]|\\n|\\011)+//m;
+        $content =~ s/([\n\t ]|\\n|\\011)+$//m;
+        $content =~ s/\\\\N/\\N/gm;
+        if ( $gi =~ /values/i ) {
+          $ac .= <<END
+COPY "ac" \( "class", "attr", "ord", "val", "desc" \) FROM stdin;
+END
+          ;
+          my $line_no = 0;
+          foreach my $line ( split /\n|\\n/, $content ) {
+            $line =~ s/^([\n\t ]|\\n|\\011)+//m;
+            $line =~ s/([\n\t ]|\\n|\\011)+$//m;
+            my ( $val, $desc ) = split /\t|\\011/, $line;
+            $desc ||= '\N';
+            $ac .= join ("\t", $classname, $attrname, $line_no, $val, $desc) . "\n";
+            $line_no++;
+          }
+          $ac .= <<END
+\\.
+
+END
+          ;
+        } # values given
+      } # each attrbute property
+    } # each attribute
+  } # each class
+
+
   my $functions;
   foreach my $item (grep {$_->gi eq 'FUNCTIONS'} $self->{root}->elements ) {
     my $content = ($item->elements)[0]->content ? ($item->elements)[0]->content : '';
     $content =~ s/\\n/\n/g;
     $functions .= "$content\n";
   }
-  return $extensions . $text . $constraint . $functions;
+  return $extensions . $text . $constraint . $ac .$functions;
 }
 
 
