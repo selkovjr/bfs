@@ -1,5 +1,5 @@
-/*global YUI, console */
-/*jslint anon:true, sloppy:true, nomen:true, indent:2*/
+/*global YUI, console, require */
+/*jslint sloppy:true, nomen:true, indent:2*/
 YUI.add('SamplesModel', function (Y, NAME) {
 
   /**
@@ -18,6 +18,7 @@ YUI.add('SamplesModel', function (Y, NAME) {
 
     init: function (config) {
       this.config = config;
+      this.pg = require('pg');
     },
 
     /**
@@ -39,6 +40,7 @@ YUI.add('SamplesModel', function (Y, NAME) {
         },
         rkey = '_resp'; // hide from jslint
 
+
       if (arg.s) {
         params.s = arg.s;
       }
@@ -50,6 +52,31 @@ YUI.add('SamplesModel', function (Y, NAME) {
         filteredResponse = response[rkey].responseText.replace(/T00:00:00\.000Z/g, '');
         callback(null, Y.JSON.parse(filteredResponse));
       });
+    },
+
+    update: function (arg, callback) {
+      var
+        conString = 'postgres://postgres:@localhost/bfs',
+        client = new this.pg.Client(conString),
+        response;
+
+      client.connect(function (err) {
+        if(err) {
+          return console.error('could not connect to postgres', err);
+        }
+        client.query(
+          Y.substitute("UPDATE samples SET {attr} = '{value}' WHERE id = '{id}'", arg),
+          function(err, result) {
+            if(err) {
+              return console.error('error running query', err);
+            }
+            console.log('update successful');
+            console.log(result);
+            client.end();
+            callback(null, response);
+          }
+        );
+      });
     }
   };
-}, '0.0.1', {requires: ['mojito', 'mojito-rest-lib', 'json']});
+}, '0.0.1', {requires: ['mojito', 'mojito-rest-lib', 'json', 'substitute']});

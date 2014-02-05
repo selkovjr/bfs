@@ -136,7 +136,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           callback('Unsupported sync action: ' + action);
         }
       };
-    },
+    },  // init()
 
     /**
      * The binder method, invoked to allow the mojit to attach DOM event
@@ -256,15 +256,37 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         //  changes with a remote server (i.e. DataSource)
         //
         table.after('cellEditorSave', function (e) {
-          var dfmt = "%Y-%m-%d";
-          Y.log(Y.DataType.Date.format(e.newVal, {format: dfmt}));
-          Y.log('Editor: ' + e.editorName + ' saved newVal=' + e.newVal + ' oldVal=' + e.prevVal + ' colKey=' + e.colKey);
-        });
+          var
+            options,
+            dfmt = "%Y-%m-%d",
+            newVal = e.newVal,
+            id = e.record.get('id');
 
-        table.after('editorShow', function (e) {
-          var inputNode = e.inputNode;
-          Y.log('--------------editorCreated------------');
-          Y.log(inputNode);
+          if (e.colKey === 'date') {
+            newVal = Y.DataType.Date.format(e.newVal, {format: dfmt});
+          }
+          if (newVal !== e.prevVal) {
+            Y.log(e);
+            Y.log('Editor: ' + e.editorName + 'in sample ' + id + ' saved newVal=' + newVal + ' oldVal=' + e.prevVal + ' colKey=' + e.colKey);
+            options = {
+              params: {
+                body: {
+                  id: id,
+                  attr: e.colKey,
+                  value: newVal
+                }
+              },
+              rpc: true
+            };
+            mp.invoke('update', options, function (err, data) {
+              if (err) {
+                Y.log('update failed');
+              }
+              else {
+                Y.log('update successful');
+              }
+            });
+          }
         });
 
       }); // on domready
@@ -279,7 +301,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       Y.on('windowresize', function (e) {
         table.set('width', Y.one('#samples').getComputedStyle('width'));
       });
-    }
+    } // bind()
   };
 }, '0.0.1', {
   requires: [

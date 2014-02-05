@@ -31,6 +31,19 @@ YUI.add('Samples', function (Y, NAME) {
         }
         ac.done(data, 'json');
       });
+    },
+
+    update: function (ac) {
+      console.log(ac.command.params.body);
+      var model = ac.models.get('samples');
+      model.update(ac.command.params.body, function (err, data) {
+        if (err) {
+          console.log('error condition');
+          ac.error(err);
+          return;
+        }
+        ac.done();
+      });
     }
   };
 }, '0.0.1', {requires: ['mojito', 'mojito-models-addon', 'mojito-data-addon', 'mojito-assets-addon']});
