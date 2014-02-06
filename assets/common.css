@@ -178,6 +178,10 @@ div.mod.collapse div.inner {
   width: 140px;
 }
 
+.bird-list {
+  width: 340px;
+}
+
 /* paginator */
 
 .yui3-pagview-link-page {

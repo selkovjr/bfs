@@ -103,6 +103,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       sampleList.sync = function (action, arg, callback) {
         var
           order,
+          options,
           response;
 
         if (action === 'read') {
@@ -173,8 +174,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                   label: 'Date',
                   editor: 'inlineDate',
                   editorConfig: {
-                    // For some resone, setting format here is not enough. It only
-                    // works the first time, then the cell editor reverts to YY/dd/mm.
                     dateFormat: '%Y-%m-%d'
                   },
                   prepFn: function (v) {
@@ -186,7 +185,32 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                       Y.DataType.Date.format(o.value, {format: "%Y-%m-%d"});
                   }
                 },
-                {key: 'bird', label: 'Bird'},
+                {
+                  key: 'bird',
+                  label: 'Bird',
+                  editor: 'inlineBirdAC',
+                  editorConfig: {
+                    autocompleteConfig: {
+                      source: '/bird?q={query}',
+                      maxResults: 100,
+                      resultHighlighter: 'phraseMatch',
+                      resultTextLocator: function (result) {
+                        return result.common_name + ' (' + result.name + ')';
+                      },
+                      on: {
+                        select: function(e) {
+                          this.editor.saveEditor(e.result.raw);
+                        }
+                      }
+                    }
+                  },
+                  formatter: function (o) {
+                    if (typeof o.value === 'object' && o.value.common_name) {
+                      return o.value.common_name;
+                    }
+                    return o.value;
+                  }
+                },
                 {
                   key: 'age',
                   label: 'Age',
@@ -272,15 +296,16 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
               if (e.colKey === 'date') {
                 newVal = Y.DataType.Date.format(e.newVal, {format: dfmt});
               }
-              if (newVal !== e.prevVal) {
-                Y.log(e);
-                Y.log('Editor: ' + e.editorName + 'in sample ' + id + ' saved newVal=' + newVal + ' oldVal=' + e.prevVal + ' colKey=' + e.colKey);
+
+              if (e.colKey === 'bird' && newVal.common_name) {
+                Y.log(['testing', newVal.common_name, e.prevVal]);
+                Y.log('Editor: ' + e.editorName + 'in sample ' + id + ' saved newVal=' + newVal.common_name + ' oldVal=' + e.prevVal + ' colKey=' + e.colKey);
                 options = {
                   params: {
                     body: {
                       id: id,
-                      attr: e.colKey,
-                      value: newVal
+                      attr: 'species',
+                      value: newVal.id
                     }
                   },
                   rpc: true
@@ -293,6 +318,30 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                     Y.log('update successful');
                   }
                 });
+              }
+              else {
+                Y.log(['testing', newVal, e.prevVal]);
+                Y.log('Editor: ' + e.editorName + 'in sample ' + id + ' saved newVal=' + newVal + ' oldVal=' + e.prevVal + ' colKey=' + e.colKey);
+                if (newVal !== e.prevVal) {
+                  options = {
+                    params: {
+                      body: {
+                        id: id,
+                        attr: e.colKey,
+                        value: newVal
+                      }
+                    },
+                    rpc: true
+                  };
+                  mp.invoke('update', options, function (err, data) {
+                    if (err) {
+                      Y.log('update failed');
+                    }
+                    else {
+                      Y.log('update successful');
+                    }
+                  });
+                }
               }
             });
 

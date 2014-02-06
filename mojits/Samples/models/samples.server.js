@@ -57,15 +57,15 @@ YUI.add('SamplesModel', function (Y, NAME) {
 
     autocomplete: function (arg, callback) {
       this.pgClient.connect(Y.bind(function (err) {
-        if(err) {
+        if (err) {
           return console.error('could not connect to postgres', err);
         }
         this.pgClient.query(
           'SELECT "attr", "val", "desc" FROM "ac" WHERE "class" = \'samples\' ORDER BY "ord"',
-          Y.bind(function(err, result) {
+          Y.bind(function (err, result) {
             var ac = {};
-            if(err) {
-              return console.error('error running autocomplete query', err);
+            if (err) {
+              callback(err);
             }
             this.pgClient.end();
             Y.each(result.rows, function (option) {
@@ -81,16 +81,49 @@ YUI.add('SamplesModel', function (Y, NAME) {
       }, this));
     },
 
+    bird: function (arg, callback) {
+      var
+        query = arg.q,
+        sql;
+
+      query = query.replace(/'/g, '<apo>').replace(/<apo>/g, "''");
+
+      sql = Y.substitute(
+        'SELECT "id", "name", "common_name" FROM "birds" WHERE' +
+        ' "name" ~* \'{query}\'' +
+        ' OR "common_name" ~* \'{query}\'' +
+        ' ORDER BY "common_name"',
+        {query: query}
+      );
+
+      this.pgClient.connect(Y.bind(function (err) {
+        if (err) {
+          return console.error('could not connect to postgres', err);
+        }
+        this.pgClient.query(
+          sql,
+          Y.bind(function (err, result) {
+            var ac = {};
+            if (err) {
+              callback(err);
+            }
+            this.pgClient.end();
+            callback(null, result.rows);
+          }, this)
+        );
+      }, this));
+    },
+
     update: function (arg, callback) {
       this.pgClient.connect(Y.bind(function (err) {
-        if(err) {
+        if (err) {
           return console.error('could not connect to postgres', err);
         }
         this.pgClient.query(
           Y.substitute("UPDATE samples SET {attr} = '{value}' WHERE id = '{id}'", arg),
-          Y.bind(function(err, result) {
-            if(err) {
-              return console.error('error running update query', err);
+          Y.bind(function (err, result) {
+            if (err) {
+              callback(err);
             }
             console.log('update successful');
             console.log(result);

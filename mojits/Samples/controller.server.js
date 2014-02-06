@@ -45,6 +45,18 @@ YUI.add('Samples', function (Y, NAME) {
       });
     },
 
+    bird: function (ac) {
+      var model = ac.models.get('samples');
+      model.bird(ac.command.params.url, function (err, data) {
+        if (err) {
+          console.log('error condition');
+          ac.error(err);
+          return;
+        }
+        ac.done(data, 'json');
+      });
+    },
+
     update: function (ac) {
       console.log(ac.command.params.body);
       var model = ac.models.get('samples');
