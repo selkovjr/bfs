@@ -19,3 +19,9 @@ tail reject.tab
 ```bash
 psql bfs < load_tables.sql
 ```
+
+## Finding non-ASCII characters in files:
+
+```bash
+cat NFB-DB_SpecList_final.tab | tr -s '[[:punct:][:space:]]' '\n' | perl -nE'say if/[\x80-\xFF]/' | sort -u
+```
