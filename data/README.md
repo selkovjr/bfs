@@ -1,5 +1,15 @@
 # BFS data
 
+## Bird taxonomy
+
+  Species codes used in the NEW-FLUBIRD database (contains 11048 entries)
+
+  Last update: 2008-06-10
+
+```
+  ./extract-birds NFB-DB_SpecList_final.tab > birds.tab
+```
+
 ## Extracting tables from the Erasmus spreadsheet
 
 ```bash
