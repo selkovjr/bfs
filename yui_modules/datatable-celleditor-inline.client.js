@@ -271,7 +271,7 @@ YUI.add('gallery-datatable-celleditor-inline', function (Y, NAME) {
         // if there is a "prep" function ... call it to pre-process the editing
         prepfn = this.get('prepFn');
         val = (prepfn && prepfn.call) ? prepfn.call(this, val) : val;
-        if (typeof val === 'object' && val.common_name) {
+        if (val && typeof val === 'object' && val.common_name) {
           val = val.common_name;
         }
 
@@ -1225,6 +1225,7 @@ YUI.add('gallery-datatable-celleditor-inline', function (Y, NAME) {
     }
   };
 
+
   /**
   @class Y.DataTable.EditorOptions.inlineBirdAC
   @public
@@ -1256,6 +1257,63 @@ YUI.add('gallery-datatable-celleditor-inline', function (Y, NAME) {
       //---------
       editorCreated: function (o) {
         Y.log('------------ Bird AC editorCreated -----------');
+        var
+          inputNode = o.inputNode,
+          // Get the users's editorConfig "autocompleteConfig" settings
+          acConfig = this.get('autocompleteConfig') || {},
+          editor = this;
+
+        if (inputNode && Y.Plugin.AutoComplete) {
+          // merge user settings with these required settings ...
+          acConfig = Y.merge(acConfig, {
+            alwaysShowList: true,
+            render: true
+          });
+          // plug in the autocomplete and we're done ...
+          Y.log('-------------- plugging autocomplete ------------');
+          Y.log(acConfig);
+          inputNode.plug(Y.Plugin.AutoComplete, acConfig);
+          Y.log(inputNode.ac.get('listNode'));
+
+          // add this View class as a static prop on the ac plugin
+          inputNode.ac.editor = editor;
+          inputNode.ac.get('listNode').ancestor().addClass('bird-list');
+        }
+      }
+    }
+  };
+
+  /**
+  @class Y.DataTable.EditorOptions.inlineLocationAC
+  @public
+  */
+  Y.DataTable.EditorOptions.inlineLocationAC = {
+    BaseViewClass:  Y.DataTable.BaseCellInlineEditor,
+    name:           'inlineAC',
+    hideMouseLeave: false,
+
+    /**
+     * A user-supplied set of configuration parameters to be passed into this View's Y.Plugin.AutoComplete
+     * configuration object.
+     *
+     * At a bare minimum, the user MUST provide the "source" of data for the AutoComplete !!
+     *
+     * For this control to save anything, the user needs to define an "on:select" listener in the AC's
+     * "autocompleteConfig" in order to saveEditor when the select action occurs.
+     *
+     * @attribute autocompleteConfig
+     * @type Object
+     * @default {}
+     */
+
+    // Define listener to this editor View's events
+    after: {
+      //---------
+      //  After this View is instantiated and created,
+      //     configure the Y.Plugin.AutoComplete as a plugin to the editor INPUT node
+      //---------
+      editorCreated: function (o) {
+        Y.log('------------ Location AC editorCreated -----------');
         var
           inputNode = o.inputNode,
           // Get the users's editorConfig "autocompleteConfig" settings
