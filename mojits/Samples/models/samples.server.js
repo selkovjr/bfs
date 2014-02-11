@@ -116,11 +116,20 @@ YUI.add('SamplesModel', function (Y, NAME) {
 
     update: function (arg, callback) {
       this.pgClient.connect(Y.bind(function (err) {
+        var query;
+
         if (err) {
           return console.error('could not connect to postgres', err);
         }
+
+        if (arg.value !== '' && arg.value !== null && arg.value !== undefined) {
+          query = Y.substitute("UPDATE samples SET {attr} = '{value}' WHERE id = '{id}'", arg);
+        }
+        else {
+          query = Y.substitute("UPDATE samples SET {attr} = NULL WHERE id = '{id}'", arg);
+        }
         this.pgClient.query(
-          Y.substitute("UPDATE samples SET {attr} = '{value}' WHERE id = '{id}'", arg),
+          query,
           Y.bind(function (err, result) {
             if (err) {
               callback(err);
