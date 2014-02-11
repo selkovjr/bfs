@@ -4220,7 +4220,7 @@ WBDB	FAMNAME	SCINAME	COMMONNAME	FAMSEQ	GENSEQ	AUTHORITY	STADESC	SEQ	GENRECID	GEN
 31676	Laridae	Larus vegae	East-Siberian Gull	61	441	Palmén 1887	under review	18116	955	61	Larus	vegae	5924		0	1	0	0	0	0	0	0	0	0	1
 3228	Laridae	Larus armenicus	Armenian Gull	61	441	Buturlin 1934	recognised	18120	955	61	Larus	armenicus			0	1	0	0	0	0	0	1	0	0	0
 3229	Laridae	Larus schistisagus	Slaty-backed Gull	61	441	Stejneger 1884	recognised	18130	955	61	Larus	schistisagus	5950		0	1	1	0	0	0	0	1	0	0	0
-3230	Laridae	Larus cachinnans	Yellow-legged Gull	61	441	Pallas 1811	recognised	18140	955	61	Larus	cachinnans	5927		0	1	1	0	0	1	0	1	0	0	0
+3230	Laridae	Larus cachinnans	Caspian Gull	61	441	Pallas 1811	recognised	18140	955	61	Larus	cachinnans	5927		0	1	1	0	0	1	0	1	0	0	0
 31672	Laridae	Larus barabensis	Baraba Gull	61	441	H. Johansen 1960	under review	18144	955	61	Larus	barabensis			0	1	0	0	0	0	0	0	0	0	1
 31675	Laridae	Larus michahellis	Yellow-legged Gull	61	441		under review	18146	955	61	Larus	michahellis	5926		1	1	0	0	0	0	0	0	0	0	0
 3231	Laridae	Larus fuscus	Lesser Black-backed Gull	61	441	Linnaeus 1758	recognised	18150	955	61	Larus	fuscus	5910	05911;05913	1	1	1	1	0	1	0	1	1	0	0
