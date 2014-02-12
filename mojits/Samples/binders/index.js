@@ -167,8 +167,19 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
             table = new Y.DataTable({
               columns: [
-                {key: 'id', label: 'ID', sortable: true, className: 'nowrap'},
-                {key: 'emc_id', label: 'EMC ID'},
+                {
+                  key: 'id',
+                  label: 'ID',
+                  sortable: true,
+                  className: 'nowrap'
+                },
+
+                {
+                  key: 'emc_id',
+                  label: 'EMC ID',
+                  editor: 'inline'
+                },
+
                 {
                   key: 'date',
                   label: 'Date',
@@ -185,6 +196,25 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                       Y.DataType.Date.format(o.value, {format: "%Y-%m-%d"});
                   }
                 },
+
+                {
+                  key: 'type',
+                  label: 'Type',
+                  editor: 'inlineAC',
+                  editorConfig: {
+                    autocompleteConfig: {
+                      source: acOptions.type,
+                      resultHighlighter: 'phraseMatch',
+                      on: {
+                        select: function(e) {
+                          var val = e.result.display.replace(/<[^>]+>/g, '').replace('&#x2F;', '/');
+                          this.editor.saveEditor(val);
+                        }
+                      }
+                    }
+                  }
+                },
+
                 {
                   key: 'bird',
                   label: 'Bird',
@@ -211,6 +241,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                     return o.value;
                   }
                 },
+
                 {
                   key: 'age',
                   label: 'Age',
@@ -220,22 +251,94 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                       source: acOptions.age,
                       resultHighlighter: 'phraseMatch',
                       on: {
-                        select: function(r) {
+                        select: function(e) {
                           // highlights do not always get cleaned
-                          var val = r.result.display.replace(/<[^>]+>/g, '');
+                          var val = e.result.display.replace(/<[^>]+>/g, '');
                           this.editor.saveEditor(val);
                         }
                       }
                     }
                   }
                 },
-                'sex',
-                'ring',
-                'clin_st',
-                'vital_st',
-                'capture_method',
-                'location',
-                'type'
+
+                {
+                  key: 'sex',
+                  label: 'Sex',
+                  editor: 'inlineAC',
+                  editorConfig: {
+                    autocompleteConfig: {
+                      source: acOptions.sex,
+                      on: {
+                        select: function(e) {
+                          this.editor.saveEditor(e.result.display);
+                        }
+                      }
+                    }
+                  }
+                },
+
+                {
+                  key: 'ring',
+                  label: 'Ring',
+                  editor: 'inline'
+                },
+
+                {
+                  key: 'clin_st',
+                  editor: 'inlineAC',
+                  editorConfig: {
+                    autocompleteConfig: {
+                      source: acOptions.clin_st,
+                      resultHighlighter: 'phraseMatch',
+                      on: {
+                        select: function(e) {
+                          // highlights do not always get cleaned
+                          var val = e.result.display.replace(/<[^>]+>/g, '');
+                          this.editor.saveEditor(val);
+                        }
+                      }
+                    }
+                  }
+                },
+
+                {
+                  key: 'vital_st',
+                  editor: 'inlineAC',
+                  editorConfig: {
+                    autocompleteConfig: {
+                      source: acOptions.vital_st,
+                      resultHighlighter: 'phraseMatch',
+                      on: {
+                        select: function(e) {
+                          // highlights do not always get cleaned
+                          var val = e.result.display.replace(/<[^>]+>/g, '');
+                          this.editor.saveEditor(val);
+                        }
+                      }
+                    }
+                  }
+                },
+
+                {
+                  key: 'capture_method',
+                  label: 'Capture method',
+                  editor: 'inlineAC',
+                  editorConfig: {
+                    autocompleteConfig: {
+                      source: acOptions.capture_method,
+                      resultHighlighter: 'phraseMatch',
+                      on: {
+                        select: function(e) {
+                          // highlights do not always get cleaned
+                          var val = e.result.display.replace(/<[^>]+>/g, '');
+                          this.editor.saveEditor(val);
+                        }
+                      }
+                    }
+                  }
+                },
+
+                'location'
               ],
 
               data: sampleList,
@@ -243,7 +346,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
               sortable: true,
               height: '290px',
               width: Y.one('#samples').getComputedStyle('width'),
-              sortBy: [{date: 1}, {type: 1}],
+              sortBy: [{date: 1}, {id: 1}],
 
               paginator: new Y.PaginatorView({
                 model: new Y.PaginatorModel({
