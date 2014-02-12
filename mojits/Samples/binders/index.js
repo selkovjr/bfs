@@ -152,7 +152,22 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         mp = this.mojitProxy,
         table,
         acOptions,
-        sizeSyncMethod = '_syncPaginatorSize';
+        sizeSyncMethod = '_syncPaginatorSize',
+        autocompleteFilter = function (query, results) {
+          query = query.toLowerCase();
+          return Y.Array.filter(results, function (result) {
+            return result.text.toLowerCase().indexOf(query) !== -1;
+          });
+        },
+        highlightCleanup = function (e) {
+          // autocomplete selection is sometimes returned with html highligts in it
+          var val = e.result.display.replace(/<[^>]+>/g, '').replace('&#x2F;', '/');
+          this.editor.saveEditor(val);
+        },
+        nudge = function (e) {
+          // make sure the autocomplete list opens when the cell is blank
+          e.inputNode.ac.sendRequest('');
+        };
 
       Y.on('domready', Y.bind(function () {
         Y.one('body').addClass('yui3-skin-sam');
@@ -192,8 +207,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                     return Y.DataType.Date.format(v, {format: dfmt});
                   },
                   formatter: function (o) {
-                    return o.value &&
-                      Y.DataType.Date.format(o.value, {format: "%Y-%m-%d"});
+                    return o.value && Y.DataType.Date.format(o.value, {format: "%Y-%m-%d"});
                   }
                 },
 
@@ -204,14 +218,13 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                   editorConfig: {
                     autocompleteConfig: {
                       source: acOptions.type,
+                      minQueryLength: 0,
+                      activateFirstItem: true,
+                      resultFilters: autocompleteFilter,
                       resultHighlighter: 'phraseMatch',
-                      on: {
-                        select: function(e) {
-                          var val = e.result.display.replace(/<[^>]+>/g, '').replace('&#x2F;', '/');
-                          this.editor.saveEditor(val);
-                        }
-                      }
-                    }
+                      on: {select: highlightCleanup}
+                    },
+                    on: {editorShow: nudge}
                   }
                 },
 
@@ -223,6 +236,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                     autocompleteConfig: {
                       source: '/bird?q={query}',
                       maxResults: 100,
+                      activateFirstItem: true,
                       resultHighlighter: 'phraseMatch',
                       resultTextLocator: function (result) {
                         return result.common_name + ' (' + result.name + ')';
@@ -249,15 +263,13 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                   editorConfig: {
                     autocompleteConfig: {
                       source: acOptions.age,
+                      minQueryLength: 0,
+                      activateFirstItem: true,
+                      resultFilters: autocompleteFilter,
                       resultHighlighter: 'phraseMatch',
-                      on: {
-                        select: function(e) {
-                          // highlights do not always get cleaned
-                          var val = e.result.display.replace(/<[^>]+>/g, '');
-                          this.editor.saveEditor(val);
-                        }
-                      }
-                    }
+                      on: {select: highlightCleanup}
+                    },
+                    on: {editorShow: nudge}
                   }
                 },
 
@@ -268,12 +280,13 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                   editorConfig: {
                     autocompleteConfig: {
                       source: acOptions.sex,
-                      on: {
-                        select: function(e) {
-                          this.editor.saveEditor(e.result.display);
-                        }
-                      }
-                    }
+                      minQueryLength: 0,
+                      activateFirstItem: true,
+                      resultFilters: autocompleteFilter,
+                      resultHighlighter: 'phraseMatch',
+                      on: {select: highlightCleanup}
+                    },
+                    on: {editorShow: nudge}
                   }
                 },
 
@@ -289,15 +302,19 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                   editorConfig: {
                     autocompleteConfig: {
                       source: acOptions.clin_st,
+                      minQueryLength: 0,
+                      activateFirstItem: true,
+                      resultFilters: function (query, results) {
+                        // match at the first character
+                        query = query.toLowerCase();
+                        return Y.Array.filter(results, function (result) {
+                          return result.text.toLowerCase().indexOf(query) === 0;
+                        });
+                      },
                       resultHighlighter: 'phraseMatch',
-                      on: {
-                        select: function(e) {
-                          // highlights do not always get cleaned
-                          var val = e.result.display.replace(/<[^>]+>/g, '');
-                          this.editor.saveEditor(val);
-                        }
-                      }
-                    }
+                      on: {select: highlightCleanup}
+                    },
+                    on: {editorShow: nudge}
                   }
                 },
 
@@ -325,7 +342,15 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                   editor: 'inlineAC',
                   editorConfig: {
                     autocompleteConfig: {
+                      minQueryLength: 0,
+                      activateFirstItem: true,
                       source: acOptions.capture_method,
+                      resultFilters: function (query, results) {
+                        query = query.toLowerCase();
+                        return Y.Array.filter(results, function (result) {
+                          return result.text.toLowerCase().indexOf(query) !== -1;
+                        });
+                      },
                       resultHighlighter: 'phraseMatch',
                       on: {
                         select: function(e) {
