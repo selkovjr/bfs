@@ -35,20 +35,9 @@ YUI.add('SamplesModel', function (Y, NAME) {
         itemsPerPage = arg.l || 30,
         sortKeys = [{'id': 1}],
         sql,
-        totalItems,
-        filteredResponse,
-        uri = "http://localhost:3030/collections/v_samples_birds_cn",
-        params = {
-          // q: '{"id":{"$matches":"217-..?$"}}',
-          sk: arg.sk || 0,
-          // s: '{"date": 1, "type": -1}',
-          l: arg.l || 30
-        },
-        rkey = '_resp'; // hide from jslint
-
+        totalItems;
 
       if (arg.s) {
-        params.s = arg.s;
         if (typeof arg.s === 'string') {
           sortKeys = Y.JSON.parse(arg.sortBy);
         }
@@ -78,21 +67,58 @@ YUI.add('SamplesModel', function (Y, NAME) {
       );
       console.log(sql);
 
-      Y.mojito.lib.REST.GET(uri, params, null, function (err, response) {
+      this.pgClient.connect(Y.bind(function (err) {
         if (err) {
           callback(err);
         }
-        filteredResponse = Y.JSON.parse(response[rkey].responseText.replace(/T00:00:00\.000Z/g, ''));
-        console.log(filteredResponse);
-        Y.each(filteredResponse.entries, function(e) {
-          Y.each(e, function (v, k) {
-            if (v === null) {
-              e[k] = '';
+        this.pgClient.query(
+          'SELECT count(*) FROM "samples"',
+          function (err, result) {
+            if (err) {
+              callback(err);
             }
-          });
-        });
-        callback(null, filteredResponse);
-      });
+            totalItems = parseInt(result.rows[0].count, 10); // why does it come as a string?
+          }
+        );
+        this.pgClient.query(
+          sql,
+          Y.bind(function (err, result) {
+            this.pgClient.end();
+
+            var ac = {};
+            if (err) {
+              callback(err);
+            }
+
+            // delete result.fields; // to reduce traffic
+            // result.pageOffset = itemIndexStart;
+
+            // result.page =  Math.floor(itemIndexStart / itemsPerPage);
+            // result.totalItems = totalItems;
+            // result.itemsPerPage = itemsPerPage;
+            // result.itemIndexStart =  itemIndexStart;
+            // result.itemIndexEnd = Math.min(totalItems, itemIndexStart + itemsPerPage) - 1;
+
+            result.entries = result.rows;
+            result.paging = {
+              l: itemsPerPage,
+              sk: itemIndexStart,
+              count: totalItems
+            };
+            // find out about the use of node pg parsers for this
+            Y.each(result.rows, function (row) {
+              row.date = Y.DataType.Date.format(row.date, {format: "%Y-%m-%d"});
+              Y.each(row, function (v, k) {
+                if (v === null) {
+                  row[k] = '';
+                }
+              });
+            });
+
+            callback(null, result);
+          }, this)
+        );
+      }, this));
     },
 
     autocomplete: function (arg, callback) {
