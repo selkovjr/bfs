@@ -33,6 +33,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
     parseDataSchema: function (resp) {
       var parsed = Y.DataSchema.JSON.apply(this.get('dsSchema'), resp);
+      Y.log(resp);
+      Y.log(parsed);
       return {
         resp: resp,
         parsed: parsed,
@@ -59,7 +61,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
     // This attribute describes the structure of server responses
     dsSchema: {
-      resultListLocator: 'entries',
+      resultListLocator: 'rows',
       resultFields: [
         'id',
         'emc_id',
@@ -75,9 +77,9 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         'type'
       ],
       metaFields: {
-        indexStart: 'paging.sk',
-        pageRecs:   'paging.l',
-        count:      'paging.count' // corresponds to 'totalItems' in  serverPaginationMap
+        indexStart: 'pageOffset',
+        pageRecs:   'rowCount',
+        count:      'tableSize' // corresponds to 'totalItems' in  serverPaginationMap
       }
     }
   });
@@ -101,6 +103,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
       // This function is an adapter between mojitProxy and ModelList.
       sampleList.sync = function (action, arg, callback) {
+        Y.log(['arg', arg]);
         var
           order,
           options,
@@ -116,13 +119,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
             }
           };
 
-          // Convert the ModelList sortBy list-of-hashes format to pgrest 's' hash.
           if (arg.sortBy) {
-            order = Y.Array.map(Y.JSON.parse(arg.sortBy), function (o) {
-              var key = Y.Object.keys(o)[0];
-              return '"' + key + '": ' + o[key];
-            });
-            options.params.body.s = '{' + order.join(', ') + '}';
+            options.params.body.sortBy = arg.sortBy;
           }
 
           mojitProxy.invoke('data', options, function (err, data) {
@@ -139,7 +137,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         }
       };
 
-    },  // init()
+    }, // init()
 
     /**
      * The binder method, invoked to allow the mojit to attach DOM event
@@ -192,12 +190,14 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                 {
                   key: 'emc_id',
                   label: 'EMC ID',
+                  sortable: true,
                   editor: 'inline'
                 },
 
                 {
                   key: 'date',
                   label: 'Date',
+                  sortable: true,
                   editor: 'inlineDate',
                   editorConfig: {
                     dateFormat: '%Y-%m-%d'
