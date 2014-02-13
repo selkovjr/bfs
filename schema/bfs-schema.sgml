@@ -405,6 +405,7 @@ CREATE VIEW v_samples_birds_cn AS
   SELECT s.id,
          s.emc_id,
          s.date,
+         s.type,
          b.common_name AS bird,
          s.age,
          s.sex,
@@ -412,9 +413,27 @@ CREATE VIEW v_samples_birds_cn AS
          s.clin_st,
          s.vital_st,
          s.capture_method,
-         s.location,
-         s.type
+         s.location
     FROM samples s LEFT OUTER JOIN birds b
       ON b.id = s.species;
+
+CREATE VIEW v_samples_birds_locations AS
+  SELECT s.id,
+         s.emc_id,
+         s.date,
+         s.type,
+         b.common_name AS bird,
+         s.age,
+         s.sex,
+         s.ring,
+         s.clin_st,
+         s.vital_st,
+         s.capture_method,
+         l.name AS location_name
+    FROM samples s
+    LEFT OUTER JOIN birds b
+      ON b.id = s.species
+    LEFT OUTER JOIN locations l
+      ON l.id = s.location;
   </functions>
 </metadata>

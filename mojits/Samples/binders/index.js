@@ -15,6 +15,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       id: {},
       emc_id: {},
       date: {},
+      type: {},
       bird: {},
       age: {},
       sex: {},
@@ -22,8 +23,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       clin_st: {},
       vital_st: {},
       capture_method: {},
-      location: {},
-      type: {}
+      location_name: {}
     }
   });
 
@@ -66,6 +66,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         'id',
         'emc_id',
         'date',
+        'type',
         'bird',
         'age',
         'sex',
@@ -73,8 +74,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         'clin_st',
         'vital_st',
         'capture_method',
-        'location',
-        'type'
+        'location_name'
       ],
       metaFields: {
         indexStart: 'paging.sk',
@@ -377,7 +377,11 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                   }
                 },
 
-                'location'
+                {
+                  key: 'location_name',
+                  label: 'Location',
+                  sortable: true
+                }
               ],
 
               data: sampleList,

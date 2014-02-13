@@ -47,7 +47,7 @@ YUI.add('SamplesModel', function (Y, NAME) {
       }
 
       sql = Y.substitute(
-        'SELECT * FROM "v_samples_birds_cn" ORDER BY {sort_keys} LIMIT {itemsPerPage} OFFSET {itemIndexStart}',
+        'SELECT * FROM "v_samples_birds_locations" ORDER BY {sort_keys} LIMIT {itemsPerPage} OFFSET {itemIndexStart}',
         {
           sort_keys: Y.Array.map(sortKeys, function (k) {
             var key, order;
