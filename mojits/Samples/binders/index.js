@@ -339,15 +339,13 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                   editorConfig: {
                     autocompleteConfig: {
                       source: acOptions.vital_st,
+                      minQueryLength: 0,
+                      activateFirstItem: true,
+                      resultFilters: autocompleteFilter,
                       resultHighlighter: 'phraseMatch',
-                      on: {
-                        select: function(e) {
-                          // highlights do not always get cleaned
-                          var val = e.result.display.replace(/<[^>]+>/g, '');
-                          this.editor.saveEditor(val);
-                        }
-                      }
-                    }
+                      on: {select: highlightCleanup}
+                    },
+                    on: {editorShow: nudge}
                   }
                 },
 
