@@ -57,7 +57,7 @@
                               "type":"LabData"
                             },
                             "location": {
-                              "type":"Location"
+                              "type":"Locations"
                             }
                           }
                         }
