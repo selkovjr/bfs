@@ -23,7 +23,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       clin_st: {},
       vital_st: {},
       capture_method: {},
-      location_name: {}
+      location: {}
     }
   });
 
@@ -74,7 +74,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         'clin_st',
         'vital_st',
         'capture_method',
-        'location_name'
+        'location'
       ],
       metaFields: {
         indexStart: 'paging.sk',
@@ -83,6 +83,63 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       }
     }
   });
+
+  /**
+  @class Y.DataTable.EditorOptions.inlineBirdAC
+  @public
+  */
+  Y.DataTable.EditorOptions.inlineBirdAC = {
+    BaseViewClass:  Y.DataTable.BaseCellInlineEditor,
+    name:           'inlineBirdAC',
+    hideMouseLeave: false,
+
+    /**
+     * A user-supplied set of configuration parameters to be passed into this View's Y.Plugin.AutoComplete
+     * configuration object.
+     *
+     * At a bare minimum, the user MUST provide the "source" of data for the AutoComplete !!
+     *
+     * For this control to save anything, the user needs to define an "on:select" listener in the AC's
+     * "autocompleteConfig" in order to saveEditor when the select action occurs.
+     *
+     * @attribute autocompleteConfig
+     * @type Object
+     * @default {}
+     */
+
+    // Define listener to this editor View's events
+    after: {
+      //---------
+      //  After this View is instantiated and created,
+      //     configure the Y.Plugin.AutoComplete as a plugin to the editor INPUT node
+      //---------
+      editorCreated: function (o) {
+        Y.log('------------ Bird AC editorCreated -----------');
+        var
+          inputNode = o.inputNode,
+          // Get the users's editorConfig "autocompleteConfig" settings
+          acConfig = this.get('autocompleteConfig') || {},
+          editor = this;
+
+        if (inputNode && Y.Plugin.AutoComplete) {
+          // merge user settings with these required settings ...
+          acConfig = Y.merge(acConfig, {
+            alwaysShowList: true,
+            render: true
+          });
+          // plug in the autocomplete and we're done ...
+          Y.log('-------------- plugging autocomplete ------------');
+          Y.log(acConfig);
+          inputNode.plug(Y.Plugin.AutoComplete, acConfig);
+          Y.log(inputNode.ac.get('listNode'));
+
+          // add this View class as a static prop on the ac plugin
+          inputNode.ac.editor = editor;
+          inputNode.ac.get('listNode').ancestor().addClass('bird-list');
+        }
+      }
+    }
+  };
 
   /**
    * Constructor for the SamplesBinderIndex class.
@@ -378,9 +435,32 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                 },
 
                 {
-                  key: 'location_name',
+                  key: 'location',
                   label: 'Location',
-                  sortable: true
+                  sortable: true,
+                  editor: 'inlineBirdAC',
+                  editorConfig: {
+                    autocompleteConfig: {
+                      source: '/location?q={query}',
+                      maxResults: 100,
+                      activateFirstItem: true,
+                      resultHighlighter: 'phraseMatch',
+                      resultTextLocator: function (result) {
+                        return result.name + ' (' + result.lat + ')';
+                      },
+                      on: {
+                        select: function(e) {
+                          this.editor.saveEditor(e.result.raw);
+                        }
+                      }
+                    }
+                  },
+                  formatter: function (o) {
+                    if (typeof o.value === 'object' && o.value.common_name) {
+                      return o.value.common_name;
+                    }
+                    return o.value;
+                  }
                 }
               ],
 

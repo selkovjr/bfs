@@ -429,7 +429,7 @@ CREATE VIEW v_samples_birds_locations AS
          s.clin_st,
          s.vital_st,
          s.capture_method,
-         l.name AS location_name
+         l.name AS location
     FROM samples s
     LEFT OUTER JOIN birds b
       ON b.id = s.species
