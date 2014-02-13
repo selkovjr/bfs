@@ -33,6 +33,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
     parseDataSchema: function (resp) {
       var parsed = Y.DataSchema.JSON.apply(this.get('dsSchema'), resp);
+      Y.log(resp);
+      Y.log(parsed);
       return {
         resp: resp,
         parsed: parsed,
@@ -118,7 +120,11 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
           // Convert the ModelList sortBy list-of-hashes format to pgrest 's' hash.
           if (arg.sortBy) {
+            options.params.body.sortBy = arg.sortBy;
             order = Y.Array.map(Y.JSON.parse(arg.sortBy), function (o) {
+              if (typeof o === 'string') {
+                return '"' + o + '": ' + '1';
+              }
               var key = Y.Object.keys(o)[0];
               return '"' + key + '": ' + o[key];
             });
@@ -139,7 +145,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         }
       };
 
-    },  // init()
+    }, // init()
 
     /**
      * The binder method, invoked to allow the mojit to attach DOM event
@@ -192,12 +198,14 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                 {
                   key: 'emc_id',
                   label: 'EMC ID',
+                  sortable: true,
                   editor: 'inline'
                 },
 
                 {
                   key: 'date',
                   label: 'Date',
+                  sortable: true,
                   editor: 'inlineDate',
                   editorConfig: {
                     dateFormat: '%Y-%m-%d'
@@ -214,6 +222,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                 {
                   key: 'type',
                   label: 'Type',
+                  sortable: true,
                   editor: 'inlineAC',
                   editorConfig: {
                     autocompleteConfig: {
@@ -231,6 +240,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                 {
                   key: 'bird',
                   label: 'Bird',
+                  sortable: true,
                   editor: 'inlineBirdAC',
                   editorConfig: {
                     autocompleteConfig: {
@@ -259,6 +269,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                 {
                   key: 'age',
                   label: 'Age',
+                  sortable: true,
                   editor: 'inlineAC',
                   editorConfig: {
                     autocompleteConfig: {
@@ -276,6 +287,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                 {
                   key: 'sex',
                   label: 'Sex',
+                  sortable: true,
                   editor: 'inlineAC',
                   editorConfig: {
                     autocompleteConfig: {
@@ -293,11 +305,13 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                 {
                   key: 'ring',
                   label: 'Ring',
+                  sortable: true,
                   editor: 'inline'
                 },
 
                 {
                   key: 'clin_st',
+                  sortable: true,
                   editor: 'inlineAC',
                   editorConfig: {
                     autocompleteConfig: {
@@ -320,6 +334,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
                 {
                   key: 'vital_st',
+                  sortable: true,
                   editor: 'inlineAC',
                   editorConfig: {
                     autocompleteConfig: {
@@ -339,6 +354,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                 {
                   key: 'capture_method',
                   label: 'Capture method',
+                  sortable: true,
                   editor: 'inlineAC',
                   editorConfig: {
                     autocompleteConfig: {

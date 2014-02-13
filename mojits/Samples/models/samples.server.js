@@ -29,9 +29,14 @@ YUI.add('SamplesModel', function (Y, NAME) {
      *        data has been retrieved.
      */
     getData: function (arg, callback) {
+      console.log(['getData()', arg]);
       var
+        itemIndexStart = arg.sk || 0,
+        itemsPerPage = arg.l || 30,
+        sortKeys = [{'id': 1}],
+        sql,
+        totalItems,
         filteredResponse,
-        // uri = "http://localhost:3030/collections/samples",
         uri = "http://localhost:3030/collections/v_samples_birds_cn",
         params = {
           // q: '{"id":{"$matches":"217-..?$"}}',
@@ -44,14 +49,49 @@ YUI.add('SamplesModel', function (Y, NAME) {
 
       if (arg.s) {
         params.s = arg.s;
+        if (typeof arg.s === 'string') {
+          sortKeys = Y.JSON.parse(arg.sortBy);
+        }
+        if (typeof arg.sortBy === 'object') {
+          sortKeys = arg.sortBy;
+        }
       }
+
+      sql = Y.substitute(
+        'SELECT * FROM "v_samples_birds_cn" ORDER BY {sort_keys} LIMIT {itemsPerPage} OFFSET {itemIndexStart}',
+        {
+          sort_keys: Y.Array.map(sortKeys, function (k) {
+            var key, order;
+            if (typeof k === 'string') {
+              key = k;
+              order = 'ASC';
+            }
+            else {
+              key = Object.keys(k)[0];
+              order = k[key] > 0 ? 'ASC' : 'DESC';
+            }
+            return '"' + key + '" ' + order;
+          }).join(', '),
+          itemsPerPage: itemsPerPage,
+          itemIndexStart: itemIndexStart
+        }
+      );
+      console.log(sql);
 
       Y.mojito.lib.REST.GET(uri, params, null, function (err, response) {
         if (err) {
           callback(err);
         }
-        filteredResponse = response[rkey].responseText.replace(/T00:00:00\.000Z/g, '');
-        callback(null, Y.JSON.parse(filteredResponse));
+        filteredResponse = Y.JSON.parse(response[rkey].responseText.replace(/T00:00:00\.000Z/g, ''));
+        console.log(filteredResponse);
+        Y.each(filteredResponse.entries, function(e) {
+          Y.each(e, function (v, k) {
+            if (v === null) {
+              e[k] = '';
+            }
+          });
+        });
+        callback(null, filteredResponse);
       });
     },
 
