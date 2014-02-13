@@ -414,7 +414,7 @@ CREATE VIEW v_samples_birds_cn AS
          s.capture_method,
          s.location,
          s.type
-    FROM samples s, birds b
-   WHERE b.id = s.species;
+    FROM samples s LEFT OUTER JOIN birds b
+      ON b.id = s.species;
   </functions>
 </metadata>
