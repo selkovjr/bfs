@@ -1,16 +1,16 @@
 /*global YUI: false, console: false */
 /*jslint anon:true, sloppy:true, nomen:true */
-YUI.add('LocationBinderIndex', function(Y, NAME) {
+YUI.add('LocationsBinderIndex', function(Y, NAME) {
 /**
  * The LocationBinderIndex module.
  *
- * @module LocationBinderIndex
+ * @module LocationsBinderIndex
  */
 
   /**
    * Constructor for the LocationBinderIndex class.
    *
-   * @class LocationBinderIndex
+   * @class LocationsBinderIndex
    * @constructor
    */
   Y.namespace('mojito.binders')[NAME] = {
@@ -20,7 +20,7 @@ YUI.add('LocationBinderIndex', function(Y, NAME) {
      * have been constructed.
      */
     init: function (mojitProxy) {
-      Y.log('******** Location binder index.js init()');
+      Y.log('******** Locations binder index.js init()');
       this.mojitProxy = mojitProxy;
     },
 

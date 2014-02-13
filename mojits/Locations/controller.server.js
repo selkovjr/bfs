@@ -1,11 +1,11 @@
 /*global YUI, console */
 /*jslint anon:true, sloppy:true, nomen:true*/
-YUI.add('Location', function(Y, NAME) {
+YUI.add('Locations', function(Y, NAME) {
 
 /**
- * The Location module.
+ * The Locations module.
  *
- * @module Location
+ * @module Locations
  */
 
   /**
@@ -22,7 +22,7 @@ YUI.add('Location', function(Y, NAME) {
      *        to the Mojito API.
      */
     index: function (ac) {
-      console.log('Location index');
+      console.log('Locations index');
       console.log(ac.command.params);
       ac.models.get('model').getData(ac.command.params.body, function (err, data) {
         if (err) {
@@ -35,14 +35,12 @@ YUI.add('Location', function(Y, NAME) {
     },
 
     find: function (ac) {
-      console.log('Location find');
-      console.log(ac.command.params);
-      ac.models.get('model').find(ac.command.params.body, function (err, data) {
+      ac.models.get('model').find(ac.command.params, function (err, data) {
         if (err) {
           ac.error(err);
           return;
         }
-        ac.done(data);
+        ac.done(data, 'json');
       });
     }
   };

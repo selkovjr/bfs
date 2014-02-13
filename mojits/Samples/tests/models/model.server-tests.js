@@ -40,4 +40,9 @@ YUI.add('SamplesModel-tests', function(Y, NAME) {
 
   YUITest.TestRunner.add(suite);
 
-}, '0.0.1', {requires: ['mojito-test', 'SamplesModel']});
+}, '0.0.1', {requires: [
+  'datatype',
+  'array-extras',
+  'mojito-test',
+  'SamplesModel'
+]});

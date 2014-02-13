@@ -1,21 +1,21 @@
 
-YUI.add('Location-tests', function(Y) {
+YUI.add('Locations-tests', function(Y) {
 
-    var suite = new YUITest.TestSuite('Location-tests'),
+    var suite = new YUITest.TestSuite('Locations-tests'),
         controller = null,
         A = YUITest.Assert;
 
     suite.add(new YUITest.TestCase({
-        
-        name: 'Location user tests',
-        
+
+        name: 'Locations user tests',
+
         setUp: function() {
-            controller = Y.mojito.controllers.Location;
+            controller = Y.mojito.controllers.Locations;
         },
         tearDown: function() {
             controller = null;
         },
-        
+
         'test mojit': function() {
             var ac,
                 modelData,
@@ -52,11 +52,11 @@ YUI.add('Location-tests', function(Y) {
             A.isObject(doneResults.data);
             A.isTrue(doneResults.data.hasOwnProperty('x'));
             A.areEqual('y', doneResults.data['x']);
-            
+
         }
-        
+
     }));
-    
+
     YUITest.TestRunner.add(suite);
-    
-}, '0.0.1', {requires: ['mojito-test', 'Location']});
+
+}, '0.0.1', {requires: ['mojito-test', 'Locations']});

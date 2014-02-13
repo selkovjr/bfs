@@ -180,38 +180,6 @@ YUI.add('SamplesModel', function (Y, NAME) {
       }, this));
     },
 
-    location: function (arg, callback) {
-      var
-        query = arg.q,
-        sql;
-
-      query = query.replace(/'/g, '<apo>').replace(/<apo>/g, "''");
-
-      sql = Y.substitute(
-        'SELECT "id", "name", "lat", "long" FROM "locations" WHERE' +
-        ' "name" ~* \'{query}\'' +
-        ' ORDER BY "name"',
-        {query: query}
-      );
-
-      this.pgClient.connect(Y.bind(function (err) {
-        if (err) {
-          return console.error('could not connect to postgres', err);
-        }
-        this.pgClient.query(
-          sql,
-          Y.bind(function (err, result) {
-            var ac = {};
-            if (err) {
-              callback(err);
-            }
-            this.pgClient.end();
-            callback(null, result.rows);
-          }, this)
-        );
-      }, this));
-    },
-
     update: function (arg, callback) {
       this.pgClient.connect(Y.bind(function (err) {
         var sql;
