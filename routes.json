@@ -10,6 +10,11 @@
       "verbs": ["get"],
       "path": "/bird",
       "call": "@Samples.bird"
+    },
+    "location lookup": {
+      "verbs": ["get"],
+      "path": "/location",
+      "call": "@Locations.find"
     }
   }
 ]

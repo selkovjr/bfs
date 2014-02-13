@@ -1,3 +1,4 @@
+/*global YUI, console */
 /*jslint anon:true, sloppy:true, nomen:true*/
 YUI.add('Location', function(Y, NAME) {
 
@@ -29,6 +30,18 @@ YUI.add('Location', function(Y, NAME) {
           return;
         }
         ac.assets.addCss('./index.css');
+        ac.done(data);
+      });
+    },
+
+    find: function (ac) {
+      console.log('Location find');
+      console.log(ac.command.params);
+      ac.models.get('model').find(ac.command.params.body, function (err, data) {
+        if (err) {
+          ac.error(err);
+          return;
+        }
         ac.done(data);
       });
     }
