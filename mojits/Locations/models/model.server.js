@@ -29,27 +29,31 @@ YUI.add('LocationsModel', function (Y, NAME) {
      */
     getData: function (arg, callback) {
       var
-        uri = "http://localhost:3030/collections/locations",
-        params = {
-          q: '{"id": "' + arg.location + '"}'
-        },
-        rkey = '_resp'; // hide from jslint
+        sql;
 
-      console.log('===== Location model.getData() ======');
-      console.log(arg);
       if (arg.location) {
-        Y.mojito.lib.REST.GET(uri, params, null, function (err, response) {
-          var data;
+        sql = Y.substitute(
+          'SELECT * FROM "locations" WHERE' +
+          ' "id" = \'{query}\'',
+          {query: arg.location}
+        );
 
-          console.log(err);
-          console.log(response);
+        this.pgClient.connect(Y.bind(function (err) {
           if (err) {
-            callback(err);
+            return console.error('could not connect to postgres', err);
           }
-
-          data = Y.JSON.parse(response[rkey].responseText).entries[0];
-          callback(null, data);
-        });
+          this.pgClient.query(
+            sql,
+            Y.bind(function (err, result) {
+              var ac = {};
+              this.pgClient.end();
+              if (err) {
+                callback(err);
+              }
+              callback(null, result.rows[0]);
+            }, this)
+          );
+        }, this));
       }
       else {
         callback(null, {
@@ -80,10 +84,10 @@ YUI.add('LocationsModel', function (Y, NAME) {
           sql,
           Y.bind(function (err, result) {
             var ac = {};
+            this.pgClient.end();
             if (err) {
               callback(err);
             }
-            this.pgClient.end();
             callback(null, result.rows);
           }, this)
         );

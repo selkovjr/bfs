@@ -1,4 +1,4 @@
-/*jslint anon: true, sloppy: true, nomen: true, regexp: true */
+/*jslint sloppy: true, nomen: true, regexp: true, indent: 2 */
 /*global YUI: false */
 YUI.add('SamplesBinderIndex', function (Y, NAME) {
 /**
@@ -23,7 +23,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       clin_st: {},
       vital_st: {},
       capture_method: {},
-      location: {}
+      location: {},
+      location_name: {}
     }
   });
 
@@ -74,7 +75,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         'clin_st',
         'vital_st',
         'capture_method',
-        'location'
+        'location',
+        'location_name'
       ],
       metaFields: {
         indexStart: 'paging.sk',
@@ -85,6 +87,10 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
   });
 
   /**
+   The only purpose of subclassing Y.DataTable.BaseCellInlineEditor
+   is to apply the `bird-list` style to its input node. Other than
+   that, it is a a clone of the `inlineAC` editor.
+
   @class Y.DataTable.EditorOptions.inlineBirdAC
   @public
   */
@@ -93,28 +99,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
     name:           'inlineBirdAC',
     hideMouseLeave: false,
 
-    /**
-     * A user-supplied set of configuration parameters to be passed into this View's Y.Plugin.AutoComplete
-     * configuration object.
-     *
-     * At a bare minimum, the user MUST provide the "source" of data for the AutoComplete !!
-     *
-     * For this control to save anything, the user needs to define an "on:select" listener in the AC's
-     * "autocompleteConfig" in order to saveEditor when the select action occurs.
-     *
-     * @attribute autocompleteConfig
-     * @type Object
-     * @default {}
-     */
-
-    // Define listener to this editor View's events
     after: {
-      //---------
-      //  After this View is instantiated and created,
-      //     configure the Y.Plugin.AutoComplete as a plugin to the editor INPUT node
-      //---------
       editorCreated: function (o) {
-        Y.log('------------ Bird AC editorCreated -----------');
         var
           inputNode = o.inputNode,
           // Get the users's editorConfig "autocompleteConfig" settings
@@ -128,14 +114,53 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
             render: true
           });
           // plug in the autocomplete and we're done ...
-          Y.log('-------------- plugging autocomplete ------------');
-          Y.log(acConfig);
           inputNode.plug(Y.Plugin.AutoComplete, acConfig);
-          Y.log(inputNode.ac.get('listNode'));
 
           // add this View class as a static prop on the ac plugin
           inputNode.ac.editor = editor;
           inputNode.ac.get('listNode').ancestor().addClass('bird-list');
+        }
+      }
+    }
+  };
+
+  /**
+   The only purpose of subclassing Y.DataTable.BaseCellInlineEditor
+   is to apply the `location-list` style to its input node. Other than
+   that, it is a a clone of the `inlineAC` editor.
+
+   This class may be replaced with something entirely different in
+   the future (possibily a map widget with the option of adding new
+   locations.
+
+  @class Y.DataTable.EditorOptions.inlineLocationAC
+  @public
+  */
+  Y.DataTable.EditorOptions.inlineLocationAC = {
+    BaseViewClass:  Y.DataTable.BaseCellInlineEditor,
+    name:           'inlineLocationAC',
+    hideMouseLeave: false,
+
+    after: {
+      editorCreated: function (o) {
+        var
+          inputNode = o.inputNode,
+          // Get the users's editorConfig "autocompleteConfig" settings
+          acConfig = this.get('autocompleteConfig') || {},
+          editor = this;
+
+        if (inputNode && Y.Plugin.AutoComplete) {
+          // merge user settings with these required settings ...
+          acConfig = Y.merge(acConfig, {
+            alwaysShowList: true,
+            render: true
+          });
+          // plug in the autocomplete and we're done ...
+          inputNode.plug(Y.Plugin.AutoComplete, acConfig);
+
+          // add this View class as a static prop on the ac plugin
+          inputNode.ac.editor = editor;
+          inputNode.ac.get('listNode').ancestor().addClass('location-list');
         }
       }
     }
@@ -425,20 +450,19 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                       resultHighlighter: 'phraseMatch',
                       on: {
                         select: function(e) {
-                          // highlights do not always get cleaned
-                          var val = e.result.display.replace(/<[^>]+>/g, '');
-                          this.editor.saveEditor(val);
+                          this.editor.saveEditor(e.result.raw);
                         }
                       }
-                    }
+                    },
+                    on: {editorShow: nudge}
                   }
                 },
 
                 {
-                  key: 'location',
+                  key: 'location_name',
                   label: 'Location',
                   sortable: true,
-                  editor: 'inlineBirdAC',
+                  editor: 'inlineLocationAC',
                   editorConfig: {
                     autocompleteConfig: {
                       source: '/location?q={query}',
@@ -446,18 +470,21 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                       activateFirstItem: true,
                       resultHighlighter: 'phraseMatch',
                       resultTextLocator: function (result) {
-                        return result.name + ' (' + result.lat + ')';
+                        return result.name + ' (' + result.lat + ', ' + result.long + ')';
                       },
                       on: {
                         select: function(e) {
+                          // this.editor.saveEditor(e.result.raw);
                           this.editor.saveEditor(e.result.raw);
                         }
-                      }
+                      // },
+                      } // on: {editorShow: nudge}
                     }
                   },
                   formatter: function (o) {
-                    if (typeof o.value === 'object' && o.value.common_name) {
-                      return o.value.common_name;
+                    Y.log(['formatter', o]);
+                    if (typeof o.value === 'object' && o.value.name) {
+                      return o.value.name;
                     }
                     return o.value;
                   }
@@ -536,6 +563,33 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                   },
                   rpc: true
                 };
+                mp.invoke('update', options, function (err, data) {
+                  if (err) {
+                    Y.log('update failed');
+                  }
+                  else {
+                    Y.log('update successful');
+                  }
+                });
+              }
+              if (e.colKey === 'location_name' && newVal.name) {
+                Y.log(['testing', newVal.name, e.prevVal]);
+                Y.log('Editor: ' + e.editorName + 'in sample ' + id + ' saved newVal=' + newVal.name + ' oldVal=' + e.prevVal + ' colKey=' + e.colKey);
+                options = {
+                  params: {
+                    body: {
+                      id: id,
+                      attr: 'location',
+                      value: newVal.id
+                    }
+                  },
+                  rpc: true
+                };
+                // The newVal object gets saved in the cell and its property `name` is displayed
+                // by a formatter defined on the column. However, the formatter is not called
+                // by the inlined editor, and it attempts to edit the stringified version of
+                // object. To prevet this, replace the object with its `name` property.
+                e.record.set('location_name', newVal.name);
                 mp.invoke('update', options, function (err, data) {
                   if (err) {
                     Y.log('update failed');

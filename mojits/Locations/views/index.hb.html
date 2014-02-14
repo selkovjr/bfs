@@ -1,5 +1,9 @@
 <div id="{{mojit_view_id}}">
   <div class="mod" id="location">
-    <b>Location</b> #{{id}} {{name}} ({{long}}, {{lat}})
+{{#if id}}
+    <b>Location</b> #{{id}}: {{name}} ({{long}}, {{lat}})
+{{else}}
+    <b>Location:</b> <span class="location-na">not available</span>
+{{/if}}
   </div>
 </div>

@@ -182,6 +182,10 @@ div.mod.collapse div.inner {
   width: 340px;
 }
 
+.location-list {
+  width: 240px;
+}
+
 /* paginator */
 
 .yui3-pagview-link-page {
