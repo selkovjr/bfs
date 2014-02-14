@@ -2,7 +2,14 @@
 
 var
   express = require('express'),
-  session = express.session({ secret: 'keyboard cat', key: 'sid', cookie: { secure: false }});
+  session = express.session({
+    secret: 'keyboard cat',
+    key: 'sid',
+    cookie: {
+      secure: false,
+      maxAge: null
+    }
+  });
 
 
 module.exports = function (req, res, next) {
