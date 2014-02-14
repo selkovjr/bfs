@@ -2,11 +2,12 @@
 
 var
   passport = require('passport'),
+  crypto = require('crypto'),
   LocalStrategy = require("passport-local").Strategy,
   initialize;
 
 var users = [
-  {id: 1, username: 'owner', password: 'pass', email: 'bob@example.com'},
+  {id: 1, username: 'owner', password: '1a1dc91c907325c69271ddf0c944bc72', email: 'bob@example.com'},
   {id: 2, username: 'visitor', password: 'pass', email: 'joe@example.com'}
 ];
 
@@ -67,7 +68,7 @@ passport.use(new LocalStrategy(function (username, password, done) {
         message: 'Unknown user ' + username
       });
     }
-    if (user.password !== password) {
+    if (crypto.createHash('md5').update(password).digest('hex') !== user.password) {
       console.log("middleware/passport/findByUserName(): bad password: " + password);
       return done(null, false, {
         message: 'Invalid password'
