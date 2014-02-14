@@ -6,6 +6,17 @@
       "path": "/",
       "call": "pageframe.index"
     },
+    "app login": {
+      "verbs": ["get"],
+      "path": "/login",
+      "call": "pageframe.index",
+      "params": {"view_type": "login"}
+    },
+    "login_submit": {
+      "verbs": ["post"],
+      "path": "/login_submit",
+      "call": "@Login.submit"
+    },
     "bird lookup": {
       "verbs": ["get"],
       "path": "/bird",

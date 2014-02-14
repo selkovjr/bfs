@@ -2,6 +2,12 @@
   {
     "settings": [ "master" ],
     "appPort": "5900",
+    "middleware": [
+      "./middleware/connect-cookie-parser.js",
+      "./middleware/connect-session.js",
+      "./middleware/passport.js",
+      "./middleware/passport-session.js"
+    ],
     "yui": {
       "showConsoleInClient": true,
       "dependencyCalculations": "precomputed+ondemand",
@@ -34,7 +40,7 @@
         "type": "HTMLFrameMojit",
         "config": {
           "deploy": true,
-          "title": "application title",
+          "title": "Bird flu sampling data",
           "child": {
             "type": "PageLayout",
             "config": {

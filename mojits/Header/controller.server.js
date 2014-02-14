@@ -22,9 +22,17 @@ YUI.add('Header', function(Y, NAME) {
     *        to the Mojito API.
     */
     index: function(ac) {
-      ac.done({
-        title: "Header title"
-      });
+      var user = ac.http.getRequest().user;
+      if (user) {
+        ac.done({
+          title: 'user: ' + user.username
+        });
+      }
+      else {
+        ac.done({
+          title: "Header title"
+        });
+      }
     }
   };
-}, '0.0.1', {requires: ['mojito']});
+}, '0.0.1', {requires: ['mojito', 'mojito-http-addon']});
