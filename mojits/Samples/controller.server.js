@@ -14,8 +14,8 @@ YUI.add('Samples', function (Y, NAME) {
         ac.assets.addCss('./index.css');
         ac.done({
           title: "Samples",
-          nsamples: data.paging.count,
-          entries: data.entries
+          nsamples: data.paging.totalItems,
+          entries: data.rows
         });
       });
     },

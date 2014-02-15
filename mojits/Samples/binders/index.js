@@ -62,7 +62,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
     // This attribute describes the structure of server responses
     dsSchema: {
-      resultListLocator: 'entries',
+      resultListLocator: 'rows',
       resultFields: [
         'id',
         'emc_id',
@@ -79,9 +79,9 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         'location_name'
       ],
       metaFields: {
-        indexStart: 'paging.sk',
-        pageRecs:   'paging.l',
-        count:      'paging.count' // corresponds to 'totalItems' in  serverPaginationMap
+        indexStart: 'paging.itemIndexStart',
+        pageRecs:   'paging.itemsPerPage',
+        totalItems: 'paging.totalItems' // corresponds to 'totalItems' in  serverPaginationMap
       }
     }
   });
@@ -194,8 +194,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           options = {
             params: {
               body: {
-                l: arg.l,
-                sk: arg.sk
+                itemsPerPage: arg.itemsPerPage,
+                itemIndexStart: arg.itemIndexStart
               }
             }
           };
@@ -509,11 +509,12 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
               paginatorResize:    true,
               paginationSource:  'server',
 
-              serverPaginationMap: {
-                totalItems:     'count',
-                itemsPerPage:   'l',
-                itemIndexStart: 'sk'
-              },
+              // No mapping is needed as the names match paginator's defaults.
+              // serverPaginationMap: {
+              //   totalItems:     'totalItems',
+              //   itemsPerPage:   'itemsPerPage',
+              //   itemIndexStart: 'itemIndexStart'
+              // },
 
               highlightMode: 'row',
               selectionMode: 'row',

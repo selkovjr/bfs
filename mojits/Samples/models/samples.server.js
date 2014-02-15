@@ -31,8 +31,8 @@ YUI.add('SamplesModel', function (Y, NAME) {
     getData: function (arg, callback) {
       console.log(['getData()', arg]);
       var
-        itemIndexStart = arg.sk || 0,
-        itemsPerPage = arg.l || 30,
+        itemIndexStart = arg.itemIndexStart || 0,
+        itemsPerPage = arg.itemsPerPage || 30,
         sortKeys = [{'id': 1}],
         sql,
         totalItems;
@@ -77,7 +77,7 @@ YUI.add('SamplesModel', function (Y, NAME) {
             if (err) {
               callback(err);
             }
-            totalItems = parseInt(result.rows[0].count, 10); // why does it come as a string?
+            totalItems = parseInt(result.rows[0].count, 10); // Pg client stringifies numbers. There is an ongoing discussion about that.
           }
         );
         this.pgClient.query(
@@ -99,11 +99,10 @@ YUI.add('SamplesModel', function (Y, NAME) {
             // result.itemIndexStart =  itemIndexStart;
             // result.itemIndexEnd = Math.min(totalItems, itemIndexStart + itemsPerPage) - 1;
 
-            result.entries = result.rows;
             result.paging = {
-              l: itemsPerPage,
-              sk: itemIndexStart,
-              count: totalItems
+              itemsPerPage: itemsPerPage,
+              itemIndexStart: itemIndexStart,
+              totalItems: totalItems
             };
             // find out about the use of node pg parsers for this
             Y.each(result.rows, function (row) {
