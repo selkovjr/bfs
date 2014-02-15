@@ -9,8 +9,7 @@
     "app login": {
       "verbs": ["get"],
       "path": "/login",
-      "call": "pageframe.index",
-      "params": {"view_type": "login"}
+      "call": "@Login.index"
     },
     "login_submit": {
       "verbs": ["post"],

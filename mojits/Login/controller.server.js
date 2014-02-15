@@ -15,6 +15,10 @@ YUI.add('Login', function (Y, NAME) {
    * @constructor
    */
   Y.namespace('mojito.controllers')[NAME] = {
+    index: function (ac) {
+      ac.done();
+    },
+
     submit: function (ac) {
       var
         http = ac.http,

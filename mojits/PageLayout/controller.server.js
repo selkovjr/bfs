@@ -21,16 +21,9 @@ YUI.add('PageLayout', function(Y, NAME) {
     *        to the Mojito API.
     */
     index: function(ac) {
-      if (ac.params.getFromMerged('view_type') === 'login') {
-        ac.done({
-          title: "Log in"
-        }, 'login');
-      }
-      else {
-        ac.composite.done({
-          title: "PageLayout title"
-        });
-      }
+      ac.composite.done({
+        title: "PageLayout title"
+      });
     }
   };
 }, '0.0.1', {requires: ['mojito','mojito-composite-addon', 'mojito-params-addon']});

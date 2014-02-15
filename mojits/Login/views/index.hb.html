@@ -1,19 +1,18 @@
-<div id="{{mojit_view_id}}">
-    {{#if message}}
-		<p>{{message}}</p>
-	{{/if}}
-    Test:
-	<form action="/login_submit" method="post">
-		<div>
-		<label>Username:</label>
-		<input type="text" name="username"/><br/>
-		</div>
-		<div>
-		<label>Password:</label>
-		<input type="password" name="password"/>
-		</div>
-		<div>
-		<input type="submit" value="Submit"/>
-		</div>
-	</form>
+<div id="{{mojit_view_id}}" class="mojit frame" >
+  <h2>Please log in</h2>
+  <div class="body-root" >
+    <form action="/login_submit" method="post">
+      <div>
+        <label>Username:</label>
+        <input type="text" name="username"/><br/>
+      </div>
+      <div>
+        <label>Password:</label>
+        <input type="password" name="password"/>
+      </div>
+      <div>
+        <input type="submit" value="Submit"/>
+      </div>
+    </form>
+  </div>
 </div>
