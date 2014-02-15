@@ -217,6 +217,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         }
       };
 
+      this.editable = !Y.one('#samples').hasClass('read-only');
     }, // init()
 
     /**
@@ -229,6 +230,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       var
         mp = this.mojitProxy,
         table,
+        tableConfig,
         acOptions,
         sizeSyncMethod = '_syncPaginatorSize',
         autocompleteFilter = function (query, results) {
@@ -247,8 +249,134 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           e.inputNode.ac.sendRequest('');
         };
 
+      tableConfig = {
+        columns: [
+          { /* 0 */
+            key: 'id',
+            label: 'ID',
+            sortable: true,
+            className: 'nowrap'
+          },
+
+          { /* 1 */
+            key: 'emc_id',
+            label: 'EMC ID',
+            sortable: true
+          },
+
+          { /* 2 */
+            key: 'date',
+            label: 'Date',
+            sortable: true,
+            formatter: function (o) {
+              return o.value && Y.DataType.Date.format(o.value, {format: "%Y-%m-%d"});
+            }
+          },
+
+          { /* 3 */
+            key: 'type',
+            label: 'Type',
+            sortable: true
+          },
+
+          { /* 4 */
+            key: 'bird',
+            label: 'Bird',
+            sortable: true,
+            formatter: function (o) {
+              if (typeof o.value === 'object' && o.value.common_name) {
+                return o.value.common_name;
+              }
+              return o.value;
+            }
+          },
+
+          { /* 5 */
+            key: 'age',
+            label: 'Age',
+            sortable: true
+          },
+
+          { /* 6 */
+            key: 'sex',
+            label: 'Sex',
+            sortable: true
+          },
+
+          { /* 7 */
+            key: 'ring',
+            label: 'Ring',
+            sortable: true,
+            editor: 'inline'
+          },
+
+          { /* 8 */
+            key: 'clin_st',
+            sortable: true
+          },
+
+          { /* 9 */
+            key: 'vital_st',
+            sortable: true
+          },
+
+          { /* 10 */
+            key: 'capture_method',
+            label: 'Capture method',
+            sortable: true
+          },
+
+          { /* 11 */
+            key: 'location_name',
+            label: 'Location',
+            sortable: true,
+            formatter: function (o) {
+              if (typeof o.value === 'object' && o.value.name) {
+                return o.value.name;
+              }
+              return o.value;
+            }
+          }
+        ],
+
+        data: sampleList,
+        scrollable: 'xy',
+        sortable: true,
+        height: '290px',
+        width: Y.one('#samples').getComputedStyle('width'),
+        sortBy: [{date: 1}],
+
+        paginator: new Y.PaginatorView({
+          model: new Y.PaginatorModel({
+            itemsPerPage: 10
+          }),
+          container:         '#samples-paginator',
+          paginatorTemplate:  Y.one('#paginator-bar-template').getHTML(),
+          pageOptions:        [10, 25, 50, 100, 'All']
+        }),
+
+        paginatorResize:    true,
+        paginationSource:  'server',
+
+        // No mapping is needed as the names match paginator's defaults.
+        // serverPaginationMap: {
+        //   totalItems:     'totalItems',
+        //   itemsPerPage:   'itemsPerPage',
+        //   itemIndexStart: 'itemIndexStart'
+        // },
+
+        highlightMode: 'row',
+        selectionMode: 'row',
+        selectionMulti: false
+      }; // tableConfig
+
       Y.on('domready', Y.bind(function () {
         Y.one('body').addClass('yui3-skin-sam');
+
+        if (this.editable) {
+          tableConfig.editable = true;
+          tableConfig.editOpenType = 'dblclick';
+        }
 
         // Get the list of autocomplete options
         mp.invoke('autocomplete', null, function (err, data) {
@@ -257,262 +385,169 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           } else {
             acOptions = Y.JSON.parse(data);
 
-            table = new Y.DataTable({
-              columns: [
-                {
-                  key: 'id',
-                  label: 'ID',
-                  sortable: true,
-                  className: 'nowrap'
-                },
+            tableConfig.columns[1].editor = 'inline'; // emc_id
 
-                {
-                  key: 'emc_id',
-                  label: 'EMC ID',
-                  sortable: true,
-                  editor: 'inline'
-                },
+            Y.mix(tableConfig.columns[2], { // date
+              editorConfig: {
+                dateFormat: '%Y-%m-%d'
+              },
+              prepFn: function (v) {
+                var dfmt = "%Y-%m-%d";
+                return Y.DataType.Date.format(v, {format: dfmt});
+              }
+            });
 
-                {
-                  key: 'date',
-                  label: 'Date',
-                  sortable: true,
-                  editor: 'inlineDate',
-                  editorConfig: {
-                    dateFormat: '%Y-%m-%d'
+            Y.mix(tableConfig.columns[3], { // type
+              editor: 'inlineAC',
+              editorConfig: {
+                autocompleteConfig: {
+                  source: acOptions.type,
+                  minQueryLength: 0,
+                  activateFirstItem: true,
+                  resultFilters: autocompleteFilter,
+                  resultHighlighter: 'phraseMatch',
+                  on: {select: highlightCleanup}
+                },
+                on: {editorShow: nudge}
+              }
+            });
+
+            Y.mix(tableConfig.columns[4], { // bird
+              editor: 'inlineBirdAC',
+              editorConfig: {
+                autocompleteConfig: {
+                  source: '/bird?q={query}',
+                  maxResults: 100,
+                  activateFirstItem: true,
+                  resultHighlighter: 'phraseMatch',
+                  resultTextLocator: function (result) {
+                    return result.common_name + ' (' + result.name + ')';
                   },
-                  prepFn: function (v) {
-                    var dfmt = "%Y-%m-%d";
-                    return Y.DataType.Date.format(v, {format: dfmt});
-                  },
-                  formatter: function (o) {
-                    return o.value && Y.DataType.Date.format(o.value, {format: "%Y-%m-%d"});
-                  }
-                },
-
-                {
-                  key: 'type',
-                  label: 'Type',
-                  sortable: true,
-                  editor: 'inlineAC',
-                  editorConfig: {
-                    autocompleteConfig: {
-                      source: acOptions.type,
-                      minQueryLength: 0,
-                      activateFirstItem: true,
-                      resultFilters: autocompleteFilter,
-                      resultHighlighter: 'phraseMatch',
-                      on: {select: highlightCleanup}
-                    },
-                    on: {editorShow: nudge}
-                  }
-                },
-
-                {
-                  key: 'bird',
-                  label: 'Bird',
-                  sortable: true,
-                  editor: 'inlineBirdAC',
-                  editorConfig: {
-                    autocompleteConfig: {
-                      source: '/bird?q={query}',
-                      maxResults: 100,
-                      activateFirstItem: true,
-                      resultHighlighter: 'phraseMatch',
-                      resultTextLocator: function (result) {
-                        return result.common_name + ' (' + result.name + ')';
-                      },
-                      on: {
-                        select: function (e) {
-                          this.editor.saveEditor(e.result.raw);
-                        }
-                      }
+                  on: {
+                    select: function (e) {
+                      this.editor.saveEditor(e.result.raw);
                     }
-                  },
-                  formatter: function (o) {
-                    if (typeof o.value === 'object' && o.value.common_name) {
-                      return o.value.common_name;
-                    }
-                    return o.value;
-                  }
-                },
-
-                {
-                  key: 'age',
-                  label: 'Age',
-                  sortable: true,
-                  editor: 'inlineAC',
-                  editorConfig: {
-                    autocompleteConfig: {
-                      source: acOptions.age,
-                      minQueryLength: 0,
-                      activateFirstItem: true,
-                      resultFilters: autocompleteFilter,
-                      resultHighlighter: 'phraseMatch',
-                      on: {select: highlightCleanup}
-                    },
-                    on: {editorShow: nudge}
-                  }
-                },
-
-                {
-                  key: 'sex',
-                  label: 'Sex',
-                  sortable: true,
-                  editor: 'inlineAC',
-                  editorConfig: {
-                    autocompleteConfig: {
-                      source: acOptions.sex,
-                      minQueryLength: 0,
-                      activateFirstItem: true,
-                      resultFilters: autocompleteFilter,
-                      resultHighlighter: 'phraseMatch',
-                      on: {select: highlightCleanup}
-                    },
-                    on: {editorShow: nudge}
-                  }
-                },
-
-                {
-                  key: 'ring',
-                  label: 'Ring',
-                  sortable: true,
-                  editor: 'inline'
-                },
-
-                {
-                  key: 'clin_st',
-                  sortable: true,
-                  editor: 'inlineAC',
-                  editorConfig: {
-                    autocompleteConfig: {
-                      source: acOptions.clin_st,
-                      minQueryLength: 0,
-                      activateFirstItem: true,
-                      resultFilters: function (query, results) {
-                        // match at the first character
-                        query = query.toLowerCase();
-                        return Y.Array.filter(results, function (result) {
-                          return result.text.toLowerCase().indexOf(query) === 0;
-                        });
-                      },
-                      resultHighlighter: 'phraseMatch',
-                      on: {select: highlightCleanup}
-                    },
-                    on: {editorShow: nudge}
-                  }
-                },
-
-                {
-                  key: 'vital_st',
-                  sortable: true,
-                  editor: 'inlineAC',
-                  editorConfig: {
-                    autocompleteConfig: {
-                      source: acOptions.vital_st,
-                      minQueryLength: 0,
-                      activateFirstItem: true,
-                      resultFilters: autocompleteFilter,
-                      resultHighlighter: 'phraseMatch',
-                      on: {select: highlightCleanup}
-                    },
-                    on: {editorShow: nudge}
-                  }
-                },
-
-                {
-                  key: 'capture_method',
-                  label: 'Capture method',
-                  sortable: true,
-                  editor: 'inlineAC',
-                  editorConfig: {
-                    autocompleteConfig: {
-                      minQueryLength: 0,
-                      activateFirstItem: true,
-                      source: acOptions.capture_method,
-                      resultFilters: function (query, results) {
-                        query = query.toLowerCase();
-                        return Y.Array.filter(results, function (result) {
-                          return result.text.toLowerCase().indexOf(query) !== -1;
-                        });
-                      },
-                      resultHighlighter: 'phraseMatch',
-                      on: {
-                        select: function (e) {
-                          this.editor.saveEditor(e.result.raw);
-                        }
-                      }
-                    },
-                    on: {editorShow: nudge}
-                  }
-                },
-
-                {
-                  key: 'location_name',
-                  label: 'Location',
-                  sortable: true,
-                  editor: 'inlineLocationAC',
-                  editorConfig: {
-                    autocompleteConfig: {
-                      source: '/location?q={query}',
-                      maxResults: 100,
-                      activateFirstItem: true,
-                      resultHighlighter: 'phraseMatch',
-                      resultTextLocator: function (result) {
-                        return result.name + ' (' + result.lat + ', ' + result.long + ')';
-                      },
-                      on: {
-                        select: function (e) {
-                          // this.editor.saveEditor(e.result.raw);
-                          this.editor.saveEditor(e.result.raw);
-                        }
-                      // },
-                      } // on: {editorShow: nudge}
-                    }
-                  },
-                  formatter: function (o) {
-                    if (typeof o.value === 'object' && o.value.name) {
-                      return o.value.name;
-                    }
-                    return o.value;
                   }
                 }
-              ],
+              }
+            });
 
-              data: sampleList,
-              scrollable: 'xy',
-              sortable: true,
-              height: '290px',
-              width: Y.one('#samples').getComputedStyle('width'),
-              sortBy: [{date: 1}, {id: 1}],
+            Y.mix(tableConfig.columns[5], { // age
+              editor: 'inlineAC',
+              editorConfig: {
+                autocompleteConfig: {
+                  source: acOptions.age,
+                  minQueryLength: 0,
+                  activateFirstItem: true,
+                  resultFilters: autocompleteFilter,
+                  resultHighlighter: 'phraseMatch',
+                  on: {select: highlightCleanup}
+                },
+                on: {editorShow: nudge}
+              }
+            });
 
-              paginator: new Y.PaginatorView({
-                model: new Y.PaginatorModel({
-                  itemsPerPage: 10
-                }),
-                container:         '#samples-paginator',
-                paginatorTemplate:  Y.one('#paginator-bar-template').getHTML(),
-                pageOptions:        [10, 25, 50, 100, 'All']
-              }),
+            Y.mix(tableConfig.columns[6], { // sex
+              editor: 'inlineAC',
+              editorConfig: {
+                autocompleteConfig: {
+                  source: acOptions.sex,
+                  minQueryLength: 0,
+                  activateFirstItem: true,
+                  resultFilters: autocompleteFilter,
+                  resultHighlighter: 'phraseMatch',
+                  on: {select: highlightCleanup}
+                },
+                on: {editorShow: nudge}
+              }
+            });
 
-              paginatorResize:    true,
-              paginationSource:  'server',
+            tableConfig.columns[7].editor = 'inline'; // ring
 
-              // No mapping is needed as the names match paginator's defaults.
-              // serverPaginationMap: {
-              //   totalItems:     'totalItems',
-              //   itemsPerPage:   'itemsPerPage',
-              //   itemIndexStart: 'itemIndexStart'
-              // },
+            Y.mix(tableConfig.columns[8], { // clin_st
+              editor: 'inlineAC',
+              editorConfig: {
+                autocompleteConfig: {
+                  source: acOptions.clin_st,
+                  minQueryLength: 0,
+                  activateFirstItem: true,
+                  resultFilters: function (query, results) {
+                    // match at the first character
+                    query = query.toLowerCase();
+                    return Y.Array.filter(results, function (result) {
+                      return result.text.toLowerCase().indexOf(query) === 0;
+                    });
+                  },
+                  resultHighlighter: 'phraseMatch',
+                  on: {select: highlightCleanup}
+                },
+                on: {editorShow: nudge}
+              }
+            });
 
-              highlightMode: 'row',
-              selectionMode: 'row',
-              selectionMulti: false,
+            Y.mix(tableConfig.columns[9], { // vital_st
+              editor: 'inlineAC',
+              editorConfig: {
+                autocompleteConfig: {
+                  source: acOptions.vital_st,
+                  minQueryLength: 0,
+                  activateFirstItem: true,
+                  resultFilters: autocompleteFilter,
+                  resultHighlighter: 'phraseMatch',
+                  on: {select: highlightCleanup}
+                },
+                on: {editorShow: nudge}
+              }
+            });
 
-              editable:      true,
-              // defaultEditor: 'inlineAC',
-              editOpenType:  'dblclick'
-            }); // new DataTable
+            Y.mix(tableConfig.columns[10], { // capture_method
+              editor: 'inlineAC',
+              editorConfig: {
+                autocompleteConfig: {
+                  minQueryLength: 0,
+                  activateFirstItem: true,
+                  source: acOptions.capture_method,
+                  resultFilters: function (query, results) {
+                    query = query.toLowerCase();
+                    return Y.Array.filter(results, function (result) {
+                      return result.text.toLowerCase().indexOf(query) !== -1;
+                    });
+                  },
+                  resultHighlighter: 'phraseMatch',
+                  on: {
+                    select: function (e) {
+                      this.editor.saveEditor(e.result.raw);
+                    }
+                  }
+                },
+                on: {editorShow: nudge}
+              }
+            });
+
+            Y.mix(tableConfig.columns[11], { // location_name
+              editor: 'inlineLocationAC',
+              editorConfig: {
+                autocompleteConfig: {
+                  source: '/location?q={query}',
+                  maxResults: 100,
+                  activateFirstItem: true,
+                  resultHighlighter: 'phraseMatch',
+                  resultTextLocator: function (result) {
+                    return result.name + ' (' + result.lat + ', ' + result.long + ')';
+                  },
+                  on: {
+                    select: function (e) {
+                      // this.editor.saveEditor(e.result.raw);
+                      this.editor.saveEditor(e.result.raw);
+                    }
+                    // },
+                  } // on: {editorShow: nudge}
+                }
+              }
+            });
+
+            Y.log(tableConfig);
+            table = new Y.DataTable(tableConfig);
 
             table[sizeSyncMethod] = function () {
               return false;

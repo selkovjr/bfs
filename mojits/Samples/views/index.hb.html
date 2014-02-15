@@ -1,5 +1,9 @@
 <div id="{{mojit_view_id}}" class="mojit">
+{{#if auth}}
   <div class="mod" id="samples">
+{{else}}
+  <div class="mod read-only" id="samples">
+{{/if}}
     <h3>
       <strong>{{title}} ({{nsamples}})</strong>
       <a title="refresh module" class="refresh" href="#">⟲</a>

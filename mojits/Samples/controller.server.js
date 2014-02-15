@@ -6,20 +6,29 @@ YUI.add('Samples', function (Y, NAME) {
   Y.namespace('mojito.controllers')[NAME] = {
     index: function (ac) {
       console.log(['controller index()', ac.command.params.body], 'info', 'Samples');
-      var model = ac.models.get('samples');
-      model.count(null, function (err, data) {
-        if (err) {
-          console.log('error condition');
-          ac.error(err);
-          return;
-        }
-        ac.assets.addCss('./index.css');
-        console.log(data);
-        ac.done({
-          title: "Samples",
-          nsamples: data
+      var
+        model = ac.models.get('samples'),
+        user = ac.http.getRequest().user;
+
+      if (user) {
+        model.count(null, function (err, data) {
+          if (err) {
+            console.log('error condition');
+            ac.error(err);
+            return;
+          }
+          ac.assets.addCss('./index.css');
+          console.log(data);
+          ac.done({
+            title: "Samples",
+            nsamples: data,
+            auth: user.auth.samples
+          });
         });
-      });
+      }
+      else {
+        ac.done({});
+      }
     },
 
     data: function (ac) {
@@ -73,4 +82,4 @@ YUI.add('Samples', function (Y, NAME) {
       });
     }
   };
-}, '0.0.1', {requires: ['mojito', 'mojito-models-addon', 'mojito-data-addon', 'mojito-assets-addon']});
+}, '0.0.1', {requires: ['mojito', 'mojito-http-addon', 'mojito-models-addon', 'mojito-data-addon', 'mojito-assets-addon']});
