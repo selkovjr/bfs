@@ -7,8 +7,108 @@ var
   initialize;
 
 var users = [
-  {id: 1, username: 'owner', password: '1a1dc91c907325c69271ddf0c944bc72', email: 'bob@example.com'},
-  {id: 2, username: 'visitor', password: 'pass', email: 'joe@example.com'}
+  {
+    id: 1,
+    username: 'owner',
+    password: '51b704fee27083614e65a9b7dbdf91b9',
+    name: 'Omnipotent Test User',
+    em: ['selkovjr', 'nsl25'],
+    ail: ['gmail.com', 'cam.ac.uk'],
+    auth: {
+      samples: true,
+      diagnostics: true
+    }
+  },
+  {
+    id: 2,
+    username: 'scout',
+    password: '51b704fee27083614e65a9b7dbdf91b9',
+    name: 'Feild Sample Collector',
+    em: ['selkovjr', 'nsl25'],
+    ail: ['gmail.com', 'cam.ac.uk'],
+    auth: {
+      samples: true
+    }
+  },
+  {
+    id: 3,
+    username: 'labrat',
+    password: '51b704fee27083614e65a9b7dbdf91b9',
+    name: 'Lab Rat',
+    em: ['selkovjr', 'nsl25'],
+    ail: ['gmail.com', 'cam.ac.uk'],
+    auth: {
+      diagnostics: true
+    }
+  },
+  {
+    id: 4,
+    username: 'visitor',
+    password: 'd663f408947a01a651c3d54986186764',
+    name: 'Anonymous Reader',
+    auth: {}
+  },
+  {
+    id: 5,
+    username: 'nic',
+    password: 'd663f408947a01a651c3d54986186764',
+    name: 'Nicola Lewis',
+    em: ['nsl25'],
+    ail: ['cam.ac.uk'],
+    org: 'University of Cambridge',
+    auth: {
+      samples: true,
+      diagnostics: true
+    }
+  },
+  {
+    id: 6,
+    username: 'zura',
+    password: 'd663f408947a01a651c3d54986186764',
+    name: 'Zura Javakhishvili',
+    em: ['zurab.javakhishvili.1'],
+    ail: ['iliauni.edu.ge'],
+    org: 'Ilia State University',
+    auth: {
+      samples: true
+    }
+  },
+  {
+    id: 7,
+    username: 'jimsher',
+    password: 'd663f408947a01a651c3d54986186764',
+    name: 'Jimsher Mamuchadze',
+    em: ['mamuchadze'],
+    ail: ['yahoo.com'],
+    org: 'PSOVI',
+    auth: {
+      samples: true
+    }
+  },
+  {
+    id: 8,
+    username: 'naira',
+    password: 'd663f408947a01a651c3d54986186764',
+    name: 'Naira Tabatadze',
+    em: ['naira.tabatadze'],
+    ail: ['lma.gov.ge'],
+    org: 'LMA Akhaltsikhe',
+    auth: {
+      diagnostics: true
+    }
+  },
+  {
+    id: 9,
+    username: 'larisa',
+    password: 'd663f408947a01a651c3d54986186764',
+    name: 'Larisa Derkach',
+    em: ['lar_derkach'],
+    ail: ['yahoo.com'],
+    org: 'LMA Kutaisi',
+    auth: {
+      diagnostics: true
+    }
+  }
 ];
 
 function findById(id, fn) {

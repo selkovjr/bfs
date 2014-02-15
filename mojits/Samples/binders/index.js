@@ -482,7 +482,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                     }
                   },
                   formatter: function (o) {
-                    Y.log(['formatter', o]);
                     if (typeof o.value === 'object' && o.value.name) {
                       return o.value.name;
                     }
