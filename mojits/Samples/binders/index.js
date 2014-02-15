@@ -1,6 +1,7 @@
-/*jslint sloppy: true, nomen: true, regexp: true, indent: 2 */
-/*global YUI: false */
+/*global YUI */
+/*jslint regexp: true, indent: 2 */
 YUI.add('SamplesBinderIndex', function (Y, NAME) {
+  'use strict';
 /**
  * The SamplesBinderIndex module.
  *
@@ -11,7 +12,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
   // Table row model
   Sample = Y.Base.create('sample-record', Y.Model, [], {}, {
-    ATTRS:{
+    ATTRS: {
       id: {},
       emc_id: {},
       date: {},
@@ -47,10 +48,10 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
     parse: function (resp) {
       var parsedObj = this.parseDataSchema(resp);
       this.fire('response',  parsedObj); // {resp: resp, parsed: parsed, meta: metadata, results: results});
-      return parsedObj.results || [] ;
+      return parsedObj.results || [];
     }
   }, {
-    ATTRS:{
+    ATTRS: {
       // Define a schema as an attribute so we can parse the response using DataSchemaJSON ...
       dsSchema:   {}
     }
@@ -216,13 +217,11 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           mojitProxy.invoke('data', options, function (err, data) {
             if (err) {
               callback('server transaction error: ' + err);
-            }
-            else {
+            } else {
               callback(null, data);
             }
           });
-        }
-        else {
+        } else {
           callback('Unsupported sync action: ' + action);
         }
       };
@@ -264,8 +263,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         mp.invoke('autocomplete', null, function (err, data) {
           if (err) {
             Y.log('server transaction error: ' + err, 'error', 'Samples binder');
-          }
-          else {
+          } else {
             acOptions = Y.JSON.parse(data);
 
             table = new Y.DataTable({
@@ -334,7 +332,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                         return result.common_name + ' (' + result.name + ')';
                       },
                       on: {
-                        select: function(e) {
+                        select: function (e) {
                           this.editor.saveEditor(e.result.raw);
                         }
                       }
@@ -449,7 +447,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                       },
                       resultHighlighter: 'phraseMatch',
                       on: {
-                        select: function(e) {
+                        select: function (e) {
                           this.editor.saveEditor(e.result.raw);
                         }
                       }
@@ -473,7 +471,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                         return result.name + ' (' + result.lat + ', ' + result.long + ')';
                       },
                       on: {
-                        select: function(e) {
+                        select: function (e) {
                           // this.editor.saveEditor(e.result.raw);
                           this.editor.saveEditor(e.result.raw);
                         }
@@ -525,7 +523,9 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
               editOpenType:  'dblclick'
             }); // new DataTable
 
-            table[sizeSyncMethod] = function() {return false;};
+            table[sizeSyncMethod] = function () {
+              return false;
+            };
 
             table.render('#samples-table');
             table.processPageRequest(1);
@@ -566,8 +566,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                 mp.invoke('update', options, function (err, data) {
                   if (err) {
                     Y.log('update failed');
-                  }
-                  else {
+                  } else {
                     Y.log('update successful');
                   }
                 });
@@ -593,13 +592,11 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                 mp.invoke('update', options, function (err, data) {
                   if (err) {
                     Y.log('update failed');
-                  }
-                  else {
+                  } else {
                     Y.log('update successful');
                   }
                 });
-              }
-              else {
+              } else {
                 Y.log(['testing', newVal, e.prevVal]);
                 Y.log('Editor: ' + e.editorName + 'in sample ' + id + ' saved newVal=' + newVal + ' oldVal=' + e.prevVal + ' colKey=' + e.colKey);
                 if (newVal !== e.prevVal) {
@@ -616,8 +613,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                   mp.invoke('update', options, function (err, data) {
                     if (err) {
                       Y.log('update failed');
-                    }
-                    else {
+                    } else {
                       Y.log('update successful');
                     }
                   });

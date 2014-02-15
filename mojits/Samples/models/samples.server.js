@@ -1,6 +1,7 @@
 /*global YUI, console, require */
-/*jslint sloppy:true, nomen:true, indent:2*/
+/*jslint regexp: true, indent: 2 */
 YUI.add('SamplesModel', function (Y, NAME) {
+  'use strict';
 
   /**
    * The SamplesModel module.
@@ -54,8 +55,7 @@ YUI.add('SamplesModel', function (Y, NAME) {
             if (typeof k === 'string') {
               key = k;
               order = 'ASC';
-            }
-            else {
+            } else {
               key = Object.keys(k)[0];
               order = k[key] > 0 ? 'ASC' : 'DESC';
             }
@@ -155,9 +155,9 @@ YUI.add('SamplesModel', function (Y, NAME) {
 
       sql = Y.substitute(
         'SELECT "id", "name", "common_name" FROM "birds" WHERE' +
-        ' "name" ~* \'{query}\'' +
-        ' OR "common_name" ~* \'{query}\'' +
-        ' ORDER BY "common_name"',
+          ' "name" ~* \'{query}\'' +
+          ' OR "common_name" ~* \'{query}\'' +
+          ' ORDER BY "common_name"',
         {query: query}
       );
 
@@ -189,8 +189,7 @@ YUI.add('SamplesModel', function (Y, NAME) {
 
         if (arg.value !== '' && arg.value !== null && arg.value !== undefined) {
           sql = Y.substitute("UPDATE samples SET {attr} = '{value}' WHERE id = '{id}'", arg);
-        }
-        else {
+        } else {
           sql = Y.substitute("UPDATE samples SET {attr} = NULL WHERE id = '{id}'", arg);
         }
         this.pgClient.query(

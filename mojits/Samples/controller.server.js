@@ -1,6 +1,7 @@
-/*global YUI, console*/
-/*jslint anon:true, sloppy:true, nomen:true*/
+/*global YUI, console */
+/*jslint indent: 2 */
 YUI.add('Samples', function (Y, NAME) {
+  'use strict';
 
   Y.namespace('mojito.controllers')[NAME] = {
     index: function (ac) {
