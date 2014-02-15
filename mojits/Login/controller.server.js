@@ -55,4 +55,4 @@ YUI.add('Login', function (Y, NAME) {
       });
     }
   };
-}, '0.0.1', {requires: ['mojito',  'passport', 'mojito-http-addon', 'mojito-assets-addon']});
+}, '0.0.1', {requires: ['mojito', 'mojito-http-addon', 'mojito-assets-addon']});

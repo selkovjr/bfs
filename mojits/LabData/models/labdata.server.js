@@ -17,6 +17,8 @@ YUI.add('LabDataModel', function (Y, NAME) {
   Y.namespace('mojito.models')[NAME] = {
     init: function (config) {
       this.config = config;
+      this.pg = require('pg');
+      this.pgClient = new this.pg.Client('postgres://postgres:@localhost/bfs');
     },
 
     /**
@@ -27,27 +29,31 @@ YUI.add('LabDataModel', function (Y, NAME) {
      */
     getData: function (arg, callback) {
       var
-        uri = "http://localhost:3030/collections/diagnostics",
-        params = {
-          q: '{"sample": "' + arg.id + '"}'
-        },
-        rkey = '_resp'; // hide from jslint
+        sql;
 
-      Y.mojito.lib.REST.GET(uri, params, null, function (err, response) {
-        var data;
+      sql = Y.substitute(
+        'SELECT * FROM "diagnostics" WHERE "sample" = \'{query}\'',
+        {query: arg.id}
+      );
 
+      this.pgClient.connect(Y.bind(function (err) {
         if (err) {
-          callback(err);
+          return console.error('could not connect to postgres', err);
         }
-
-        data = Y.JSON.parse(response[rkey].responseText).entries[0];
-        callback(null, data);
-      });
-
-      // callback(null, {
-      //   id: arg.id
-      // });
+        this.pgClient.query(
+          sql,
+          Y.bind(function (err, result) {
+            var ac = {};
+            this.pgClient.end();
+            if (err) {
+              callback(err);
+            }
+            callback(null, result.rows[0]);
+          }, this)
+        );
+      }, this));
     }
+
   };
 }, '0.0.1', {requires: []});
 
