@@ -7,7 +7,7 @@ YUI.add('Samples', function (Y, NAME) {
     index: function (ac) {
       console.log(['controller index()', ac.command.params.body], 'info', 'Samples');
       var model = ac.models.get('samples');
-      model.getData(ac.command.params.body, function (err, data) {
+      model.count(null, function (err, data) {
         if (err) {
           console.log('error condition');
           ac.error(err);
@@ -17,8 +17,7 @@ YUI.add('Samples', function (Y, NAME) {
         console.log(data);
         ac.done({
           title: "Samples",
-          nsamples: data.paging.totalItems,
-          entries: data.rows
+          nsamples: data
         });
       });
     },

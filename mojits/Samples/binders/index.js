@@ -518,6 +518,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
               return false;
             };
 
+            Y.one('#samples-table').empty(); // remove the "Loading" message
             table.render('#samples-table');
             table.processPageRequest(1);
 

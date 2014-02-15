@@ -29,6 +29,31 @@ YUI.add('SamplesModel', function (Y, NAME) {
      * @param callback {function(err,data)} The callback function to call when the
      *        data has been retrieved.
      */
+    count: function (arg, callback) {
+      console.log(['count()', arg]);
+
+      this.pgClient.connect(Y.bind(function (err) {
+        if (err) {
+          callback(err);
+        }
+        this.pgClient.query(
+          'SELECT count(*) FROM "samples"',
+          function (err, result) {
+            if (err) {
+              callback(err);
+            }
+            callback(null, parseInt(result.rows[0].count, 10)); // Pg client stringifies numbers. There is an ongoing discussion about that.
+          }
+        );
+      }, this));
+    },
+
+    /**
+     * Method that will be invoked by the mojit controller to obtain data.
+     *
+     * @param callback {function(err,data)} The callback function to call when the
+     *        data has been retrieved.
+     */
     getData: function (arg, callback) {
       console.log(['getData()', arg]);
       var
