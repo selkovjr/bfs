@@ -33,18 +33,16 @@ YUI.add('SamplesModel', function (Y, NAME) {
       console.log(['getData()', arg]);
       var
         itemIndexStart = arg.itemIndexStart || 0,
-        itemsPerPage = arg.itemsPerPage || 30,
+        itemsPerPage = arg.itemsPerPage || 3,
         sortKeys = [{'id': 1}],
         sql,
         totalItems;
 
-      if (arg.s) {
-        if (typeof arg.s === 'string') {
-          sortKeys = Y.JSON.parse(arg.sortBy);
-        }
-        if (typeof arg.sortBy === 'object') {
-          sortKeys = arg.sortBy;
-        }
+      if (typeof arg.sortBy === 'string') {
+        sortKeys = Y.JSON.parse(arg.sortBy);
+      }
+      if (typeof arg.sortBy === 'object') {
+        sortKeys = arg.sortBy;
       }
 
       sql = Y.substitute(

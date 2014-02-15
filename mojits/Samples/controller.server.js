@@ -5,6 +5,7 @@ YUI.add('Samples', function (Y, NAME) {
 
   Y.namespace('mojito.controllers')[NAME] = {
     index: function (ac) {
+      console.log(['controller index()', ac.command.params.body], 'info', 'Samples');
       var model = ac.models.get('samples');
       model.getData(ac.command.params.body, function (err, data) {
         if (err) {
@@ -13,6 +14,7 @@ YUI.add('Samples', function (Y, NAME) {
           return;
         }
         ac.assets.addCss('./index.css');
+        console.log(data);
         ac.done({
           title: "Samples",
           nsamples: data.paging.totalItems,
@@ -22,7 +24,7 @@ YUI.add('Samples', function (Y, NAME) {
     },
 
     data: function (ac) {
-      console.log(ac.command.params.body);
+      console.log(['controller data()', ac.command.params.body], 'info', 'Samples');
       var model = ac.models.get('samples');
       model.getData(ac.command.params.body, function (err, data) {
         if (err) {
@@ -30,6 +32,7 @@ YUI.add('Samples', function (Y, NAME) {
           ac.error(err);
           return;
         }
+        console.log(data);
         ac.done(data, 'json');
       });
     },

@@ -187,7 +187,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       // This function is an adapter between mojitProxy and ModelList.
       sampleList.sync = function (action, arg, callback) {
         var
-          order,
           options,
           response;
 
@@ -204,14 +203,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           // Convert the ModelList sortBy list-of-hashes format to pgrest 's' hash.
           if (arg.sortBy) {
             options.params.body.sortBy = arg.sortBy;
-            order = Y.Array.map(Y.JSON.parse(arg.sortBy), function (o) {
-              if (typeof o === 'string') {
-                return '"' + o + '": ' + '1';
-              }
-              var key = Y.Object.keys(o)[0];
-              return '"' + key + '": ' + o[key];
-            });
-            options.params.body.s = '{' + order.join(', ') + '}';
           }
 
           mojitProxy.invoke('data', options, function (err, data) {
