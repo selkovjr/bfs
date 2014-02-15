@@ -16,26 +16,39 @@ YUI.add('Header-tests', function(Y) {
 
     'test mojit': function () {
       var
-        ac,
-        modelData,
+        ac1, ac2,
         assetsResults,
         doneResults;
 
-      modelData = {x: 'y'};
-      ac = {
+      ac1 = {
+        http: {
+          getRequest: function () {
+            return {};
+          }
+        },
         assets: {
           addCss: function(css) {
             assetsResults = css;
           }
         },
-        models: {
-          get: function(modelName) {
-            A.areEqual('HeaderModel', modelName, 'wrong model name');
+        done: function(data) {
+          doneResults = data;
+        }
+      };
+
+      ac2 = {
+        http: {
+          getRequest: function () {
             return {
-              getData: function(cb) {
-                cb(null, modelData);
+              user: {
+                name: 'Test User'
               }
             };
+          }
+        },
+        assets: {
+          addCss: function(css) {
+            assetsResults = css;
           }
         },
         done: function(data) {
@@ -45,13 +58,12 @@ YUI.add('Header-tests', function(Y) {
 
       A.isNotNull(controller);
       A.isFunction(controller.index);
-      controller.index(ac);
-      // A.areSame('./index.css', assetsResults);
+      controller.index(ac1);
+      A.areSame('./index.css', assetsResults);
       A.isObject(doneResults);
       A.areSame('Header title', doneResults.title);
-      // A.isObject(doneResults.data);
-      // A.isTrue(doneResults.data.hasOwnProperty('x'));
-      // A.areEqual('y', doneResults.data['x']);
+      controller.index(ac2);
+      A.areSame('user: Test User', doneResults.title);
     }
   }));
 
