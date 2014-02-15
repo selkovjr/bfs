@@ -1,10 +1,10 @@
 body {
-  background-color: #F8F8F8;
+  background-color: #eee;
   padding-left: 8px;
 }
 
-h1 {
-  text-shadow: -2px -2px 3px #FFF;
+h2 {
+  text-shadow: 2px 2px 3px #ccc;
 }
 
 div.mod{
@@ -35,7 +35,6 @@ div.mod h3 strong {
 }
 
 /** for each mojit, add a bgimage for logo **/
-
 div.mod h3 a.min,
 div.mod h3 a.refresh {
   background-color: #F9F9FC;
@@ -72,59 +71,16 @@ div.mod div.inner {
   xpadding-right: 8px;
 }
 
-div.inner ul {
-  margin: 0;
-  padding: 0;
-}
-
-div.inner ul li {
-  list-style-type: none;
-  margin: 0;
-  padding: 8px 4px;
-  border-top: 1px solid #ececec;
-}
-
-div.inner ul li a {
-  text-decoration: none;
-  color: #000;
-}
-
-div.inner ul li {
-  background: rgb(255,255,255); /* Old browsers */
-  background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(241,241,241,1) 48%, rgba(225,225,225,1) 100%, rgba(246,246,246,1) 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(48%,rgba(241,241,241,1)), color-stop(100%,rgba(225,225,225,1)), color-stop(100%,rgba(246,246,246,1))); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(241,241,241,1) 48%,rgba(225,225,225,1) 100%,rgba(246,246,246,1) 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(241,241,241,1) 48%,rgba(225,225,225,1) 100%,rgba(246,246,246,1) 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(241,241,241,1) 48%,rgba(225,225,225,1) 100%,rgba(246,246,246,1) 100%); /* IE10+ */
-  background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(241,241,241,1) 48%,rgba(225,225,225,1) 100%,rgba(246,246,246,1) 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#f6f6f6',GradientType=0 ); /* IE6-9 */
-}
-
 /** collapse module **/
 div.mod.collapse div.inner {
   display:none;
 }
 
-.myfooter {
+.page-footer {
   clear: left;
 }
 
-.galleryFlow {
-  position:relative;
-}
 
-.swap {
-  /*transform*/
-  -webkit-transform:scale(0.5,0.5);
-  -moz-transform:scale(0.5,0.5);
-  -ms-transform:scale(0.5,0.5);
-  -o-transform:scale(0.5,0.5);
-  transform:scale(0.5,0.5);
-
-  position: absolute;
-  top: 0px;
-  right: 0px;
-}
 
 /* gallery-datatable-editable, gallery-datatable-celleditor-inline */
 
@@ -182,8 +138,9 @@ div.mod.collapse div.inner {
   width: 240px;
 }
 
-/* paginator */
 
+
+/* paginator */
 .yui3-pagview-link-page {
     border: 1px solid #b0c4de;
     color: blue;
