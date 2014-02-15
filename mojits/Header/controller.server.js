@@ -25,7 +25,7 @@ YUI.add('Header', function(Y, NAME) {
       var user = ac.http.getRequest().user;
       if (user) {
         ac.done({
-          title: 'user: ' + user.username
+          title: 'user: ' + user.name
         });
       }
       else {

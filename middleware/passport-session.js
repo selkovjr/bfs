@@ -5,7 +5,7 @@ var
   passport_session = passport.session();
 
 module.exports = function (req, res, next) {
-  console.log('passport-session middleware url: ' + req.url);
+  // console.log('passport-session middleware url: ' + req.url);
 
   // we want to take control of the middleware so we can
   // initialize and also attach passport into req object
@@ -15,13 +15,13 @@ module.exports = function (req, res, next) {
     }
     // Not sure if i attach to anything
     if (!req.isAuthenticated() && !req.url.match(/login/)) {
-      console.log('middleware/passport-session/passport session(): unauthenticated; redirecting');
+      // console.log('middleware/passport-session/passport session(): unauthenticated; redirecting');
       // res.send('Please <a href="/login">log in</a>');
       req.method = 'post';
       res.redirect('/login');
     }
     else {
-      console.log('middleware/passport-session/passport session(): user ' + req._passport.session.user);
+      // console.log('middleware/passport-session/passport session(): user ' + req._passport.session.user);
       // returning control back to mojito flow
       next();
     }

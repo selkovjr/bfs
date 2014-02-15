@@ -125,7 +125,7 @@ function findByUsername(username, fn) {
   for (i = 0; i < users.length; i += 1) {
     user = users[i];
     if (user.username === username) {
-      console.log("middleware/passport/findByUserName(): found username: " + username);
+      // console.log("middleware/passport/findByUserName(): found username: " + username);
       return fn(null, user);
     }
   }
@@ -141,7 +141,7 @@ function findByUsername(username, fn) {
 //   and finding the user by ID when deserializing.
 
 passport.serializeUser(function (user, done) {
-  console.log('middleware/passport/passport.serializeUser(): User ID ' + user.id + ' in serializeUser, done = '  + done.toString());
+  // console.log('middleware/passport/passport.serializeUser(): User ID ' + user.id + ' in serializeUser, done = '  + done.toString());
   done(null, user.id);
 });
 
@@ -158,23 +158,23 @@ passport.use(new LocalStrategy(function (username, password, done) {
   // indicate failure and set a flash message.  Otherwise, return the
   // authenticated `user`.
   findByUsername(username, function (err, user) {
-    console.log('middleware/passport/LocalStrategy/findByUsername callback: Trying to authenticate ' + username);
+    // console.log('middleware/passport/LocalStrategy/findByUsername callback: Trying to authenticate ' + username);
     if (err) {
       return done(err);
     }
     if (!user) {
-      console.log("middleware/passport/findByUserName(): bad username: " + username);
+      // console.log("middleware/passport/findByUserName(): bad username: " + username);
       return done(null, false, {
         message: 'Unknown user ' + username
       });
     }
     if (crypto.createHash('md5').update(password).digest('hex') !== user.password) {
-      console.log("middleware/passport/findByUserName(): bad password: " + password);
+      // console.log("middleware/passport/findByUserName(): bad password: " + password);
       return done(null, false, {
         message: 'Invalid password'
       });
     }
-    console.log('middleware/passport/LocalStrategy/findByUsername():    password OK');
+    // console.log('middleware/passport/LocalStrategy/findByUsername():    password OK');
     return done(null, user);
   });
 }));
