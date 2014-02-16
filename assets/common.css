@@ -18,13 +18,18 @@ div.mod{
 
 div.mod h3 {
   position: relative;
-  background-color: #E5E6F1;
   border-radius: 4px 4px 0 0;
-  color: #5E6BA4;
   font-weight: bold;
   font-size: 1.1em;
   margin: 0;
   padding: 4px 7px 5px;
+  background: -o-linear-gradient(bottom, #0069d3 5%, #007fff 100%);
+  background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #0069d3), color-stop(1, #007fff) );
+  background: -moz-linear-gradient( center top, #0069d3 5%, #007fff 100% );
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#0069d3", endColorstr="#007fff");
+  background: -o-linear-gradient(top,#0069d3,007fff);
+  background-color: #0069d3;
+  color: #f8f8ff;
 }
 
 div.mod h3 strong {
@@ -49,7 +54,7 @@ div.mod h3 a.refresh {
   right: 4px;
   top: 1px;
   position: absolute;
-  font-size: 80%;
+  /* font-size: 80%; */
   margin: 2px;
   padding: 0;
 }
@@ -84,42 +89,48 @@ div.mod.collapse div.inner {
 
 /* gallery-datatable-editable, gallery-datatable-celleditor-inline */
 
-.yui3-skin-sam .yui3-datatable td.yui3-datatable-sel-highlighted,.yui3-skin-sam .yui3-datatable td.yui3-datatable-sorted.yui3-datatable-sel-highlighted,.yui3-skin-sam .yui3-datatable tr.yui3-datatable-sel-highlighted td,.yui3-skin-sam .yui3-datatable tr.yui3-datatable-sel-highlighted td.yui3-datatable-sorted {
-    background-color: #f0db5c;
+.yui3-skin-sam .yui3-datatable td.yui3-datatable-sel-highlighted,
+.yui3-skin-sam .yui3-datatable td.yui3-datatable-sorted.yui3-datatable-sel-highlighted,
+.yui3-skin-sam .yui3-datatable tr.yui3-datatable-sel-highlighted td,
+.yui3-skin-sam .yui3-datatable tr.yui3-datatable-sel-highlighted td.yui3-datatable-sorted {
+  background-color: #f0db5c;
 }
 
-.yui3-skin-sam .yui3-datatable td.yui3-datatable-sel-selected,.yui3-skin-sam .yui3-datatable td.yui3-datatable-sorted.yui3-datatable-sel-selected,.yui3-skin-sam .yui3-datatable tr.yui3-datatable-sel-selected td,.yui3-skin-sam .yui3-datatable tr.yui3-datatable-sel-selected td.yui3-datatable-sorted {
-    background-color: #90ee90;
+.yui3-skin-sam .yui3-datatable td.yui3-datatable-sel-selected,
+.yui3-skin-sam .yui3-datatable td.yui3-datatable-sorted.yui3-datatable-sel-selected
+,.yui3-skin-sam .yui3-datatable tr.yui3-datatable-sel-selected td,
+.yui3-skin-sam .yui3-datatable tr.yui3-datatable-sel-selected td.yui3-datatable-sorted {
+  background-color: #90ee90;
 }
 
 #yui3-css-stamp.skin-sam-gallery-datatable-selection {
-    display: none;
+  display: none;
 }
 
 .yui3-datatable-col-editable {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .yui3-datatable-col-editable {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 #yui3-css-stamp.skin-sam-gallery-datatable-editable {
-    display: none;
+  display: none;
 }
 
 .yui3-datatable-inline-input:focus {
-    outline: 0;
+  outline: 0;
 }
 
 .yui3-datatable-inline-input {
-    border: 1px solid #cbcbcb;
-    background-color: #fffebb;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding-left: 9px;
-    z-index: 999;
+  border: 1px solid #cbcbcb;
+  background-color: #fffebb;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding-left: 9px;
+  z-index: 999;
 }
 
 #yui3-css-stamp.skin-sam-gallery-datatable-celleditor-inline {
@@ -202,3 +213,19 @@ div.mod.collapse div.inner {
     display: none;
 }
 
+
+/* ------------------ datatable read-only ------------------------ */
+.yui3-skin-sam .read-only .yui3-datatable,
+.yui3-skin-sam .read-only .yui3-datatable-header {
+  color:#8E8E8E;
+}
+
+div.read-only h3 {
+  color: #5E6BA4;
+  background: -o-linear-gradient(bottom, #E5E6F1 5%, #f8f8ff 100%);
+  background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #E5E6F1), color-stop(1, #f8f8ff) );
+  background: -moz-linear-gradient( center top, #E5E6F1 5%, #f8f8ff 100% );
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#E5E6F1", endColorstr="#f8f8ff");
+  background: -o-linear-gradient(top,#E5E6F1,f8f8ff);
+  background-color: #E5E6F1;
+}

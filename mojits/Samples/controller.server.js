@@ -5,7 +5,6 @@ YUI.add('Samples', function (Y, NAME) {
 
   Y.namespace('mojito.controllers')[NAME] = {
     index: function (ac) {
-      console.log(['controller index()', ac.command.params.body], 'info', 'Samples');
       var
         model = ac.models.get('samples'),
         user = ac.http.getRequest().user;
@@ -13,12 +12,11 @@ YUI.add('Samples', function (Y, NAME) {
       if (user) {
         model.count(null, function (err, data) {
           if (err) {
-            console.log('error condition');
+            console.error('error condition');
             ac.error(err);
             return;
           }
           ac.assets.addCss('./index.css');
-          console.log(data);
           ac.done({
             title: "Samples",
             nsamples: data,
@@ -32,15 +30,13 @@ YUI.add('Samples', function (Y, NAME) {
     },
 
     data: function (ac) {
-      console.log(['controller data()', ac.command.params.body], 'info', 'Samples');
       var model = ac.models.get('samples');
       model.getData(ac.command.params.body, function (err, data) {
         if (err) {
-          console.log('error condition');
+          console.error('error condition');
           ac.error(err);
           return;
         }
-        console.log(data);
         ac.done(data, 'json');
       });
     },
@@ -49,7 +45,7 @@ YUI.add('Samples', function (Y, NAME) {
       var model = ac.models.get('samples');
       model.autocomplete(ac.command.params.body, function (err, data) {
         if (err) {
-          console.log('error condition');
+          console.error('error condition');
           ac.error(err);
           return;
         }
@@ -61,7 +57,7 @@ YUI.add('Samples', function (Y, NAME) {
       var model = ac.models.get('samples');
       model.bird(ac.command.params.url, function (err, data) {
         if (err) {
-          console.log('error condition');
+          console.error('error condition');
           ac.error(err);
           return;
         }
@@ -70,11 +66,10 @@ YUI.add('Samples', function (Y, NAME) {
     },
 
     update: function (ac) {
-      console.log(ac.command.params.body);
       var model = ac.models.get('samples');
       model.update(ac.command.params.body, function (err, data) {
         if (err) {
-          console.log('error condition');
+          console.error('error condition');
           ac.error(err);
           return;
         }

@@ -371,8 +371,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       }; // tableConfig
 
       Y.on('domready', Y.bind(function () {
-        Y.one('body').addClass('yui3-skin-sam');
-
         if (this.editable) {
           tableConfig.editable = true;
           tableConfig.editOpenType = 'dblclick';

@@ -16,14 +16,10 @@
     </h3>
     <div class="inner" id="diagnostics-inner">
 {{#if id}}
-      <div class="yui3-u-1">
-        {{{location}}}
-      </div>
-      <div class="yui3-u-1">
-        {{{data}}}
-      </div>
+      {{{location}}}
+      {{{data}}}
 {{else}}
-      <div id="diagnostics-message" class="yui3-u-3-4">
+      <div id="diagnostics-message">
         Click on a sample in the table to see its details.
       </div>
 {{/if}}

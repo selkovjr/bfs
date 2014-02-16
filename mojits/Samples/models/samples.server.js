@@ -30,8 +30,6 @@ YUI.add('SamplesModel', function (Y, NAME) {
      *        data has been retrieved.
      */
     count: function (arg, callback) {
-      console.log(['count()', arg]);
-
       this.pgClient.connect(Y.bind(function (err) {
         if (err) {
           callback(err);
@@ -55,7 +53,6 @@ YUI.add('SamplesModel', function (Y, NAME) {
      *        data has been retrieved.
      */
     getData: function (arg, callback) {
-      console.log(['getData()', arg]);
       var
         itemIndexStart = arg.itemIndexStart || 0,
         itemsPerPage = arg.itemsPerPage || 3,
@@ -88,7 +85,6 @@ YUI.add('SamplesModel', function (Y, NAME) {
           itemIndexStart: itemIndexStart
         }
       );
-      console.log(sql);
 
       this.pgClient.connect(Y.bind(function (err) {
         if (err) {

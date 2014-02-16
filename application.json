@@ -9,10 +9,9 @@
       "./middleware/passport-session.js"
     ],
     "yui": {
-      "showConsoleInClient": true,
       "dependencyCalculations": "precomputed+ondemand",
       "config": {
-        "debug": true,
+        "debug": "true",
         "logLevel": "info",
         "fetchCSS": true,
         "combine": false,
@@ -80,8 +79,7 @@
           "assets": {
             "top": {
               "css": [
-                "/static/bfs/assets/common.css",
-                "http://yui.yahooapis.com/3.13.0/build/cssgrids/cssgrids-min.css"
+                "/static/bfs/assets/common.css"
               ]
             }
           }
