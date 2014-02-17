@@ -49,22 +49,13 @@
   border-bottom-left-radius: 4px;
 }
 
-.read-only-table td:hover {
-  background-color: #82c0ff;
-  background: -o-linear-gradient(bottom, #82c0ff 5%, #56aaff 100%);
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #82c0ff), color-stop(1, #56aaff) );
-  background: -moz-linear-gradient( center top, #82c0ff 5%, #56aaff 100% );
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#82c0ff", endColorstr="#56aaff");
-  background: -o-linear-gradient(top,#82c0ff,56aaff);
-}
-
 .read-only-table tr:first-child td {
-  background: -o-linear-gradient(bottom, #0069d3 5%, #007fff 100%);
-  background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #0069d3), color-stop(1, #007fff) );
-  background: -moz-linear-gradient( center top, #0069d3 5%, #007fff 100% );
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#0069d3", endColorstr="#007fff");
-  background: -o-linear-gradient(top,#0069d3,007fff);
-  background-color: #0069d3;
+  background: -o-linear-gradient(bottom, #a0a0c0 5%, #c0c0e0 100%);
+  background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #a0a0c0), color-stop(1, #c0c0e0) );
+  background: -moz-linear-gradient( center top, #a0a0c0 5%, #c0c0e0 100% );
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#a0a0c0", endColorstr="#c0c0e0");
+  background: -o-linear-gradient(top, #a0a0c0, #c0c0e0);
+  background-color: #a0a0c0;
   border: 0px solid #888888;
   text-align: center;
   border-width: 0px 0px 1px 1px;
@@ -83,12 +74,12 @@
 }
 
 .read-only-table td {
-  background: -o-linear-gradient(bottom, #56aaff 5%, #82c0ff 100%);
-  background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #56aaff), color-stop(1, #82c0ff) );
-  background: -moz-linear-gradient( center top, #56aaff 5%, #82c0ff 100% );
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#56aaff", endColorstr="#82c0ff");
-  background: -o-linear-gradient(top,#56aaff,82c0ff);
-  background-color: #56aaff;
+  background: -o-linear-gradient(bottom, #d8d8f0 5%, #f0f0ff 100%);
+  background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #d8d8f0), color-stop(1, #f0f0ff) );
+  background: -moz-linear-gradient( center top, #d8d8f0 5%, #f0f0ff 100% );
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#d8d8f0", endColorstr="#f0f0ff");
+  background: -o-linear-gradient(top, #d8d8f0, #f0f0ff);
+  background-color: #d8d8f0;
   border: 1px solid #888888;
   border-width: 0px 1px 1px 0px;
   text-align: center;
