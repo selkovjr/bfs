@@ -1,17 +1,17 @@
 /*global YUI, console */
 /*jslint sloppy: true, nomen: true, indent: 2 */
-YUI.add('LabDataModel', function (Y, NAME) {
+YUI.add('DiagnosticsModel', function (Y, NAME) {
 
 /**
- * The LabDataModel module.
+ * The DiagnosticsModel module.
  *
- * @module LabData
+ * @module Diagnostics
  */
 
   /**
-   * Constructor for the LabDataModel class.
+   * Constructor for the DiagnosticsModel class.
    *
-   * @class LabDataModel
+   * @class DiagnosticsModel
    * @constructor
    */
   Y.namespace('mojito.models')[NAME] = {

@@ -58,11 +58,11 @@
                         "type": "SampleDetails",
                         "config": {
                           "children": {
-                            "data": {
-                              "type":"LabData"
-                            },
                             "location": {
                               "type":"Locations"
+                            },
+                            "diagnostics": {
+                              "type":"Diagnostics"
                             }
                           }
                         }

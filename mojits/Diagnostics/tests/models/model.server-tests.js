@@ -1,21 +1,21 @@
 
-YUI.add('LabDataModel-tests', function(Y, NAME) {
-    
+YUI.add('DiagnosticsModel-tests', function(Y, NAME) {
+
     var suite = new YUITest.TestSuite(NAME),
         model = null,
         A = YUITest.Assert;
-    
+
     suite.add(new YUITest.TestCase({
-        
-        name: 'LabDataModel user tests',
-        
+
+        name: 'DiagnosticsModel user tests',
+
         setUp: function() {
-            model = Y.mojito.models.LabDataModel;
+            model = Y.mojito.models.DiagnosticsModel;
         },
         tearDown: function() {
             model = null;
         },
-        
+
         'test mojit model': function() {
             var called = false,
                 cfg = { color: 'red' };
@@ -35,9 +35,9 @@ YUI.add('LabDataModel-tests', function(Y, NAME) {
             });
             A.isTrue(called);
         }
-        
+
     }));
-    
+
     YUITest.TestRunner.add(suite);
-    
-}, '0.0.1', {requires: ['mojito-test', 'LabDataModel']});
+
+}, '0.0.1', {requires: ['mojito-test', 'DiagnosticsModel']});

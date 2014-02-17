@@ -1,11 +1,11 @@
 /*global YUI, console*/
 /*jslint anon:true, sloppy:true, nomen:true*/
-YUI.add('LabData', function(Y, NAME) {
+YUI.add('Diagnostics', function(Y, NAME) {
 
 /**
- * The LabData module.
+ * The Diagnostics module.
  *
- * @module LabData
+ * @module Diagnostics
  */
 
   /**
@@ -25,10 +25,10 @@ YUI.add('LabData', function(Y, NAME) {
     index: function(ac) {
       var user = ac.http.getRequest().user;
 
-      console.log("LabData - controller.server.js index called");
+      console.log("Diagnostics - controller.server.js index called");
       console.log(ac.command.params.body);
-      ac.models.get('labdata').getData(ac.command.params.body, function (err, data) {
-        console.log('LabData model called from controller index');
+      ac.models.get('model').getData(ac.command.params.body, function (err, data) {
+        console.log('Diagnostics model called from controller index');
 
         if (err) {
           ac.error(err);
@@ -47,4 +47,4 @@ YUI.add('LabData', function(Y, NAME) {
 
   };
 
-}, '0.0.1', {requires: ['mojito', 'mojito-http-addon', 'mojito-assets-addon', 'mojito-models-addon', 'LabDataModel']});
+}, '0.0.1', {requires: ['mojito', 'mojito-http-addon', 'mojito-assets-addon', 'mojito-models-addon', 'DiagnosticsModel']});

@@ -1,16 +1,16 @@
 /*global YUI: false, console: false */
 /*jslint anon:true, sloppy:true, nomen:true */
-YUI.add('LabDataBinderIndex', function(Y, NAME) {
+YUI.add('DiagnosticsBinderIndex', function(Y, NAME) {
 /**
- * The LabDataBinderIndex module.
+ * The DiagnosticsBinderIndex module.
  *
- * @module LabDataBinderIndex
+ * @module DiagnosticsBinderIndex
  */
 
   /**
-   * Constructor for the LabDataBinderIndex class.
+   * Constructor for the DiagnosticsBinderIndex class.
    *
-   * @class LabDataBinderIndex
+   * @class DiagnosticsBinderIndex
    * @constructor
    */
   Y.namespace('mojito.binders')[NAME] = {
@@ -20,7 +20,7 @@ YUI.add('LabDataBinderIndex', function(Y, NAME) {
      * have been constructed.
      */
     init: function(mojitProxy) {
-      Y.log('******** LabData binder index.js init()');
+      Y.log('******** Diagnostics binder index.js init()');
       this.mojitProxy = mojitProxy;
     },
 
