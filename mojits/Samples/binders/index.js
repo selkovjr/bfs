@@ -338,9 +338,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         ],
 
         data: sampleList,
-        scrollable: 'xy',
+        scrollable: 'x',
         sortable: true,
-        height: '290px',
         width: Y.one('#samples').getComputedStyle('width'),
         sortBy: [{date: 1}],
 
