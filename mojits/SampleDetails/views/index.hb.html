@@ -1,8 +1,8 @@
 <div id="{{mojit_view_id}}" class="mojit">
 {{#if id}}
-  <div class="mod" id="diagnostics">
+  <div class="mod" id="sample-details">
 {{else}}
-  <div class="mod collapse" id="diagnostics">
+  <div class="mod collapse" id="sample-details">
 {{/if}}
     <h3>
 {{#if id}}
@@ -14,12 +14,12 @@
       <a title="minimize module" class="min"
         href="#">-</a>
     </h3>
-    <div class="inner" id="diagnostics-inner">
+    <div class="inner" id="sample-details-inner">
 {{#if id}}
       {{{location}}}
       {{{data}}}
 {{else}}
-      <div id="diagnostics-message">
+      <div id="sample-details-message">
         Click on a sample in the table to see its details.
       </div>
 {{/if}}

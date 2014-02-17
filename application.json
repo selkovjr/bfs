@@ -54,8 +54,8 @@
                       "samples": {
                         "type":"Samples"
                       },
-                      "diagnostics": {
-                        "type": "Diagnostics",
+                      "sampleDetails": {
+                        "type": "SampleDetails",
                         "config": {
                           "children": {
                             "data": {

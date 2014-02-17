@@ -109,15 +109,6 @@ YUI.add('SamplesModel', function (Y, NAME) {
               callback(err);
             }
 
-            // delete result.fields; // to reduce traffic
-            // result.pageOffset = itemIndexStart;
-
-            // result.page =  Math.floor(itemIndexStart / itemsPerPage);
-            // result.totalItems = totalItems;
-            // result.itemsPerPage = itemsPerPage;
-            // result.itemIndexStart =  itemIndexStart;
-            // result.itemIndexEnd = Math.min(totalItems, itemIndexStart + itemsPerPage) - 1;
-
             result.paging = {
               itemsPerPage: itemsPerPage,
               itemIndexStart: itemIndexStart,

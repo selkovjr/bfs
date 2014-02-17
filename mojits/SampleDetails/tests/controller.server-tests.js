@@ -1,21 +1,21 @@
 
-YUI.add('Diagnostics-tests', function(Y) {
+YUI.add('SampleDetails-tests', function(Y) {
 
-    var suite = new YUITest.TestSuite('Diagnostics-tests'),
+    var suite = new YUITest.TestSuite('SampleDetails-tests'),
         controller = null,
         A = YUITest.Assert;
 
     suite.add(new YUITest.TestCase({
-        
-        name: 'Diagnostics user tests',
-        
+
+        name: 'SampleDetails user tests',
+
         setUp: function() {
-            controller = Y.mojito.controllers.Diagnostics;
+            controller = Y.mojito.controllers.SampleDetails;
         },
         tearDown: function() {
             controller = null;
         },
-        
+
         'test mojit': function() {
             var ac,
                 modelData,
@@ -52,11 +52,11 @@ YUI.add('Diagnostics-tests', function(Y) {
             A.isObject(doneResults.data);
             A.isTrue(doneResults.data.hasOwnProperty('x'));
             A.areEqual('y', doneResults.data['x']);
-            
+
         }
-        
+
     }));
-    
+
     YUITest.TestRunner.add(suite);
-    
-}, '0.0.1', {requires: ['mojito-test', 'Diagnostics']});
+
+}, '0.0.1', {requires: ['mojito-test', 'SampleDetails']});

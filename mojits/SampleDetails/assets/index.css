@@ -1,4 +1,4 @@
-.diagnostics-table {
+.read-only-table {
   margin: 0px;
   padding: 0px;
   width: 100%;
@@ -18,38 +18,38 @@
   border-top-left-radius: 4px;
 }
 
-.diagnostics-table table {
+.read-only-table table {
   width: 100%;
   height: 100%;
   margin: 0px;
   padding: 0px;
 }
 
-.diagnostics-table tr:last-child td:last-child {
+.read-only-table tr:last-child td:last-child {
   -moz-border-radius-bottomright: 4px;
   -webkit-border-bottom-right-radius: 4px;
   border-bottom-right-radius: 4px;
 }
 
-.diagnostics-table table tr:first-child td:first-child {
+.read-only-table table tr:first-child td:first-child {
   -moz-border-radius-topleft: 4px;
   -webkit-border-top-left-radius: 4px;
   border-top-left-radius: 4px;
 }
 
-.diagnostics-table table tr:first-child td:last-child {
+.read-only-table table tr:first-child td:last-child {
   -moz-border-radius-topright: 4px;
   -webkit-border-top-right-radius: 4px;
   border-top-right-radius: 4px;
 }
 
-.diagnostics-table tr:last-child td:first-child {
+.read-only-table tr:last-child td:first-child {
   -moz-border-radius-bottomleft: 4px;
   -webkit-border-bottom-left-radius: 4px;
   border-bottom-left-radius: 4px;
 }
 
-.diagnostics-table td:hover {
+.read-only-table td:hover {
   background-color: #82c0ff;
   background: -o-linear-gradient(bottom, #82c0ff 5%, #56aaff 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #82c0ff), color-stop(1, #56aaff) );
@@ -58,7 +58,7 @@
   background: -o-linear-gradient(top,#82c0ff,56aaff);
 }
 
-.diagnostics-table tr:first-child td {
+.read-only-table tr:first-child td {
   background: -o-linear-gradient(bottom, #0069d3 5%, #007fff 100%);
   background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #0069d3), color-stop(1, #007fff) );
   background: -moz-linear-gradient( center top, #0069d3 5%, #007fff 100% );
@@ -74,15 +74,15 @@
   color: #ffffff;
 }
 
-.diagnostics-table tr:first-child td:first-child {
+.read-only-table tr:first-child td:first-child {
   border-width: 0px 0px 1px 0px;
 }
 
-.diagnostics-table tr:first-child td:last-child {
+.read-only-table tr:first-child td:last-child {
   border-width: 0px 0px 1px 1px;
 }
 
-.diagnostics-table td {
+.read-only-table td {
   background: -o-linear-gradient(bottom, #56aaff 5%, #82c0ff 100%);
   background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #56aaff), color-stop(1, #82c0ff) );
   background: -moz-linear-gradient( center top, #56aaff 5%, #82c0ff 100% );
@@ -99,14 +99,14 @@
   color: #000000;
 }
 
-.diagnostics-table tr:last-child td {
+.read-only-table tr:last-child td {
   border-width: 0px 1px 0px 0px;
 }
 
-.diagnostics-table tr td:last-child {
+.read-only-table tr td:last-child {
   border-width: 0px 0px 1px 0px;
 }
 
-.diagnostics-table tr:last-child td:last-child {
+.read-only-table tr:last-child td:last-child {
   border-width: 0px 0px 0px 0px;
 }

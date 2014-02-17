@@ -43,11 +43,22 @@ YUI.add('LabDataModel', function (Y, NAME) {
         this.pgClient.query(
           sql,
           Y.bind(function (err, result) {
-            var ac = {};
+            var data = result.rows[0];
+
             this.pgClient.end();
             if (err) {
               callback(err);
             }
+
+            Y.each(data, function (v, k) {
+              if (v === null) {
+                data[k] = '';
+              }
+              else if (k === 'date' || k === 'rec_date') {
+                data[k] = Y.DataType.Date.format(data[k], {format: "%Y-%m-%d"});
+              }
+            });
+
             callback(null, result.rows[0]);
           }, this)
         );

@@ -1,11 +1,11 @@
 /*global YUI */
 /*jslint anon:true, sloppy:true, nomen:true*/
-YUI.add('Diagnostics', function(Y, NAME) {
+YUI.add('SampleDetails', function(Y, NAME) {
 
 /**
- * The Diagnostics module.
+ * The SampleDetails module.
  *
- * @module Diagnostics
+ * @module SampleDetails
  */
 
   /**

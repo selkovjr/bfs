@@ -1,15 +1,15 @@
 /*jslint anon:true, sloppy:true, nomen:true*/
-YUI.add('DiagnosticsBinderIndex', function(Y, NAME) {
+YUI.add('SampleDetailsBinderIndex', function(Y, NAME) {
 /**
- * The DiagnosticsBinderIndex module.
+ * The SampleDetailsBinderIndex module.
  *
- * @module DiagnosticsBinderIndex
+ * @module SampleDetailsBinderIndex
  */
 
   /**
-   * Constructor for the DiagnosticsBinderIndex class.
+   * Constructor for the SampleDetailsBinderIndex class.
    *
-   * @class DiagnosticsBinderIndex
+   * @class SampleDetailsBinderIndex
    * @constructor
    */
   Y.namespace('mojito.binders')[NAME] = {
@@ -25,13 +25,13 @@ YUI.add('DiagnosticsBinderIndex', function(Y, NAME) {
      */
     bind: function(node) {
       this.mojitProxy.listen('row-selected', Y.bind(function (e) {
-        Y.log('broadcast event received in Diagnostics', 'info', NAME);
+        Y.log('broadcast event received in SampleDetails', 'info', NAME);
 
-        if (node.one('#diagnostics').hasClass('collapse')) {
-          node.one('#diagnostics').removeClass('collapse');
+        if (node.one('#sample-details').hasClass('collapse')) {
+          node.one('#sample-details').removeClass('collapse');
         }
 
-        node.one('#diagnostics-message').setContent('Loading data...');
+        node.one('#sample-details-message').setContent('Loading data...');
 
         this.mojitProxy.refreshView({
           params: {

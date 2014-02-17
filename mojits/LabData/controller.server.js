@@ -23,20 +23,28 @@ YUI.add('LabData', function(Y, NAME) {
      *        to the Mojito API.
      */
     index: function(ac) {
+      var user = ac.http.getRequest().user;
+
       console.log("LabData - controller.server.js index called");
       console.log(ac.command.params.body);
       ac.models.get('labdata').getData(ac.command.params.body, function (err, data) {
         console.log('LabData model called from controller index');
-        console.log(data);
+
         if (err) {
           ac.error(err);
           return;
         }
+
         ac.assets.addCss('./index.css');
+        if (!data) {
+          data = {};
+        }
+        data.auth = user.auth.diagnostics;
+        console.log(data);
         ac.done(data);
       });
     }
 
   };
 
-}, '0.0.1', {requires: ['mojito', 'mojito-assets-addon', 'mojito-models-addon', 'LabDataModel']});
+}, '0.0.1', {requires: ['mojito', 'mojito-http-addon', 'mojito-assets-addon', 'mojito-models-addon', 'LabDataModel']});

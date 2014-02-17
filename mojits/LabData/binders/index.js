@@ -39,7 +39,7 @@ YUI.add('LabDataBinderIndex', function(Y, NAME) {
     //     Y.log('broadcast event received', 'info', NAME);
     //     Y.log(e);
 
-    //     node.one('#lab-data').setContent('getting data ...');
+    //     node.one('#diagnostics').setContent('getting data ...');
     //     this.mojitProxy.refreshView({
     //       params: {
     //         body: {
