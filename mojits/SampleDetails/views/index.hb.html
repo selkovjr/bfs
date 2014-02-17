@@ -1,8 +1,16 @@
 <div id="{{mojit_view_id}}" class="mojit">
 {{#if id}}
-  <div class="mod" id="sample-details">
+  {{#if auth}}
+    <div class="mod" id="sample-details">
+  {{else}}
+    <div class="mod read-only" id="sample-details">
+  {{/if}}
 {{else}}
-  <div class="mod collapse" id="sample-details">
+  {{#if auth}}
+    <div class="mod collapse" id="sample-details">
+  {{else}}
+    <div class="mod collapse read-only" id="sample-details">
+  {{/if}}
 {{/if}}
     <h3>
 {{#if id}}

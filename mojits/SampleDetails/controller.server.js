@@ -22,10 +22,13 @@ YUI.add('SampleDetails', function(Y, NAME) {
      *        to the Mojito API.
      */
     index: function(ac) {
+      var user = ac.http.getRequest().user;
+
       ac.assets.addCss('./index.css');
       ac.composite.done({
-        id: ac.params.getFromMerged('id')
+        id: ac.params.getFromMerged('id'),
+        auth: user.auth.diagnostics || user.auth.cultures || user.auth.sera
       });
     }
   };
-}, '0.0.1', {requires: ['mojito', 'mojito-assets-addon', 'mojito-composite-addon', 'mojito-params-addon']});
+}, '0.0.1', {requires: ['mojito', 'mojito-http-addon', 'mojito-assets-addon', 'mojito-composite-addon', 'mojito-params-addon']});
