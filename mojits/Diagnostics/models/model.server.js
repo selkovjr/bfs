@@ -28,6 +28,7 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
      *        data has been retrieved.
      */
     getData: function (arg, callback) {
+      console.log(['getData', arg]);
       var
         sql;
 
@@ -63,8 +64,61 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
           }, this)
         );
       }, this));
-    }
+    },
 
+    autocomplete: function (arg, callback) {
+      this.pgClient.connect(Y.bind(function (err) {
+        if (err) {
+          return console.error('could not connect to postgres', err);
+        }
+        this.pgClient.query(
+          'SELECT "attr", "val", "desc" FROM "ac" WHERE "class" = \'diagnostics\' ORDER BY "ord"',
+          Y.bind(function (err, result) {
+            var ac = {};
+            if (err) {
+              callback(err);
+            }
+            this.pgClient.end();
+            Y.each(result.rows, function (option) {
+              if (ac[option.attr] === undefined) {
+                ac[option.attr] = [];
+              }
+              // ac[option.attr].push({val: option.val, desc: option.desc});
+              ac[option.attr].push(option.val);
+            });
+            callback(null, ac);
+          }, this)
+        );
+      }, this));
+    },
+
+    update: function (arg, callback) {
+      this.pgClient.connect(Y.bind(function (err) {
+        var sql;
+
+        if (err) {
+          return console.error('could not connect to postgres', err);
+        }
+
+        if (arg.value !== '' && arg.value !== null && arg.value !== undefined) {
+          sql = Y.substitute("UPDATE diagnostics SET {attr} = '{value}' WHERE sample = '{id}'", arg);
+        } else {
+          sql = Y.substitute("UPDATE diagnostics SET {attr} = NULL WHERE sample = '{id}'", arg);
+        }
+        this.pgClient.query(
+          sql,
+          Y.bind(function (err, result) {
+            if (err) {
+              callback(err);
+            }
+            console.log('update successful');
+            console.log(result);
+            this.pgClient.end();
+            callback(null, result);
+          }, this)
+        );
+      }, this));
+    }
   };
 }, '0.0.1', {requires: []});
 

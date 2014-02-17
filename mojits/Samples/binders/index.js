@@ -200,7 +200,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
             }
           };
 
-          // Convert the ModelList sortBy list-of-hashes format to pgrest 's' hash.
           if (arg.sortBy) {
             options.params.body.sortBy = arg.sortBy;
           }
@@ -306,8 +305,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           { /* 7 */
             key: 'ring',
             label: 'Ring',
-            sortable: true,
-            editor: 'inline'
+            sortable: true
           },
 
           { /* 8 */
@@ -386,6 +384,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
             tableConfig.columns[1].editor = 'inline'; // emc_id
 
             Y.mix(tableConfig.columns[2], { // date
+              editor: 'inlineDate',
               editorConfig: {
                 dateFormat: '%Y-%m-%d'
               },

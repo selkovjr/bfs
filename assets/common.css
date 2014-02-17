@@ -85,7 +85,15 @@ div.mod.collapse div.inner {
   clear: left;
 }
 
-
+.single-row-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: arial,sans-serif;
+  margin: 0;
+  padding: 0;
+  top: 0;
+  left: 0;
+}
 
 /* gallery-datatable-editable, gallery-datatable-celleditor-inline */
 

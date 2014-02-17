@@ -10,53 +10,57 @@
       <a title="minimize module" class="min" href="#">-</a>
     </h3>
 
-    <table>
-      <tr>
-        <td style="vertical-align: top">
-          <table>
-            <tr>
-              <td style="vertical-align: top">
-                <b>PCR Pool</b> {{pool}}<br>
-                {{date}}
-              </td>
-            </tr>
-            <tr>
-              <td style="vertical-align: top">
-                <b>Received:</b> {{rec_date}}<br>
-                <b>TaqMan:</b>{{date}}
-              </td>
-            </tr>
-          </table>
-        </td>
-        <td style="vertical-align: top; padding-left: 2em;">
-          <table class="read-only-table">
-            <tr>
-              <td> ma_status </td>
-              <td> ma_ct </td>
-              <td> h5_status </td>
-              <td> h5_ct </td>
-              <td> h5_pt </td>
-              <td> h7_status </td>
-              <td> h7_ct </td>
-              <td> h7_pt </td>
-              <td> h9_status </td>
-              <td> h9_ct </td>
-            </tr>
-            <tr>
-              <td> {{ma_status}} </td>
-              <td> {{ma_ct}} </td>
-              <td> {{h5_status}} </td>
-              <td> {{h5_ct}} </td>
-              <td> {{h5_pt}} </td>
-              <td> {{h7_status}} </td>
-              <td> {{h7_ct}} </td>
-              <td> {{h7_pt}} </td>
-              <td> {{h9_status}} </td>
-              <td> {{h9_ct}} </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
+    <input id="sample_id" type="hidden" value="{{sample}}" />
+
+    <div class="inner" id="diagnostics-inner">
+      <table id="diagnostics-table" class="single-row-table">
+        <tr>
+          <td style="vertical-align: top">
+            <table>
+              <tr>
+                <td style="vertical-align: top">
+                  <b>PCR Pool</b> {{pool}}<br>
+                  {{date}}
+                </td>
+              </tr>
+              <tr>
+                <td style="vertical-align: top">
+                  <b>Received:</b> {{rec_date}}<br>
+                  <b>TaqMan:</b>{{date}}
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td style="vertical-align: top; padding-left: 2em;">
+            <table class="read-only-table">
+              <tr>
+                <td> ma_status </td>
+                <td> ma_ct </td>
+                <td> h5_status </td>
+                <td> h5_ct </td>
+                <td> h5_pt </td>
+                <td> h7_status </td>
+                <td> h7_ct </td>
+                <td> h7_pt </td>
+                <td> h9_status </td>
+                <td> h9_ct </td>
+              </tr>
+              <tr>
+                <td> {{ma_status}} </td>
+                <td> {{ma_ct}} </td>
+                <td> {{h5_status}} </td>
+                <td> {{h5_ct}} </td>
+                <td> {{h5_pt}} </td>
+                <td> {{h7_status}} </td>
+                <td> {{h7_ct}} </td>
+                <td> {{h7_pt}} </td>
+                <td> {{h9_status}} </td>
+                <td> {{h9_ct}} </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
   </div>
 </div>
