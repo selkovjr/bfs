@@ -8,7 +8,13 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
  * @module DiagnosticsBinderIndex
  */
 
-  var Model, ModelList, modelList, sampleID;
+  var
+    Model,
+    ModelList,
+    modelList,
+    sampleIDFromParent,
+    sampleID,
+    createListener;
 
   // Table row model
   Model = Y.Base.create('diagnostics-record', Y.Model, [], {}, {
@@ -92,7 +98,8 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
      * have been constructed.
      */
     init: function (mojitProxy) {
-      sampleID = Y.one('#sample_id').get('value');
+      sampleIDFromParent = Y.one('#sample_id').get('value');
+      sampleID = Y.one('#sample').get('value');
 
       this.mojitProxy = mojitProxy;
 
@@ -138,6 +145,7 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
         table,
         tableConfig,
         acOptions,
+        render,
         autocompleteFilter = function (query, results) {
           query = query.toLowerCase();
           return Y.Array.filter(results, function (result) {
@@ -154,239 +162,262 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
           e.inputNode.ac.sendRequest('');
         };
 
-      Y.on('domready', Y.bind(function () {
+      render = Y.bind(function () {
+        Y.log(['sample id', sampleID]);
         if (this.editable) {
-          // Get the list of autocomplete options
-          mp.invoke('autocomplete', null, function (err, data) {
-            if (err) {
-              Y.log('server transaction error: ' + err, 'error', 'Diagnostics binder');
-            } else {
-              acOptions = Y.JSON.parse(data);
-            }
-            table = new Y.DataTable({
-              columns: [
-                {
-                  key: 'rec_date',
-                  label: 'Received',
-                  formatter: function (o) {
-                    return o.value && Y.DataType.Date.format(o.value, {format: "%Y-%m-%d"});
-                  },
-                  editor: 'inlineDate',
-                  editorConfig: {
-                    dateFormat: '%Y-%m-%d'
-                  },
-                  prepFn: function (v) {
-                    var dfmt = "%Y-%m-%d";
-                    return Y.DataType.Date.format(v, {format: dfmt});
-                  }
-                },
-
-                {
-                  key: 'date',
-                  label: 'TaqMan date',
-                  formatter: function (o) {
-                    return o.value && Y.DataType.Date.format(o.value, {format: "%Y-%m-%d"});
-                  },
-                  editor: 'inlineDate',
-                  editorConfig: {
-                    dateFormat: '%Y-%m-%d'
-                  },
-                  prepFn: function (v) {
-                    var dfmt = "%Y-%m-%d";
-                    return Y.DataType.Date.format(v, {format: dfmt});
-                  }
-                },
-
-                {
-                  key: 'pool',
-                  label: 'Pool',
-                  editor: 'inlineNumber'
-                },
-
-                {
-                  key: 'ma_status',
-                  label: 'MA Status',
-                  editor: 'inlineAC',
-                  editorConfig: {
-                    autocompleteConfig: {
-                      source: acOptions.ma_status,
-                      minQueryLength: 0,
-                      activateFirstItem: true,
-                      resultFilters: autocompleteFilter,
-                      resultHighlighter: 'phraseMatch',
-                      on: {select: highlightCleanup}
-                    },
-                    on: {editorShow: nudge}
-                  }
-                },
-
-                {
-                  key: 'ma_ct',
-                  label: 'MA Ct',
-                  editor: 'inlineNumber'
-                },
-
-                {
-                  key: 'h5_status',
-                  label: 'H5 Status',
-                  editor: 'inlineAC',
-                  editorConfig: {
-                    autocompleteConfig: {
-                      source: acOptions.h5_status,
-                      minQueryLength: 0,
-                      activateFirstItem: true,
-                      resultFilters: autocompleteFilter,
-                      resultHighlighter: 'phraseMatch',
-                      on: {select: highlightCleanup}
-                    },
-                    on: {editorShow: nudge}
-                  }
-                },
-
-                {
-                  key: 'h5_ct',
-                  label: 'H5 Ct',
-                  editor: 'inlineNumber'
-                },
-
-                {
-                  key: 'h5_pt',
-                  label: 'H5 Pathotype',
-                  editor: 'inlineAC',
-                  editorConfig: {
-                    autocompleteConfig: {
-                      source: acOptions.h5_pt,
-                      minQueryLength: 0,
-                      activateFirstItem: true,
-                      resultFilters: autocompleteFilter,
-                      resultHighlighter: 'phraseMatch',
-                      on: {select: highlightCleanup}
-                    },
-                    on: {editorShow: nudge}
-                  }
-                },
-
-                {
-                  key: 'h7_status',
-                  label: 'H7 Status',
-                  editor: 'inlineAC',
-                  editorConfig: {
-                    autocompleteConfig: {
-                      source: acOptions.h7_status,
-                      minQueryLength: 0,
-                      activateFirstItem: true,
-                      resultFilters: autocompleteFilter,
-                      resultHighlighter: 'phraseMatch',
-                      on: {select: highlightCleanup}
-                    },
-                    on: {editorShow: nudge}
-                  }
-                },
-
-                {
-                  key: 'h7_ct',
-                  label: 'H7 Ct',
-                  editor: 'inlineNumber'
-                },
-
-                {
-                  key: 'h7_pt',
-                  label: 'H7 Pathotype',
-                  editor: 'inlineAC',
-                  editorConfig: {
-                    autocompleteConfig: {
-                      source: acOptions.h7_pt,
-                      minQueryLength: 0,
-                      activateFirstItem: true,
-                      resultFilters: autocompleteFilter,
-                      resultHighlighter: 'phraseMatch',
-                      on: {select: highlightCleanup}
-                    },
-                    on: {editorShow: nudge}
-                  }
-                },
-
-                {
-                  key: 'h9_status',
-                  label: 'H9 Status',
-                  editor: 'inlineAC',
-                  editorConfig: {
-                    autocompleteConfig: {
-                      source: acOptions.h9_status,
-                      minQueryLength: 0,
-                      activateFirstItem: true,
-                      resultFilters: autocompleteFilter,
-                      resultHighlighter: 'phraseMatch',
-                      on: {select: highlightCleanup}
-                    },
-                    on: {editorShow: nudge}
-                  }
-                },
-
-                {
-                  key: 'h9_ct',
-                  label: 'H9 Ct',
-                  editor: 'inlineNumber'
-                }
-              ],
-
-              data: modelList,
-              scrollable: 'x',
-              // height: '290px',
-              // width: Y.one('#diagnostics').getComputedStyle('width'),
-
-              editable: true,
-              editOpenType: 'dblclick'
-            }); // table = new Y.DataTable()
-
-
-            Y.one('#diagnostics-table').empty(); // remove the "Loading" message
-            table.data.load(function () {
-              table.render('#diagnostics-table');
-            });
-
-            //
-            //  Set a listener to DT's cell editor save event so that we can synchronize
-            //  changes with a remote server (i.e. DataSource)
-            //
-            table.after('cellEditorSave', function (e) {
-              var
-                options,
-                dfmt = "%Y-%m-%d",
-                newVal = e.newVal,
-                id = e.record.get('sample');
-                Y.log('updateding sample ' + id);
-
-              if (e.colKey === 'date' || e.colKey === 'rec_date') {
-                newVal = Y.DataType.Date.format(e.newVal, {format: dfmt});
+          if (sampleID !== '') {
+            // Get the list of autocomplete options
+            mp.invoke('autocomplete', null, function (err, data) {
+              if (err) {
+                Y.log('server transaction error: ' + err, 'error', 'Diagnostics binder');
+              } else {
+                acOptions = Y.JSON.parse(data);
               }
-
-              Y.log(['testing', newVal, e.prevVal]);
-              Y.log('Editor: ' + e.editorName + ' saved newVal=' + newVal + ' oldVal=' + e.prevVal + ' colKey=' + e.colKey);
-              if (newVal !== e.prevVal) {
-                options = {
-                  params: {
-                    body: {
-                      id: id,
-                      attr: e.colKey,
-                      value: newVal
+              table = new Y.DataTable({
+                columns: [
+                  {
+                    key: 'rec_date',
+                    label: 'Received',
+                    formatter: function (o) {
+                      return o.value && Y.DataType.Date.format(o.value, {format: "%Y-%m-%d"});
+                    },
+                    editor: 'inlineDate',
+                    editorConfig: {
+                      dateFormat: '%Y-%m-%d'
+                    },
+                    prepFn: function (v) {
+                      var dfmt = "%Y-%m-%d";
+                      return Y.DataType.Date.format(v, {format: dfmt});
                     }
                   },
-                  rpc: true
-                };
-                mp.invoke('update', options, function (err, data) {
-                  if (err) {
-                    Y.log('update failed');
-                  } else {
-                    Y.log('update successful');
-                  }
-                });
-              }
-            });
-          }); // invoke autocomplete data
-        } // editable
-      }, this)); // on domready
 
+                  {
+                    key: 'date',
+                    label: 'TaqMan date',
+                    formatter: function (o) {
+                      return o.value && Y.DataType.Date.format(o.value, {format: "%Y-%m-%d"});
+                    },
+                    editor: 'inlineDate',
+                    editorConfig: {
+                      dateFormat: '%Y-%m-%d'
+                    },
+                    prepFn: function (v) {
+                      var dfmt = "%Y-%m-%d";
+                      return Y.DataType.Date.format(v, {format: dfmt});
+                    }
+                  },
+
+                  {
+                    key: 'pool',
+                    label: 'Pool',
+                    editor: 'inlineNumber'
+                  },
+
+                  {
+                    key: 'ma_status',
+                    label: 'MA Status',
+                    editor: 'inlineAC',
+                    editorConfig: {
+                      autocompleteConfig: {
+                        source: acOptions.ma_status,
+                        minQueryLength: 0,
+                        activateFirstItem: true,
+                        resultFilters: autocompleteFilter,
+                        resultHighlighter: 'phraseMatch',
+                        on: {select: highlightCleanup}
+                      },
+                      on: {editorShow: nudge}
+                    }
+                  },
+
+                  {
+                    key: 'ma_ct',
+                    label: 'MA Ct',
+                    editor: 'inlineNumber'
+                  },
+
+                  {
+                    key: 'h5_status',
+                    label: 'H5 Status',
+                    editor: 'inlineAC',
+                    editorConfig: {
+                      autocompleteConfig: {
+                        source: acOptions.h5_status,
+                        minQueryLength: 0,
+                        activateFirstItem: true,
+                        resultFilters: autocompleteFilter,
+                        resultHighlighter: 'phraseMatch',
+                        on: {select: highlightCleanup}
+                      },
+                      on: {editorShow: nudge}
+                    }
+                  },
+
+                  {
+                    key: 'h5_ct',
+                    label: 'H5 Ct',
+                    editor: 'inlineNumber'
+                  },
+
+                  {
+                    key: 'h5_pt',
+                    label: 'H5 Pathotype',
+                    editor: 'inlineAC',
+                    editorConfig: {
+                      autocompleteConfig: {
+                        source: acOptions.h5_pt,
+                        minQueryLength: 0,
+                        activateFirstItem: true,
+                        resultFilters: autocompleteFilter,
+                        resultHighlighter: 'phraseMatch',
+                        on: {select: highlightCleanup}
+                      },
+                      on: {editorShow: nudge}
+                    }
+                  },
+
+                  {
+                    key: 'h7_status',
+                    label: 'H7 Status',
+                    editor: 'inlineAC',
+                    editorConfig: {
+                      autocompleteConfig: {
+                        source: acOptions.h7_status,
+                        minQueryLength: 0,
+                        activateFirstItem: true,
+                        resultFilters: autocompleteFilter,
+                        resultHighlighter: 'phraseMatch',
+                        on: {select: highlightCleanup}
+                      },
+                      on: {editorShow: nudge}
+                    }
+                  },
+
+                  {
+                    key: 'h7_ct',
+                    label: 'H7 Ct',
+                    editor: 'inlineNumber'
+                  },
+
+                  {
+                    key: 'h7_pt',
+                    label: 'H7 Pathotype',
+                    editor: 'inlineAC',
+                    editorConfig: {
+                      autocompleteConfig: {
+                        source: acOptions.h7_pt,
+                        minQueryLength: 0,
+                        activateFirstItem: true,
+                        resultFilters: autocompleteFilter,
+                        resultHighlighter: 'phraseMatch',
+                        on: {select: highlightCleanup}
+                      },
+                      on: {editorShow: nudge}
+                    }
+                  },
+
+                  {
+                    key: 'h9_status',
+                    label: 'H9 Status',
+                    editor: 'inlineAC',
+                    editorConfig: {
+                      autocompleteConfig: {
+                        source: acOptions.h9_status,
+                        minQueryLength: 0,
+                        activateFirstItem: true,
+                        resultFilters: autocompleteFilter,
+                        resultHighlighter: 'phraseMatch',
+                        on: {select: highlightCleanup}
+                      },
+                      on: {editorShow: nudge}
+                    }
+                  },
+
+                  {
+                    key: 'h9_ct',
+                    label: 'H9 Ct',
+                    editor: 'inlineNumber'
+                  }
+                ],
+
+                data: modelList,
+                scrollable: 'x',
+
+                editable: true,
+                editOpenType: 'dblclick'
+              }); // table = new Y.DataTable()
+
+
+              Y.one('#diagnostics-table').empty(); // remove the "Loading" message
+              table.data.load(function () {
+                table.render('#diagnostics-table');
+              });
+
+              //
+              //  Set a listener to DT's cell editor save event so that we can synchronize
+              //  changes with a remote server (i.e. DataSource)
+              //
+              table.after('cellEditorSave', function (e) {
+                var
+                  options,
+                  dfmt = "%Y-%m-%d",
+                  newVal = e.newVal,
+                  id = e.record.get('sample');
+
+                if (e.colKey === 'date' || e.colKey === 'rec_date') {
+                  newVal = Y.DataType.Date.format(e.newVal, {format: dfmt});
+                }
+
+                Y.log(['testing', newVal, e.prevVal]);
+                Y.log('Editor: ' + e.editorName + ' saved newVal=' + newVal + ' oldVal=' + e.prevVal + ' colKey=' + e.colKey);
+                if (newVal !== e.prevVal) {
+                  options = {
+                    params: {
+                      body: {
+                        id: id,
+                        attr: e.colKey,
+                        value: newVal
+                      }
+                    },
+                    rpc: true
+                  };
+                  mp.invoke('update', options, function (err, data) {
+                    if (err) {
+                      Y.log('update failed');
+                    } else {
+                      Y.log('update successful');
+                    }
+                  });
+                }
+              });
+            }); // invoke autocomplete data
+          } // sampleID non-null
+          else {
+            Y.one('#diagnostics-na').append('<button id="diagnostics-create" type="button">Create</button>');
+            createListener = Y.one('#diagnostics-create').on('click', function (e) {
+              var options = {
+                params: {
+                  body: {
+                    id: sampleIDFromParent
+                  }
+                },
+                rpc: true
+              };
+              mp.invoke('create', options, function (err, data) {
+                if (err) {
+                  Y.log('create failed');
+                } else {
+                  Y.log('create successful');
+                  sampleID = sampleIDFromParent;
+                  render();
+                }
+              });
+            });
+          }
+        } // editable
+      }, this); // render()
+
+      Y.on('domready', render, this);
 
       // Refresh the content when user clicks refresh button.
       Y.one('#diagnostics').delegate('click', function (e) {
@@ -396,9 +427,6 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
         });
       }, 'a.refresh');
 
-      Y.on('windowresize', function (e) {
-        // table.set('width', Y.one('#diagnostics').getComputedStyle('width'));
-      });
     } // bind()
   };
 }, '0.0.1', {requires: ['event-mouseenter', 'mojito-client']});

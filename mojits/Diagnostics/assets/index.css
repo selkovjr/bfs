@@ -1,2 +1,8 @@
-dt { font-weight: bold; }
-.sel { background-color: #FF4; }
+.diagnostics-na {
+  padding: 7px 0px 7px 20px;
+  color: #999;
+}
+
+#diagnostics-create {
+  margin-left: 10px;
+}

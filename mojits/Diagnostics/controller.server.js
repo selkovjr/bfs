@@ -40,6 +40,7 @@ YUI.add('Diagnostics', function(Y, NAME) {
           data = {};
         }
         data.auth = user.auth.diagnostics;
+        data.sampleID = ac.params.getFromMerged('id');
         console.log(data);
         ac.done(data);
       });
@@ -79,7 +80,19 @@ YUI.add('Diagnostics', function(Y, NAME) {
         }
         ac.done();
       });
+    },
+
+    create: function (ac) {
+      var model = ac.models.get('model');
+      model.create(ac.command.params.body, function (err, data) {
+        if (err) {
+          console.error('error condition');
+          ac.error(err);
+          return;
+        }
+        ac.done();
+      });
     }
   };
 
-}, '0.0.1', {requires: ['mojito', 'mojito-http-addon', 'mojito-assets-addon', 'mojito-models-addon', 'DiagnosticsModel']});
+}, '0.0.1', {requires: ['mojito', 'mojito-http-addon', 'mojito-params-addon', 'mojito-assets-addon', 'mojito-models-addon', 'DiagnosticsModel']});

@@ -118,6 +118,30 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
           }, this)
         );
       }, this));
+    },
+
+    create: function (arg, callback) {
+      this.pgClient.connect(Y.bind(function (err) {
+        var sql = Y.substitute("INSERT into diagnostics (sample) VALUES ('{id}')", arg);
+
+        if (err) {
+          return console.error('could not connect to postgres', err);
+        }
+
+        console.log(sql);
+        this.pgClient.query(
+          sql,
+          Y.bind(function (err, result) {
+            if (err) {
+              callback(err);
+            }
+            console.log('create successful');
+            console.log(result);
+            this.pgClient.end();
+            callback(null, result);
+          }, this)
+        );
+      }, this));
     }
   };
 }, '0.0.1', {requires: []});

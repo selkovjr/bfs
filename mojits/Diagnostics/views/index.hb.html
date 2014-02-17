@@ -10,11 +10,14 @@
       <a title="minimize module" class="min" href="#">-</a>
     </h3>
 
-    <input id="sample_id" type="hidden" value="{{sample}}" />
+    <input id="sample_id" type="hidden" value="{{sampleID}}" />
+    <input id="sample" type="hidden" value="{{sample}}" />
 
     <div class="inner" id="diagnostics-inner">
       <table id="diagnostics-table" class="single-row-table">
         <tr>
+{{#if sample}}
+  {{#unless auth}}
           <td style="vertical-align: top">
             <table>
               <tr>
@@ -59,6 +62,12 @@
               </tr>
             </table>
           </td>
+  {{/unless}}
+{{else}}
+          <td id="diagnostics-na" class="diagnostics-na">
+            no data
+          </td>
+{{/if}}
         </tr>
       </table>
     </div>

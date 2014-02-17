@@ -95,6 +95,10 @@ div.mod.collapse div.inner {
   left: 0;
 }
 
+.single-row-table tr {
+  height: 24px;
+}
+
 /* gallery-datatable-editable, gallery-datatable-celleditor-inline */
 
 .yui3-skin-sam .yui3-datatable td.yui3-datatable-sel-highlighted,
