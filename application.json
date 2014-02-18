@@ -35,6 +35,23 @@
       }
     },
     "specs": {
+      "loginframe": {
+        "type": "HTMLFrameMojit",
+        "config": {
+          "deploy": true,
+          "title": "Bird flu sampling data: log in",
+          "child": {
+            "type": "Login"
+          },
+          "assets": {
+            "top": {
+              "css": [
+                "/static/bfs/assets/common.css"
+              ]
+            }
+          }
+        }
+      },
       "pageframe": {
         "type": "HTMLFrameMojit",
         "config": {
@@ -88,12 +105,7 @@
     }
   },
   {
-    "settings": [ "runtime:client" ],
-    "yui": {
-      "config": {
-        "logLevel": "debug"
-      }
-    }
+    "settings": [ "runtime:client" ]
   },
 
   {

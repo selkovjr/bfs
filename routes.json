@@ -9,7 +9,7 @@
     "app login": {
       "verbs": ["get"],
       "path": "/login",
-      "call": "@Login.index"
+      "call": "loginframe.index"
     },
     "login_submit": {
       "verbs": ["post"],
