@@ -1,3 +1,7 @@
+.samples-controls {
+  display: none;
+}
+
 .yui3-datatable-table {
   font-size: small;
   white-space: nowrap;

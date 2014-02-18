@@ -178,7 +178,6 @@ YUI.add('SamplesModel', function (Y, NAME) {
         this.pgClient.query(
           sql,
           Y.bind(function (err, result) {
-            var ac = {};
             if (err) {
               callback(err);
             }
@@ -189,12 +188,37 @@ YUI.add('SamplesModel', function (Y, NAME) {
       }, this));
     },
 
+    create: function (arg, callback) {
+      this.pgClient.connect(Y.bind(function (err) {
+        var sql = Y.substitute("INSERT into samples (id) VALUES ('{id}')", arg);
+
+        if (err) {
+          return console.error('could not connect to postgres', err);
+        }
+
+        console.log(sql);
+        this.pgClient.query(
+          sql,
+          Y.bind(function (err, result) {
+            if (err) {
+              callback(err);
+            }
+            console.log('create successful');
+            console.log(result);
+            this.pgClient.end();
+            callback(null, result);
+          }, this)
+        );
+      }, this));
+    },
+
     update: function (arg, callback) {
       this.pgClient.connect(Y.bind(function (err) {
         var sql;
 
         if (err) {
-          return console.error('could not connect to postgres', err);
+          console.error('could not connect to postgres', err);
+          callback(err);
         }
 
         if (arg.value !== '' && arg.value !== null && arg.value !== undefined) {
@@ -205,12 +229,19 @@ YUI.add('SamplesModel', function (Y, NAME) {
         this.pgClient.query(
           sql,
           Y.bind(function (err, result) {
+            console.log('-------- update query --------');
+            console.log([err, result]);
+            this.pgClient.end();
             if (err) {
               callback(err);
             }
-            console.log('update successful');
-            console.log(result);
-            this.pgClient.end();
+            if (result.rowCount) {
+              console.log('update successful');
+              callback(null, result.rows);
+            } else {
+              console.log('update error');
+              callback('UPDATE: no rows matching "' + arg.id  + '"');
+            }
             callback(null, result);
           }, this)
         );

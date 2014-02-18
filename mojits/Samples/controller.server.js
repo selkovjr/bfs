@@ -65,6 +65,18 @@ YUI.add('Samples', function (Y, NAME) {
       });
     },
 
+    create: function (ac) {
+      var model = ac.models.get('samples');
+      model.create(ac.command.params.body, function (err, data) {
+        if (err) {
+          console.error('error condition');
+          ac.error(err);
+          return;
+        }
+        ac.done();
+      });
+    },
+
     update: function (ac) {
       var model = ac.models.get('samples');
       model.update(ac.command.params.body, function (err, data) {

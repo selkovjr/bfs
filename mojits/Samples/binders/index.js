@@ -167,15 +167,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
     }
   };
 
-  // insert a new row
-  function insert () {
-    var text = Y.Lang.trim(Y.one('#new-sample-id').get('value'));
-    sampleList.add([{
-      id: text
-    }]);
-    Y.one('#new-sample-id').set('value', '');
-  }
-
   /**
    * Constructor for the SamplesBinderIndex class.
    *
@@ -380,6 +371,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         if (this.editable) {
           tableConfig.editable = true;
           tableConfig.editOpenType = 'dblclick';
+          Y.one('.samples-controls').setStyle('display', 'block');
         }
 
         // Get the list of autocomplete options
@@ -553,7 +545,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
             Y.log(tableConfig);
             table = new Y.DataTable(tableConfig);
-            Y.log(['addRow', table.addRow]);
 
             table[sizeSyncMethod] = function () {
               return false;
@@ -654,7 +645,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                 }
               }
             });
-
           } // got autocomplete options
         }); // invoke autocomplete data
       }, this)); // on domready
@@ -669,12 +659,12 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           }
         });
 
-        Y.one('#new-sample-id').on('key', function (e) {
-          insert();
-        }, 'enter');
-        Y.one('#add-sample').on('click', function (e) {
-          insert();
-        });
+        Y.one('#new-sample-id').on('key', Y.bind(function () {
+          this.insert();
+        }, this), 'enter');
+        Y.one('#add-sample').on('click', Y.bind(function (e) {
+          this.insert();
+        }, this));
       }
 
       // Refresh the content when user clicks refresh button.
@@ -686,7 +676,46 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       Y.on('windowresize', function (e) {
         table.set('width', Y.one('#samples').getComputedStyle('width'));
       });
-    } // bind()
+    }, // bind()
+
+    // insert a new row
+    insert: function () {
+      var
+        id = Y.Lang.trim(Y.one('#new-sample-id').get('value')),
+        options = {
+          params: {
+            body: {
+              id: id
+            }
+          },
+          rpc: true
+        };
+
+      this.mojitProxy.invoke('create', options, function (err, data) {
+        if (err) {
+          Y.log('create failed');
+        } else {
+          Y.log('create successful');
+        }
+      });
+
+      sampleList.add([{
+        id: id,
+        emc_id: '',
+        date: '',
+        type: '',
+        bird: '',
+        age: '',
+        sex: '',
+        ring: '',
+        clin_st: '',
+        vital_st: '',
+        capture_method: '',
+        location: '',
+        location_name: ''
+      }]);
+      Y.one('#new-sample-id').set('value', '');
+    }
   };
 }, '0.0.1', {
   requires: [
