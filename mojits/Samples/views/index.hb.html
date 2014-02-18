@@ -14,6 +14,12 @@
         Loading data ...
       </div>
       <div class="yui3-pagview-bar" id="samples-paginator"></div>
+{{#if auth}}
+      <div class="controls">
+        <input id="new-sample-id" type="text" placeholder="Sample ID" />
+        <button id="add-sample" disabled="1">Add</button>
+      </div>
+{{/if}}
     </div>
   </div>
 </div>

@@ -8,7 +8,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
  * @module SamplesBinderIndex
  */
 
-  var Sample, SampleList, sampleList;
+  var table, Sample, SampleList, sampleList;
 
   // Table row model
   Sample = Y.Base.create('sample-record', Y.Model, [], {}, {
@@ -167,6 +167,15 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
     }
   };
 
+  // insert a new row
+  function insert () {
+    var text = Y.Lang.trim(Y.one('#new-sample-id').get('value'));
+    sampleList.add([{
+      id: text
+    }]);
+    Y.one('#new-sample-id').set('value', '');
+  }
+
   /**
    * Constructor for the SamplesBinderIndex class.
    *
@@ -190,6 +199,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           options,
           response;
 
+        Y.log('sync action: ' + action);
         if (action === 'read') {
           options = {
             params: {
@@ -228,7 +238,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
     bind: function (node) {
       var
         mp = this.mojitProxy,
-        table,
         tableConfig,
         acOptions,
         sizeSyncMethod = '_syncPaginatorSize',
@@ -544,6 +553,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
             Y.log(tableConfig);
             table = new Y.DataTable(tableConfig);
+            Y.log(['addRow', table.addRow]);
 
             table[sizeSyncMethod] = function () {
               return false;
@@ -649,6 +659,23 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         }); // invoke autocomplete data
       }, this)); // on domready
 
+      if (this.editable) {
+        // Enable/disable the Add button
+        Y.one('#new-sample-id').on('keyup', function (e) {
+          if (Y.one('#new-sample-id').get('value').match(/^ *$/)) {
+            Y.one('#add-sample').set('disabled', true);
+          } else {
+            Y.one('#add-sample').set('disabled', false);
+          }
+        });
+
+        Y.one('#new-sample-id').on('key', function (e) {
+          insert();
+        }, 'enter');
+        Y.one('#add-sample').on('click', function (e) {
+          insert();
+        });
+      }
 
       // Refresh the content when user clicks refresh button.
       Y.one('#samples').delegate('click', function (e) {
@@ -666,6 +693,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
     'autocomplete',
     'autocomplete-highlighters',
     'event-mouseenter',
+    'event-key',
     'mojito-client',
     'mojito-data-addon',
     'node-base',
