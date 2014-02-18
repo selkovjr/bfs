@@ -99,6 +99,7 @@ YUI.add('SamplesModel', function (Y, NAME) {
             totalItems = parseInt(result.rows[0].count, 10); // Pg client stringifies numbers. There is an ongoing discussion about that.
           }
         );
+        console.log(sql);
         this.pgClient.query(
           sql,
           Y.bind(function (err, result) {
@@ -226,6 +227,7 @@ YUI.add('SamplesModel', function (Y, NAME) {
         } else {
           sql = Y.substitute("UPDATE samples SET {attr} = NULL WHERE id = '{id}'", arg);
         }
+        console.log(sql);
         this.pgClient.query(
           sql,
           Y.bind(function (err, result) {
@@ -235,12 +237,38 @@ YUI.add('SamplesModel', function (Y, NAME) {
             if (err) {
               callback(err);
             }
-            if (result.rowCount) {
-              console.log('update successful');
-              callback(null, result.rows);
-            } else {
-              console.log('update error');
-              callback('UPDATE: no rows matching "' + arg.id  + '"');
+            else {
+              if (result.rowCount) {
+                console.log('update successful');
+                callback(null, result);
+              } else {
+                console.log('update error');
+                callback('UPDATE: no rows matching "' + arg.id  + '"');
+              }
+            }
+          }, this)
+        );
+      }, this));
+    },
+
+    find: function (arg, callback) {
+      this.pgClient.connect(Y.bind(function (err) {
+        var sql;
+
+        if (err) {
+          console.error('could not connect to postgres', err);
+          callback(err);
+        }
+
+        sql = Y.substitute("SELECT * FROM samples WHERE id = '{id}'", arg);
+        this.pgClient.query(
+          sql,
+          Y.bind(function (err, result) {
+            console.log('-------- find query --------');
+            console.log([err, result]);
+            this.pgClient.end();
+            if (err) {
+              callback(err);
             }
             callback(null, result);
           }, this)

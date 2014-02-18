@@ -1,4 +1,4 @@
-/*global YUI */
+/*global YUI, alert */
 /*jslint regexp: true, indent: 2 */
 YUI.add('SamplesBinderIndex', function (Y, NAME) {
   'use strict';
@@ -368,6 +368,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       }; // tableConfig
 
       Y.on('domready', Y.bind(function () {
+        var self = this;
+
         if (this.editable) {
           tableConfig.editable = true;
           tableConfig.editOpenType = 'dblclick';
@@ -558,7 +560,41 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
               Y.log(['selection', e]);
               mp.pageData.set('sample',  e.rows[0].record.get('id'));
               mp.broadcast('row-selected', {row: e.rows[0]});
+              if (self.editable) {
+                Y.one('#delete-sample').set('disabled', false);
+              }
             });
+
+            table.on('pageUpdate', function (e) {
+              if (self.editable) {
+                // Updates lose selection
+                Y.one('#delete-sample').set('disabled', true);
+              }
+            });
+
+            if (self.editable) {
+              // Enable/disable the Add button
+              Y.one('#new-sample-id').on('keyup', function (e) {
+                if (Y.one('#new-sample-id').get('value').match(/^ *$/)) {
+                  Y.one('#add-sample').set('disabled', true);
+                } else {
+                  Y.one('#add-sample').set('disabled', false);
+                }
+              });
+
+              // Subscribe insert() to Add button and to enter key
+              Y.one('#new-sample-id').on('key', function () {
+                self.insert();
+              }, 'enter');
+              Y.one('#add-sample').on('click', function () {
+                self.insert();
+              });
+
+              Y.one('#delete-sample').on('click', function () {
+                var id = table.get('selectedRows')[0].record.get('id');
+                mp.broadcast('row-deleted', {id: id});
+              });
+            }
 
             //
             //  Set a listener to DT's cell editor save event so that we can synchronize
@@ -576,8 +612,9 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
               }
 
               if (e.colKey === 'bird' && newVal.common_name) {
+                Y.log(newVal);
                 Y.log(['testing', newVal.common_name, e.prevVal]);
-                Y.log('Editor: ' + e.editorName + 'in sample ' + id + ' saved newVal=' + newVal.common_name + ' oldVal=' + e.prevVal + ' colKey=' + e.colKey);
+                Y.log('Editor: ' + e.editorName + ' in sample ' + id + ' saved newVal=' + newVal.common_name + ' oldVal=' + e.prevVal + ' colKey=' + e.colKey);
                 options = {
                   params: {
                     body: {
@@ -588,17 +625,18 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                   },
                   rpc: true
                 };
+                Y.log('invoke update 1');
                 mp.invoke('update', options, function (err, data) {
                   if (err) {
-                    Y.log('update failed');
+                    Y.log('update 1 failed');
                   } else {
-                    Y.log('update successful');
+                    Y.log('update 1 successful');
                   }
                 });
               }
-              if (e.colKey === 'location_name' && newVal.name) {
+              else if (e.colKey === 'location_name' && newVal.name) {
                 Y.log(['testing', newVal.name, e.prevVal]);
-                Y.log('Editor: ' + e.editorName + 'in sample ' + id + ' saved newVal=' + newVal.name + ' oldVal=' + e.prevVal + ' colKey=' + e.colKey);
+                Y.log('Editor: ' + e.editorName + ' in sample ' + id + ' saved newVal=' + newVal.name + ' oldVal=' + e.prevVal + ' colKey=' + e.colKey);
                 options = {
                   params: {
                     body: {
@@ -614,16 +652,18 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                 // by the inlined editor, and it attempts to edit the stringified version of
                 // object. To prevet this, replace the object with its `name` property.
                 e.record.set('location_name', newVal.name);
+                Y.log('invoke update 2');
                 mp.invoke('update', options, function (err, data) {
                   if (err) {
-                    Y.log('update failed');
+                    Y.log('update 2 failed');
                   } else {
-                    Y.log('update successful');
+                    Y.log('update 2 successful');
                   }
                 });
-              } else {
+              }
+              else {
                 Y.log(['testing', newVal, e.prevVal]);
-                Y.log('Editor: ' + e.editorName + 'in sample ' + id + ' saved newVal=' + newVal + ' oldVal=' + e.prevVal + ' colKey=' + e.colKey);
+                Y.log('Editor: ' + e.editorName + ' in sample ' + id + ' saved newVal=' + newVal + ' oldVal=' + e.prevVal + ' colKey=' + e.colKey);
                 if (newVal !== e.prevVal) {
                   options = {
                     params: {
@@ -635,11 +675,12 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                     },
                     rpc: true
                   };
+                  Y.log('invoke update 3');
                   mp.invoke('update', options, function (err, data) {
                     if (err) {
-                      Y.log('update failed');
+                      Y.log('update 3 failed');
                     } else {
-                      Y.log('update successful');
+                      Y.log('update 3 successful');
                     }
                   });
                 }
@@ -648,24 +689,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           } // got autocomplete options
         }); // invoke autocomplete data
       }, this)); // on domready
-
-      if (this.editable) {
-        // Enable/disable the Add button
-        Y.one('#new-sample-id').on('keyup', function (e) {
-          if (Y.one('#new-sample-id').get('value').match(/^ *$/)) {
-            Y.one('#add-sample').set('disabled', true);
-          } else {
-            Y.one('#add-sample').set('disabled', false);
-          }
-        });
-
-        Y.one('#new-sample-id').on('key', Y.bind(function () {
-          this.insert();
-        }, this), 'enter');
-        Y.one('#add-sample').on('click', Y.bind(function (e) {
-          this.insert();
-        }, this));
-      }
 
       // Refresh the content when user clicks refresh button.
       Y.one('#samples').delegate('click', function (e) {
@@ -678,9 +701,10 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       });
     }, // bind()
 
-    // insert a new row
+    // insert a new sample
     insert: function () {
       var
+        self = this,
         id = Y.Lang.trim(Y.one('#new-sample-id').get('value')),
         options = {
           params: {
@@ -691,30 +715,44 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           rpc: true
         };
 
-      this.mojitProxy.invoke('create', options, function (err, data) {
+      Y.log(this.mojitPorxy);
+      this.mojitProxy.invoke('find', options, function (err, data) {
         if (err) {
-          Y.log('create failed');
+          Y.log(err);
+          alert('server transaction error: ' + err);
         } else {
-          Y.log('create successful');
+          if (data.rowCount === 0) {
+            self.mojitProxy.invoke('create', options, function (err, data) {
+              if (err) {
+                Y.log('create failed');
+              } else {
+                // The create() method seems to be a better alternative to the above,
+                // but it does not work. It creates empty rows and does not sync.
+                sampleList.add([{
+                  id: id,
+                  emc_id: '',
+                  date: '',
+                  type: '',
+                  bird: '',
+                  age: '',
+                  sex: '',
+                  ring: '',
+                  clin_st: '',
+                  vital_st: '',
+                  capture_method: '',
+                  location: '',
+                  location_name: ''
+                }]);
+                // table.set('selectedRows', [0]); // (!) only because the row gets inserted at the top postion by default
+                Y.one('#new-sample-id').set('value', '');
+                Y.log('create successful');
+              }
+            });
+          } else {
+            alert('Sample with the ID of ' + id + ' already exists');
+          }
         }
       });
-
-      sampleList.add([{
-        id: id,
-        emc_id: '',
-        date: '',
-        type: '',
-        bird: '',
-        age: '',
-        sex: '',
-        ring: '',
-        clin_st: '',
-        vital_st: '',
-        capture_method: '',
-        location: '',
-        location_name: ''
-      }]);
-      Y.one('#new-sample-id').set('value', '');
     }
   };
 }, '0.0.1', {

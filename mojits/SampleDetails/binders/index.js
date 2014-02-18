@@ -44,6 +44,19 @@ YUI.add('SampleDetailsBinderIndex', function(Y, NAME) {
           rpc: true
         });
       }, this));
+
+      this.mojitProxy.listen('row-deleted', Y.bind(function (e) {
+        Y.log('row-deleted event received in SampleDetails', 'info', NAME);
+
+        // Can't use 'node' here for some reason. It exists, but is not
+        // rendered.
+        Y.one('#sample-details-header').setContent('Sample details');
+        if (!Y.one('#sample-details').hasClass('collapse')) {
+          Y.one('#sample-details').addClass('collapse');
+        }
+
+        Y.one('#sample-details-inner').setContent('Sample ' + e.data.id + ' has been deleted.');
+      }, this));
     }
 
   };

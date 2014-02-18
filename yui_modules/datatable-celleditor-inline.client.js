@@ -326,7 +326,6 @@ YUI.add('gallery-datatable-celleditor-inline', function (Y, NAME) {
           // If a "save" function was defined, run thru it and update the "value" setting
           var savefn = this.get('saveFn');
           val = (savefn && savefn.call) ? savefn.call(this, val) : val;
-          Y.log(['saveEditor', val]);
 
           // So value was initially okay, but didn't pass saveFn validation call ...
           if (val === undefined) {
@@ -1201,7 +1200,6 @@ YUI.add('gallery-datatable-celleditor-inline', function (Y, NAME) {
       //     configure the Y.Plugin.AutoComplete as a plugin to the editor INPUT node
       //---------
       editorCreated: function (o) {
-        Y.log('------------ AC editorCreated -----------');
         var
           inputNode = o.inputNode,
           // Get the users's editorConfig "autocompleteConfig" settings
@@ -1215,7 +1213,6 @@ YUI.add('gallery-datatable-celleditor-inline', function (Y, NAME) {
             render: true
           });
           // plug in the autocomplete and we're done ...
-          Y.log('-------------- plugging autocomplete ------------');
           inputNode.plug(Y.Plugin.AutoComplete, acConfig);
 
           // add this View class as a static prop on the ac plugin
