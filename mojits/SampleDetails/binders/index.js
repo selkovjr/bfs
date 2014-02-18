@@ -33,6 +33,7 @@ YUI.add('SampleDetailsBinderIndex', function(Y, NAME) {
 
         node.one('#sample-details-message').setContent('Loading data...');
 
+        console.log('refresh view');
         this.mojitProxy.refreshView({
           params: {
             body: {

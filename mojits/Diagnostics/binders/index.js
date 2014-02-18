@@ -12,7 +12,6 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
     Model,
     ModelList,
     modelList,
-    sampleIDFromParent,
     sampleID,
     createListener;
 
@@ -98,9 +97,6 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
      * have been constructed.
      */
     init: function (mojitProxy) {
-      sampleIDFromParent = Y.one('#sample_id').get('value');
-      sampleID = Y.one('#sample').get('value');
-
       this.mojitProxy = mojitProxy;
 
       // This function is an adapter between mojitProxy and ModelList.
@@ -113,7 +109,7 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
           options = {
             params: {
               body: {
-                id: sampleID
+                id: mojitProxy.pageData.get('sample')
               }
             }
           };
@@ -141,6 +137,7 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
      */
     bind: function (node) {
       var
+        sampleID = Y.one('#sample').get('value'),
         mp = this.mojitProxy,
         table,
         tableConfig,
@@ -163,7 +160,7 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
         };
 
       render = Y.bind(function () {
-        Y.log(['sample id', sampleID]);
+        Y.log(['render sample id', sampleID, mp.pageData.get('sample')]);
         if (this.editable) {
           if (sampleID !== '') {
             // Get the list of autocomplete options
@@ -398,7 +395,7 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
               var options = {
                 params: {
                   body: {
-                    id: sampleIDFromParent
+                    id: mp.pageData.get('sample')
                   }
                 },
                 rpc: true
@@ -408,7 +405,7 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
                   Y.log('create failed');
                 } else {
                   Y.log('create successful');
-                  sampleID = sampleIDFromParent;
+                  sampleID = mp.pageData.get('sample');
                   render();
                 }
               });
@@ -429,4 +426,4 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
 
     } // bind()
   };
-}, '0.0.1', {requires: ['event-mouseenter', 'mojito-client']});
+}, '0.0.1', {requires: ['event-mouseenter', 'mojito-client', 'mojito-data-addon']});

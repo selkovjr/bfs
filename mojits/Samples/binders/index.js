@@ -555,6 +555,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
             table.on('selection', function (e) {
               Y.log(['selection', e]);
+              mp.pageData.set('sample',  e.rows[0].record.get('id'));
               mp.broadcast('row-selected', {row: e.rows[0]});
             });
 
@@ -666,6 +667,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
     'autocomplete-highlighters',
     'event-mouseenter',
     'mojito-client',
+    'mojito-data-addon',
     'node-base',
     'datatable-sort',
     'datatable-scroll',
