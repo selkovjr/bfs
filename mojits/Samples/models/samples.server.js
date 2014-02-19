@@ -140,10 +140,10 @@ YUI.add('SamplesModel', function (Y, NAME) {
           'SELECT "attr", "val", "desc" FROM "ac" WHERE "class" = \'samples\' ORDER BY "ord"',
           Y.bind(function (err, result) {
             var ac = {};
+            this.pgClient.end();
             if (err) {
               callback(err);
             }
-            this.pgClient.end();
             Y.each(result.rows, function (option) {
               if (ac[option.attr] === undefined) {
                 ac[option.attr] = [];
@@ -179,10 +179,10 @@ YUI.add('SamplesModel', function (Y, NAME) {
         this.pgClient.query(
           sql,
           Y.bind(function (err, result) {
+            this.pgClient.end();
             if (err) {
               callback(err);
             }
-            this.pgClient.end();
             callback(null, result.rows);
           }, this)
         );
@@ -191,7 +191,7 @@ YUI.add('SamplesModel', function (Y, NAME) {
 
     create: function (arg, callback) {
       this.pgClient.connect(Y.bind(function (err) {
-        var sql = Y.substitute("INSERT into samples (id) VALUES ('{id}')", arg);
+        var sql = Y.substitute("INSERT INTO samples (id) VALUES ('{id}')", arg);
 
         if (err) {
           return console.error('could not connect to postgres', err);
@@ -201,13 +201,43 @@ YUI.add('SamplesModel', function (Y, NAME) {
         this.pgClient.query(
           sql,
           Y.bind(function (err, result) {
+            this.pgClient.end();
             if (err) {
               callback(err);
             }
             console.log('create successful');
             console.log(result);
-            this.pgClient.end();
             callback(null, result);
+          }, this)
+        );
+      }, this));
+    },
+
+    'delete': function (arg, callback) {
+      this.pgClient.connect(Y.bind(function (err) {
+        var sql = Y.substitute("DELETE FROM samples WHERE id = '{id}'", arg);
+
+        if (err) {
+          return console.error('could not connect to postgres', err);
+        }
+
+        console.log(sql);
+        this.pgClient.query(
+          sql,
+          Y.bind(function (err, result) {
+            this.pgClient.end();
+            if (err) {
+              callback(err);
+            }
+            else {
+              if (result.rowCount) {
+                console.log('delete successful');
+                callback(null, result);
+              } else {
+                console.log('update error');
+                callback('DELETE: no rows matching "' + arg.id  + '"');
+              }
+            }
           }, this)
         );
       }, this));

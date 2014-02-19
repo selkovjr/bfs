@@ -590,11 +590,36 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                 self.insert();
               });
 
+              // Delete listener
               Y.one('#delete-sample').on('click', function () {
-                var id = table.get('selectedRows')[0].record.get('id');
-                mp.broadcast('row-deleted', {id: id});
-              });
-            }
+                Y.log(table.get('selectedRows')[0]);
+                var
+                  row = table.get('selectedRows')[0],
+                  id = row.record.get('id'),
+                  index = row.recordIndex,
+                  options = {
+                    params: {
+                      body: {
+                        id: id
+                      }
+                    },
+                    rpc: true
+                  };
+
+                self.mojitProxy.invoke('delete', options, function (err, data) {
+                  if (err) {
+                    Y.log(err);
+                    alert('server transaction error: ' + err);
+                  } else {
+                    // This makes SampleDetails collapse
+                    mp.broadcast('row-deleted', {id: id});
+
+                    Y.log('removing index: ' + index);
+                    sampleList.remove(index);
+                  }
+                });
+              }); // on delete
+            } // if editable
 
             //
             //  Set a listener to DT's cell editor save event so that we can synchronize
@@ -724,32 +749,38 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           if (data.rowCount === 0) {
             self.mojitProxy.invoke('create', options, function (err, data) {
               if (err) {
-                Y.log('create failed');
+                Y.log('create failed: ' + err);
               } else {
                 // The create() method seems to be a better alternative to the above,
                 // but it does not work. It creates empty rows and does not sync.
-                sampleList.add([{
-                  id: id,
-                  emc_id: '',
-                  date: '',
-                  type: '',
-                  bird: '',
-                  age: '',
-                  sex: '',
-                  ring: '',
-                  clin_st: '',
-                  vital_st: '',
-                  capture_method: '',
-                  location: '',
-                  location_name: ''
-                }]);
+                sampleList.remove(0);
+                sampleList.add(
+                  [{
+                    id: id,
+                    emc_id: '',
+                    date: '',
+                    type: '',
+                    bird: '',
+                    age: '',
+                    sex: '',
+                    ring: '',
+                    clin_st: '',
+                    vital_st: '',
+                    capture_method: '',
+                    location: '',
+                    location_name: ''
+                  }],
+                  {
+                    index: sampleList.get('id').length // Getting ids just to see how many rows are there
+                  }
+                );
                 // table.set('selectedRows', [0]); // (!) only because the row gets inserted at the top postion by default
                 Y.one('#new-sample-id').set('value', '');
                 Y.log('create successful');
               }
             });
           } else {
-            alert('Sample with the ID of ' + id + ' already exists');
+            alert('Sample with this ID already exists: ' + id);
           }
         }
       });

@@ -89,6 +89,18 @@ YUI.add('Samples', function (Y, NAME) {
       });
     },
 
+    'delete': function (ac) {
+      var model = ac.models.get('samples');
+      model['delete'](ac.command.params.body, function (err, data) {
+        if (err) {
+          console.error('error condition');
+          ac.error(err);
+          return;
+        }
+        ac.done();
+      });
+    },
+
     find: function (ac) {
       var model = ac.models.get('samples');
       model.find(ac.command.params.body, function (err, data) {
