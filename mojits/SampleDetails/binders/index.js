@@ -15,6 +15,7 @@ YUI.add('SampleDetailsBinderIndex', function(Y, NAME) {
   Y.namespace('mojito.binders')[NAME] = {
     init: function(mojitProxy) {
       this.mojitProxy = mojitProxy;
+      this.processing = false;
     },
 
     /**
@@ -25,24 +26,31 @@ YUI.add('SampleDetailsBinderIndex', function(Y, NAME) {
      */
     bind: function(node) {
       this.mojitProxy.listen('row-selected', Y.bind(function (e) {
-        Y.log('broadcast event received in SampleDetails', 'info', NAME);
+        if (!this.processing) {
+          Y.log('refreshView begin');
+          this.processing = true;
+          Y.log('broadcast event received in SampleDetails', 'info', NAME);
 
-        if (node.one('#sample-details').hasClass('collapse')) {
-          node.one('#sample-details').removeClass('collapse');
+          if (node.one('#sample-details').hasClass('collapse')) {
+            node.one('#sample-details').removeClass('collapse');
+          }
+
+          node.one('#sample-details-message').setContent('Loading data...');
+
+          console.log('refresh view');
+          this.mojitProxy.refreshView({
+            params: {
+              body: {
+                id: e.data.row.record.get('id'),
+                location: e.data.row.record.get('location')
+              }
+            },
+            rpc: true
+          });
         }
-
-        node.one('#sample-details-message').setContent('Loading data...');
-
-        console.log('refresh view');
-        this.mojitProxy.refreshView({
-          params: {
-            body: {
-              id: e.data.row.record.get('id'),
-              location: e.data.row.record.get('location')
-            }
-          },
-          rpc: true
-        });
+        else {
+          Y.log('*********** refreshView prevented ************');
+        }
       }, this));
 
       this.mojitProxy.listen('row-deleted', Y.bind(function (e) {
@@ -57,6 +65,11 @@ YUI.add('SampleDetailsBinderIndex', function(Y, NAME) {
 
         Y.one('#sample-details-inner').setContent('Sample ' + e.data.id + ' has been deleted.');
       }, this));
+    },
+
+    onRefreshView: function () {
+      Y.log('refreshView done');
+      this.processing = false;
     }
 
   };
