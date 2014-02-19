@@ -616,6 +616,9 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
                     Y.log('removing index: ' + index);
                     sampleList.remove(index);
+
+                    // Row deletion loses selection
+                    Y.one('#delete-sample').set('disabled', true);
                   }
                 });
               }); // on delete
