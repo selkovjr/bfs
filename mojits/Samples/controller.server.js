@@ -14,7 +14,6 @@ YUI.add('Samples', function (Y, NAME) {
           if (err) {
             console.error('error condition');
             ac.error(err);
-            return;
           }
           ac.assets.addCss('./index.css');
           ac.done({
@@ -35,7 +34,6 @@ YUI.add('Samples', function (Y, NAME) {
         if (err) {
           console.error('error condition');
           ac.error(err);
-          return;
         }
         ac.done(data, 'json');
       });
@@ -47,7 +45,6 @@ YUI.add('Samples', function (Y, NAME) {
         if (err) {
           console.error('error condition');
           ac.error(err);
-          return;
         }
         ac.done(Y.JSON.stringify(data), 'json');
       });
@@ -59,7 +56,6 @@ YUI.add('Samples', function (Y, NAME) {
         if (err) {
           console.error('error condition');
           ac.error(err);
-          return;
         }
         ac.done(data, 'json');
       });
@@ -71,7 +67,6 @@ YUI.add('Samples', function (Y, NAME) {
         if (err) {
           console.error('error condition');
           ac.error(err);
-          return;
         }
         ac.done();
       });
@@ -83,7 +78,6 @@ YUI.add('Samples', function (Y, NAME) {
         if (err) {
           console.error('error condition');
           ac.error(err);
-          return;
         }
         ac.done();
       });
@@ -95,7 +89,6 @@ YUI.add('Samples', function (Y, NAME) {
         if (err) {
           console.error('error condition');
           ac.error(err);
-          return;
         }
         ac.done();
       });
@@ -107,7 +100,6 @@ YUI.add('Samples', function (Y, NAME) {
         if (err) {
           console.error('error condition');
           ac.error(err);
-          return;
         }
         ac.done(data, 'json');
       });

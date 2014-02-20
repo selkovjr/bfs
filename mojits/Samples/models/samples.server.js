@@ -174,7 +174,7 @@ YUI.add('SamplesModel', function (Y, NAME) {
 
       this.pgClient.connect(Y.bind(function (err) {
         if (err) {
-          return console.error('could not connect to postgres', err);
+          callback('could not connect to postgres; ' + err);
         }
         this.pgClient.query(
           sql,
@@ -183,7 +183,12 @@ YUI.add('SamplesModel', function (Y, NAME) {
             if (err) {
               callback(err);
             }
-            callback(null, result.rows);
+            if (result) {
+              callback(null, result.rows);
+            }
+            else {
+              callback(null, {rows: []});
+            }
           }, this)
         );
       }, this));
