@@ -125,6 +125,51 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
     }
   };
 
+  Y.DataTable.EditorOptions.birdAC = {
+    BaseViewClass:  Y.DataTable.BaseCellPopupEditor,
+    name:           'birdAC',
+    templateObject: {
+      html: '<input type="text" title="inline cell editor" class="<%= this.classInput %>" />'
+    },
+    inputKeys:   true,
+
+    // Set listeners to this View's instance ....
+    on: {
+      editorShow: function (e) {
+        // Because cell formatter does not get called in the popup editor version
+        if (typeof e.cell.value === 'object' && e.cell.value.common_name) {
+          // e.cell.value = e.cell.value.common_name;
+          e.inputNode.set('value', e.cell.value.common_name);
+        }
+      }
+    },
+
+    after: {
+      //---------
+      //  After the cell editor View is instantiated,
+      //    get the INPUT node and plugin the AutoComplete to it
+      //---------
+      editorCreated : function (o) {
+        var inputNode = o.inputNode,
+        acConfig = this.get('autocompleteConfig') || {},
+        editor = this;
+
+        // If input node exists and autocomplete-plugin is available, plug the sucker in!
+        if (inputNode && Y.Plugin.AutoComplete) {
+          acConfig = Y.merge(acConfig, {
+            alwaysShowList: true,
+            render: true
+          });
+          inputNode.plug(Y.Plugin.AutoComplete, acConfig);
+
+          // add this View class as a static prop on the ac plugin
+          inputNode.ac.editor = editor;
+          inputNode.ac.get('listNode').ancestor().addClass('bird-list');
+        }
+      }
+    }
+  };
+
   /**
    The only purpose of subclassing Y.DataTable.BaseCellInlineEditor
    is to apply the `location-list` style to its input node. Other than
@@ -383,10 +428,12 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           } else {
             acOptions = Y.JSON.parse(data);
 
-            tableConfig.columns[1].editor = 'inline'; // emc_id
+            // tableConfig.columns[1].editor = 'inline'; // emc_id
+            tableConfig.columns[1].editor = 'text'; // emc_id
 
             Y.mix(tableConfig.columns[2], { // date
-              editor: 'inlineDate',
+              // editor: 'inlineDate',
+              editor: 'date',
               editorConfig: {
                 dateFormat: '%Y-%m-%d'
               },
@@ -397,22 +444,27 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
             });
 
             Y.mix(tableConfig.columns[3], { // type
-              editor: 'inlineAC',
+              // editor: 'inlineAC',
+              // editorConfig: {
+              //   autocompleteConfig: {
+              //     source: acOptions.type,
+              //     minQueryLength: 0,
+              //     activateFirstItem: true,
+              //     resultFilters: autocompleteFilter,
+              //     resultHighlighter: 'phraseMatch',
+              //     on: {select: highlightCleanup}
+              //   },
+              //   on: {editorShow: nudge}
+              // }
+              editor: 'select',
               editorConfig: {
-                autocompleteConfig: {
-                  source: acOptions.type,
-                  minQueryLength: 0,
-                  activateFirstItem: true,
-                  resultFilters: autocompleteFilter,
-                  resultHighlighter: 'phraseMatch',
-                  on: {select: highlightCleanup}
-                },
-                on: {editorShow: nudge}
+                selectOptions: acOptions.type
               }
             });
 
             Y.mix(tableConfig.columns[4], { // bird
-              editor: 'inlineBirdAC',
+              // editor: 'inlineBirdAC',
+              editor: 'birdAC',
               editorConfig: {
                 autocompleteConfig: {
                   source: '/bird?q={query}',
@@ -808,7 +860,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
     'datasource-jsonschema',
     'gallery-datatable-selection',
     'gallery-datatable-editable',
-    'gallery-datatable-celleditor-inline',
+    // 'gallery-datatable-celleditor-inline',
+    'gallery-datatable-celleditor-popup',
     'gallery-datatable-paginator',
     'gallery-paginator-view'
   ]
