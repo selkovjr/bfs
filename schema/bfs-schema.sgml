@@ -454,7 +454,7 @@ CREATE VIEW v_samples_birds_locations AS
 CREATE EXTENSION IF NOT EXISTS hstore;
 
 CREATE SCHEMA audit;
-REVOKE ALL ON SCHEMA audit FROM public;
+-- REVOKE ALL ON SCHEMA audit FROM public;
 
 COMMENT ON SCHEMA audit IS 'Out-of-table audit/history logging tables and trigger functions';
 
@@ -663,6 +663,42 @@ SELECT audit.audit_table('samples');
 SELECT audit.audit_table('locations');
 SELECT audit.audit_table('diagnostics');
 SELECT audit.audit_table('sera');
+
+DROP ROLE IF EXISTS visitor;
+CREATE USER visitor WITH NOCREATEDB NOCREATEROLE NOCREATEUSER;
+
+DROP ROLE IF EXISTS users;
+CREATE USER users WITH NOCREATEDB NOCREATEROLE NOCREATEUSER;
+
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO visitor;
+GRANT ALL ON SCHEMA public TO users;
+GRANT ALL ON SCHEMA audit TO users;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO users;
+GRANT ALL ON ALL TABLES IN SCHEMA audit TO users;
+
+DROP ROLE IF EXISTS owner;
+CREATE USER owner IN ROLE users;
+
+DROP ROLE IF EXISTS scout;
+CREATE USER scout IN ROLE users;
+
+DROP ROLE IF EXISTS labrat;
+CREATE USER labrat IN ROLE users;
+
+DROP ROLE IF EXISTS nic;
+CREATE USER nic IN ROLE users;
+
+DROP ROLE IF EXISTS zura;
+CREATE USER zura IN ROLE users;
+
+DROP ROLE IF EXISTS jimsher;
+CREATE USER jimsher IN ROLE users;
+
+DROP ROLE IF EXISTS naira;
+CREATE USER naira IN ROLE users;
+
+DROP ROLE IF EXISTS larisa;
+CREATE USER larisa IN ROLE users;
 
   </functions>
 </metadata>

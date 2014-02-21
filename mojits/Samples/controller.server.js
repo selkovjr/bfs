@@ -10,6 +10,12 @@ YUI.add('Samples', function (Y, NAME) {
         user = ac.http.getRequest().user;
 
       if (user) {
+        // Using the index action as a sort of initialize() method
+        // to attach username to ll models.
+        Y.each(Y.namespace('mojito.models'), function (model) {
+          model.user = user.username;
+        });
+
         model.count(null, function (err, data) {
           if (err) {
             console.error('error condition');
