@@ -831,7 +831,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
     'autocomplete-highlighters',
     'event-mouseenter',
     'event-key',
-    'node-event-simulate',
     'mojito-client',
     'mojito-data-addon',
     'node-base',

@@ -426,4 +426,24 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
 
     } // bind()
   };
-}, '0.0.1', {requires: ['event-mouseenter', 'mojito-client', 'mojito-data-addon']});
+}, '0.0.1', {
+  requires: [
+    'autocomplete',
+    'autocomplete-highlighters',
+    'event-mouseenter',
+    'event-key',
+    'mojito-client',
+    'mojito-data-addon',
+    'node-base',
+    'cssfonts',
+    'cssbutton',
+    'dataschema-json',
+    'datatable-datasource',
+    'datasource-io',
+    'datasource-jsonschema',
+    'gallery-datatable-selection',
+    'gallery-datatable-editable',
+    'gallery-datatable-celleditor-inline'
+  ]
+});
+
