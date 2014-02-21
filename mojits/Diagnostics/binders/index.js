@@ -157,6 +157,9 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
         nudge = function (e) {
           // make sure the autocomplete list opens when the cell is blank
           e.inputNode.ac.sendRequest('');
+          if (e.inputNode.get('value') === 'undefined') {
+            e.inputNode.set('value', '');
+          }
         };
 
       render = Y.bind(function () {
