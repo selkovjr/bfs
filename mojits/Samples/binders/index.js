@@ -35,8 +35,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
     parseDataSchema: function (resp) {
       var parsed = Y.DataSchema.JSON.apply(this.get('dsSchema'), resp);
-      Y.log(resp);
-      Y.log(parsed);
       return {
         resp: resp,
         parsed: parsed,
@@ -88,46 +86,16 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
   });
 
   /**
-   The only purpose of subclassing Y.DataTable.BaseCellInlineEditor
-   is to apply the `bird-list` style to its input node. Other than
-   that, it is a a clone of the `inlineAC` editor.
-
-  @class Y.DataTable.EditorOptions.inlineBirdAC
-  @public
+   The purpose of subclassing Y.DataTable.BaseCellPopupEditor
+   is to apply the `bird-list` style to its input node, to set focus
+   to the input node, and to replace the bird object with the bird's
+   common name as input value. Other than that, it is just a clone of the
+   `autocomplete` editor.
   */
-  Y.DataTable.EditorOptions.inlineBirdAC = {
-    BaseViewClass:  Y.DataTable.BaseCellInlineEditor,
-    name:           'inlineBirdAC',
-    hideMouseLeave: false,
-
-    after: {
-      editorCreated: function (o) {
-        var
-          inputNode = o.inputNode,
-          // Get the users's editorConfig "autocompleteConfig" settings
-          acConfig = this.get('autocompleteConfig') || {},
-          editor = this;
-
-        if (inputNode && Y.Plugin.AutoComplete) {
-          // merge user settings with these required settings ...
-          acConfig = Y.merge(acConfig, {
-            alwaysShowList: true,
-            render: true
-          });
-          // plug in the autocomplete and we're done ...
-          inputNode.plug(Y.Plugin.AutoComplete, acConfig);
-
-          // add this View class as a static prop on the ac plugin
-          inputNode.ac.editor = editor;
-          inputNode.ac.get('listNode').ancestor().addClass('bird-list');
-        }
-      }
-    }
-  };
 
   Y.DataTable.EditorOptions.birdAC = {
-    BaseViewClass:  Y.DataTable.BaseCellPopupEditor,
-    name:           'birdAC',
+    BaseViewClass: Y.DataTable.BaseCellPopupEditor,
+    name: 'birdAC',
     templateObject: {
       html: '<input type="text" title="inline cell editor" class="<%= this.classInput %>" />'
     },
@@ -141,6 +109,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           // e.cell.value = e.cell.value.common_name;
           e.inputNode.set('value', e.cell.value.common_name);
         }
+        e.inputNode.focus();
       }
     },
 
@@ -149,8 +118,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       //  After the cell editor View is instantiated,
       //    get the INPUT node and plugin the AutoComplete to it
       //---------
-      editorCreated : function (o) {
-        var inputNode = o.inputNode,
+      editorCreated : function (e) {
+        var inputNode = e.inputNode,
         acConfig = this.get('autocompleteConfig') || {},
         editor = this;
 
@@ -171,46 +140,57 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
   };
 
   /**
-   The only purpose of subclassing Y.DataTable.BaseCellInlineEditor
-   is to apply the `location-list` style to its input node. Other than
-   that, it is a a clone of the `inlineAC` editor.
+   The purpose of subclassing Y.DataTable.BaseCellInlineEditor
+   is to apply the `location-list` style to its input node and
+   to set focus on it. Other than that, it is a a clone of the
+   `inlineAC` editor.
 
    This class may be replaced with something entirely different in
    the future (possibily a map widget with the option of adding new
    locations.
-
-  @class Y.DataTable.EditorOptions.inlineLocationAC
-  @public
   */
-  Y.DataTable.EditorOptions.inlineLocationAC = {
-    BaseViewClass:  Y.DataTable.BaseCellInlineEditor,
-    name:           'inlineLocationAC',
-    hideMouseLeave: false,
 
-    after: {
-      editorCreated: function (o) {
-        var
-          inputNode = o.inputNode,
-          // Get the users's editorConfig "autocompleteConfig" settings
-          acConfig = this.get('autocompleteConfig') || {},
-          editor = this;
+  Y.DataTable.EditorOptions.locationAC = {
+    BaseViewClass: Y.DataTable.BaseCellPopupEditor,
+    name: 'locationAC',
+    templateObject: {
+      html: '<input type="text" title="inline cell editor" class="<%= this.classInput %>" />'
+    },
+    inputKeys:   true,
 
-        if (inputNode && Y.Plugin.AutoComplete) {
-          // merge user settings with these required settings ...
-          acConfig = Y.merge(acConfig, {
-            alwaysShowList: true,
-            render: true
-          });
-          // plug in the autocomplete and we're done ...
-          inputNode.plug(Y.Plugin.AutoComplete, acConfig);
-
-          // add this View class as a static prop on the ac plugin
-          inputNode.ac.editor = editor;
-          inputNode.ac.get('listNode').ancestor().addClass('location-list');
-        }
+    // Set listeners to this View's instance ....
+    on: {
+      editorShow: function (e) {
+        e.inputNode.focus();
       }
-    }
-  };
+    },
+
+    after: {
+      //---------
+      //  After the cell editor View is instantiated,
+      //    get the INPUT node and plugin the AutoComplete to it
+      //---------
+      editorCreated : function (o) {
+        var
+          inputNode = o.inputNode,
+          acConfig = this.get('autocompleteConfig') || {},
+          editor = this;
+
+        // If input node exists and autocomplete-plugin is available, plug the sucker in!
+        if (inputNode && Y.Plugin.AutoComplete) {
+          acConfig = Y.merge(acConfig, {
+            alwaysShowList: true,
+            render: true
+          });
+          inputNode.plug(Y.Plugin.AutoComplete, acConfig);
+
+          // add this View class as a static prop on the ac plugin
+          inputNode.ac.editor = editor;
+          inputNode.ac.get('listNode').ancestor().addClass('location-list');
+        }
+      }
+    }
+  };
 
   /**
    * Constructor for the SamplesBinderIndex class.
@@ -290,6 +270,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         },
         nudge = function (e) {
           // make sure the autocomplete list opens when the cell is blank
+          e.inputNode.focus();
           e.inputNode.ac.sendRequest('');
         };
 
@@ -428,14 +409,17 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           } else {
             acOptions = Y.JSON.parse(data);
 
-            // tableConfig.columns[1].editor = 'inline'; // emc_id
             tableConfig.columns[1].editor = 'text'; // emc_id
 
             Y.mix(tableConfig.columns[2], { // date
-              // editor: 'inlineDate',
               editor: 'date',
               editorConfig: {
-                dateFormat: '%Y-%m-%d'
+                dateFormat: '%Y-%m-%d',
+                on: {
+                  editorShow: function (e) {
+                    e.inputNode.focus();
+                  }
+                }
               },
               prepFn: function (v) {
                 var dfmt = "%Y-%m-%d";
@@ -444,26 +428,32 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
             });
 
             Y.mix(tableConfig.columns[3], { // type
-              // editor: 'inlineAC',
+              // editor: 'select',
               // editorConfig: {
-              //   autocompleteConfig: {
-              //     source: acOptions.type,
-              //     minQueryLength: 0,
-              //     activateFirstItem: true,
-              //     resultFilters: autocompleteFilter,
-              //     resultHighlighter: 'phraseMatch',
-              //     on: {select: highlightCleanup}
-              //   },
-              //   on: {editorShow: nudge}
+              //   selectOptions: acOptions.type,
+              //   activateFirstItem: true,
+              //   on: {
+              //     editorShow: function (e) {
+              //       // Weird. There is no e.inputNode.
+              //       Y.one('select.myselect').focus();
+              //     }
+              //   }
               // }
-              editor: 'select',
+              editor: 'autocomplete',
               editorConfig: {
-                selectOptions: acOptions.type
+                autocompleteConfig: {
+                  source: acOptions.type,
+                  minQueryLength: 0,
+                  activateFirstItem: true,
+                  resultFilters: autocompleteFilter,
+                  resultHighlighter: 'phraseMatch',
+                  on: {select: highlightCleanup}
+                },
+                on: {editorShow: nudge}
               }
             });
 
             Y.mix(tableConfig.columns[4], { // bird
-              // editor: 'inlineBirdAC',
               editor: 'birdAC',
               editorConfig: {
                 autocompleteConfig: {
@@ -484,7 +474,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
             });
 
             Y.mix(tableConfig.columns[5], { // age
-              editor: 'inlineAC',
+              editor: 'autocomplete',
               editorConfig: {
                 autocompleteConfig: {
                   source: acOptions.age,
@@ -499,7 +489,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
             });
 
             Y.mix(tableConfig.columns[6], { // sex
-              editor: 'inlineAC',
+              editor: 'autocomplete',
               editorConfig: {
                 autocompleteConfig: {
                   source: acOptions.sex,
@@ -513,10 +503,10 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
               }
             });
 
-            tableConfig.columns[7].editor = 'inline'; // ring
+            tableConfig.columns[7].editor = 'text'; // ring
 
             Y.mix(tableConfig.columns[8], { // clin_st
-              editor: 'inlineAC',
+              editor: 'autocomplete',
               editorConfig: {
                 autocompleteConfig: {
                   source: acOptions.clin_st,
@@ -537,7 +527,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
             });
 
             Y.mix(tableConfig.columns[9], { // vital_st
-              editor: 'inlineAC',
+              editor: 'autocomplete',
               editorConfig: {
                 autocompleteConfig: {
                   source: acOptions.vital_st,
@@ -552,7 +542,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
             });
 
             Y.mix(tableConfig.columns[10], { // capture_method
-              editor: 'inlineAC',
+              editor: 'autocomplete',
               editorConfig: {
                 autocompleteConfig: {
                   minQueryLength: 0,
@@ -576,7 +566,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
             });
 
             Y.mix(tableConfig.columns[11], { // location_name
-              editor: 'inlineLocationAC',
+              editor: 'locationAC',
               editorConfig: {
                 autocompleteConfig: {
                   source: '/location?q={query}',
@@ -588,16 +578,13 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                   },
                   on: {
                     select: function (e) {
-                      // this.editor.saveEditor(e.result.raw);
                       this.editor.saveEditor(e.result.raw);
                     }
-                    // },
-                  } // on: {editorShow: nudge}
+                  }
                 }
               }
             });
 
-            Y.log(tableConfig);
             table = new Y.DataTable(tableConfig);
 
             table[sizeSyncMethod] = function () {
@@ -609,7 +596,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
             table.processPageRequest(1);
 
             table.on('selection', function (e) {
-              Y.log(['selection', e]);
               mp.pageData.set('sample',  e.rows[0].record.get('id'));
               mp.broadcast('row-selected', {row: e.rows[0]});
               if (self.editable) {
@@ -644,7 +630,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
               // Delete listener
               Y.one('#delete-sample').on('click', function () {
-                Y.log(table.get('selectedRows')[0]);
                 var
                   row = table.get('selectedRows')[0],
                   id = row.record.get('id'),
@@ -795,7 +780,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           rpc: true
         };
 
-      Y.log(this.mojitPorxy);
       this.mojitProxy.invoke('find', options, function (err, data) {
         if (err) {
           Y.log(err);
@@ -847,6 +831,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
     'autocomplete-highlighters',
     'event-mouseenter',
     'event-key',
+    'node-event-simulate',
     'mojito-client',
     'mojito-data-addon',
     'node-base',
@@ -860,7 +845,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
     'datasource-jsonschema',
     'gallery-datatable-selection',
     'gallery-datatable-editable',
-    // 'gallery-datatable-celleditor-inline',
     'gallery-datatable-celleditor-popup',
     'gallery-datatable-paginator',
     'gallery-paginator-view'
