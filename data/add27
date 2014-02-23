@@ -1,0 +1,13 @@
+#!/usr/bin/perl -n
+
+use strict;
+use warnings;
+
+my @cols = split("\t", $_);
+if (@cols == 26) {
+  chomp;
+  print "$_\t\n";
+}
+else {
+  print;
+}

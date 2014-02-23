@@ -1,0 +1,8 @@
+#!/usr/bin/perl -n
+
+use strict;
+use warnings;
+
+my @cols = split("\t", $_);
+my $n = @cols;
+print "$.\t$n\n";

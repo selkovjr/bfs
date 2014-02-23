@@ -29,6 +29,12 @@ tail reject.tab
 ```bash
 psql bfs < load_tables.sql
 ```
+To load Josanne's spreadsheet:
+
+```bash
+cut -f 1-27 131128_NicolaLewis-2.tab | ./add27 | ./fix-unknown-date > josanne.tab
+tail -n +2 josanne.tab | psql bfs -c '\copy josanne from STDIN'
+```
 
 ## Finding non-ASCII characters in files:
 

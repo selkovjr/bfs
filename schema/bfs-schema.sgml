@@ -700,5 +700,34 @@ CREATE USER naira IN ROLE users;
 DROP ROLE IF EXISTS larisa;
 CREATE USER larisa IN ROLE users;
 
+CREATE TABLE josanne (
+  source text,
+  Collecting_Institution text,
+  Collection_Date date,
+  Receipt_Date date,
+  Location text,
+  Country text,
+  State_Province text,
+  Latitude float,
+  Longitude float,
+  Host_Species text,
+  Host_Common_Name text,
+  Host_Identifier text,
+  Capture_Status text,
+  Health text,
+  Age text,
+  Behavior text,
+  Sample_Identifier text,
+  Sample_Material text,
+  Influenza_Test_Type text,
+  Influenza_Test_Result text,
+  Other_pathogens_tested_for text,
+  Other_pathogen_test_result text,
+  Habitat text,
+  Sex text,
+  Host_ID_Type text,
+  Sample_Transport_Medium text,
+  Strain_Name text
+);
   </functions>
 </metadata>

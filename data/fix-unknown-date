@@ -1,0 +1,12 @@
+#!/usr/bin/perl -n
+
+use strict;
+use warnings;
+
+my @field = split("\t", $_);
+foreach my $i (2, 3) {
+  if (not $field[$i] or $field[$i]) {
+    $field[$i] = '\N';
+  }
+}
+print join("\t", @field);
