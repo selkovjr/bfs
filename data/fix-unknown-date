@@ -5,7 +5,7 @@ use warnings;
 
 my @field = split("\t", $_);
 foreach my $i (2, 3) {
-  if (not $field[$i] or $field[$i]) {
+  if (not $field[$i] or $field[$i] =~ /unkn/i) {
     $field[$i] = '\N';
   }
 }
