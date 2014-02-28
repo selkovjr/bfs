@@ -67,6 +67,18 @@ hunted
 found dead
         </values>
       </attribute>
+      <attribute name="tos" type="text">
+        <description>Type of surveillance</description>
+        <source>user input</source>
+        <values>
+A	Active surveillance (e.g. trap); sampling not initiated by an outbreak
+F	Farm Sample
+K	Opportunistically sampled (e.g., hunter-killed or killed in order to take sample)
+M	Market Sample
+O	Sample collected in response to outbreak (sick or dying birds)
+U	Undetermined
+        </values>
+      </attribute>
       <attribute name="capture_method" type="text">
         <description></description>
         <source>user input</source>
