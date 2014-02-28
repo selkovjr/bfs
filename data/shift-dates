@@ -1,0 +1,26 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+my %tr;
+open TR, "<shifted_dates.tab" or die "Cannot open shifted_dates.tab: $!";
+while(<TR>) {
+  chomp;
+  my @field = split("\t", $_);
+  $tr{$field[0]} = $field[2];
+}
+close TR;
+
+# Two odd substitutions
+$tr{'217-267'} = '2010-09-11';
+$tr{'217-1865'} = '2010-04-27';
+
+while (<>) {
+  my @field = split("\t", $_);
+  if ($tr{$field[11]} and $field[2] =~ /200[56]/) { # 11: Host_Identifier; shift dates only for 2005-2006 (ids are not unique)
+    $field[2] = $tr{$field[11]};
+    $field[3] = '2010-02-18';
+  }
+  print join("\t", @field);
+}
