@@ -34,6 +34,7 @@ subadult
 juvenile
 first year
 second year
+undetermined
         </values>
       </attribute>
       <attribute name="sex" type="char" length="1">
@@ -131,6 +132,10 @@ other
       </attribute>
       <attribute name="name" type="text">
         <description>Name</description>
+        <source>user input</source>
+      </attribute>
+      <attribute name="province" type="text">
+        <description>State/province</description>
         <source>user input</source>
       </attribute>
       <attribute name="lat" type="seg">
