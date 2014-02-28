@@ -8,8 +8,14 @@ loadable SQL to initialise the database.
 
 ## Requirements:
 
-* **nsgmls** (part of **opensp**)
+* **nsgmls** (part of **sp** or **opensp**)
 * **graphviz**
+
+In Ubuntu, these requirements are satisfied with:
+
+```bash
+sudo aptitude install libgraphviz-perl sp
+```
 
 ## Synopsis:
 
