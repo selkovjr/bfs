@@ -1,0 +1,551 @@
+#!/usr/bin/env perl
+
+# Erasmus spreadsheet fields
+#
+#  0: Serial No.
+#  1: Week No.
+#  2: Sample ID
+#  3: Sample type
+#  4: Species (English)
+#  5: Age
+#  6: Sex
+#  7: EURING code
+#  8: Location
+#  9: Bird ring number
+# 10: Location type
+# 11: Collection date
+# 12: Arrival date
+# 13: Pool ID
+# 14: Indiv. ID
+# 15: Alliquote date
+# 16: Taqman date
+# 17: MA
+# 18: MA-Ct
+# 19: H5
+# 20: H5-Ct
+# 21: H7
+# 22: H7-Ct
+# 23: Virus isolation
+# 24: E1
+# 25: E2
+# 26: Virus pathotype
+# 27: HA subtype
+# 28: NA subtype
+# 29: Remarks
+# 30: LAT-Y
+# 31: LONG-X
+# 32: Health
+
+
+# Josanne's spreadsheet fields
+#
+#  0: source
+#  1: Collecting_Institution [always CIP047 - Erasmus - disregard]
+#  2: Collection_Date
+#  3: Receipt_Date
+#  4: Location
+#  5: Country
+#  6: State_Province
+#  7: Latitude
+#  8: Longitude
+#  9: Host_Species
+# 10: Host_Common_Name
+# 11: Host_Identifier
+# 12: Capture_Status
+# 13: Health
+# 14: Age
+# 15: Behavior
+# 16: Sample_Identifier
+# 17: Sample_Material
+# 18: Influenza_Test_Type
+# 19: Influenza_Test_Result
+# 20: Other_pathogens_tested_for (other than influenza)
+# 21: Other_pathogen_test_result (other than influenza)
+# 22: Habitat
+# 23: Sex
+# 24: Host_ID_Type
+# 25: Sample_Transport_Medium
+# 26: Strain_Name
+# 27: (empty) Other_Host_and_Sample_Data
+# 28: (empty)
+
+use strict;
+use warnings FATAL => qw( all );
+use feature qw/state say/;
+use 5.010;
+use Data::Dumper;
+
+my %field = (
+  samples => [
+    'Host_Identifier',   # id
+    'source',            # emc_id
+    'Collection_Date',   # date
+    'species',           # species (matching 'Host_Species'
+    'Age',               # age
+    'Sex',               # sex
+    '-',                 # ring
+    'Health',            # clin_st
+    '-',                 # vital_st
+    '-',                 # capture_method -- does not exist in the spreadsheet
+    'Location',          # location
+    'Sample_Material'    # type
+  ],
+
+  sera => [
+    'Sample ID',         # sample
+    '-',                 # date
+    '-',                 # status
+    '-'                  # plate
+  ],
+
+  diagnostics => [
+    'Sample ID',       # sample
+    'Receipt_Date',    # rec_date
+    '-',               # date
+    '-',               # pool
+    'Influenza_Test_Type',   # ma_status, h5_status, h7_status
+    'Influenza_Test_Result', # ma_status, h5_status, h7_status
+  ],
+
+  cultures => [
+    'Sample ID',       # sample
+    '-',               # id (AHVLA id)
+    '-',               # e1
+    '-',               # e2
+    '-',               # isolation
+    '-',               # pathotype
+    '-',               # ha_subtype
+    '-',               # na_subtype
+    'Strain_Name'      # name
+  ]
+);
+
+
+my %location = map {lc $_->[1] => $_->[0]} (
+  [1,  'Alkhasikhe Lake 1'],
+  [2,  'Alkhasikhe Lake 2'],
+  [3,  'Beshkenti'],
+  [4,  'Grigoleti'],
+  [5,  'Heretskari'],
+  [6,  'Hunting shop 1'],
+  [7,  'Jandari Lake'],
+  [8,  'Kazbegi Brewery'],
+  [9,  'Kumisi Lake'],
+  [10, 'Lagodekhi'],
+  [11, 'Lekiani'],
+  [12, 'Napareuli'],
+  [13, 'Natanebi'],
+  [14, 'Paliastomi Lake'],
+  [15, 'Ponichala Park'],
+  [16, 'Poti'],
+  [17, 'Pumping station'],
+  [18, 'Rustavi'],
+  [19, 'Tbilisi River'],
+  [20, 'Telavi'],
+  [21, 'village'],
+  [22, 'other'],
+);
+
+my %health = (
+  'hunted without clinical signs' => {clin_st => 'normal', vital_st => 'hunted'},
+  'live without clinical signs' => {clin_st => 'normal', vital_st => 'live'},
+  'H' => {clin_st => 'normal', vital_st => 'live'},
+  'D' => {clin_st => '\N', vital_st => 'found dead'},
+  'U' => {clin_st => '\N', vital_st => '\N'},
+);
+
+my %age = (
+  j => 'juvenile',
+  H => 'juvenile',
+  a => 'adult',
+  A => 'adult',
+  U => '\N',
+);
+
+my %sample_type = (
+  F => 'freash faeces',
+  OP => 'oral-pharyngeal',
+  COP => 'cloacal/op',
+  C => 'cloacal',
+  TS => 'tracheal swab'
+);
+
+my %isolation = (
+  positive => 't',
+  negative => 'f',
+  'not performed' => '\N',
+);
+
+my %id;
+my %duplicate = (
+  '217-2618' => 1,
+  '217-2577' => 1,
+  '217-2624' => 1,
+  '217-2616' => 1,
+  '217-2612' => 1,
+  '217-2578' => 1,
+  '217-2611' => 1,
+  '217-2596' => 1,
+  '217-2715' => 1,
+  '217-2623' => 1,
+  '217-2615' => 1,
+  '217-2617' => 1,
+  '217-2621' => 1,
+  '217-2622' => 1,
+  '217-2613' => 1,
+  '217-2614' => 1,
+  '217-2619' => 1,
+  '217-2620' => 1,
+  '217-2579' => 1,
+  '217-1609' => 1,
+  '217-2754' => 1,
+  '217-4237' => 1,
+  '217-3936' => 1,
+  '217-4363' => 1,
+  '217-1653' => 1,
+  '217-2557' => 1,
+  '217-2574' => 1,
+  '217-3745' => 1,
+  '217-3534' => 1,
+  '217-4366' => 1,
+  '217-4208' => 1,
+  '217-2846' => 1,
+  '217-2583' => 1,
+  '217-2575' => 1,
+  '217-4364' => 1,
+  '217-4101' => 1,
+  '217-5237' => 1,
+  '217-1608' => 1,
+  '217-2595' => 1,
+  '217-2606' => 1,
+  '217-1404' => 1,
+  '217-2609' => 1,
+  '217-3047' => 1,
+  '217-2755' => 1,
+  '217-2610' => 1,
+  '217-3061' => 1,
+  '217-1865' => 1,
+  '217-3982' => 1,
+  '217-5070' => 1,
+  '217-3738' => 1,
+  '217-3914' => 1,
+  '217-4139' => 1,
+  '217-3706' => 1,
+  '217-4269' => 1,
+  '217-355' => 1,
+  '217-3736' => 1,
+  '217-3679' => 1,
+  '217-2528' => 1,
+  '217-2868' => 1,
+  '217-4365' => 1,
+  '217-3747' => 1,
+  '217-4652' => 1,
+  '217-2090' => 1,
+  '217-3374' => 1,
+  '217-2931' => 1,
+  '217-2558' => 1,
+  '217-3733' => 1,
+  '217-3209' => 1,
+  '217-267' => 1,
+  '217-3495' => 1,
+  '217-5072' => 1,
+  '217-1654' => 1,
+  '217-2468' => 1,
+  '217-3791' => 1,
+  '217-1087' => 1,
+  '217-1659' => 1,
+  '217-3783' => 1,
+  '217-2555' => 1,
+  '217-3737' => 1,
+  '217-506' => 1,
+  '217-2828' => 1,
+  '217-2999' => 1,
+  '217-2736' => 1,
+  '217-2600' => 1,
+  '217-2103' => 1,
+  '217-3522' => 1,
+  '217-2665' => 1,
+  '217-5230' => 1,
+  '217-1616' => 1,
+  '217-3564' => 1,
+  '217-2599' => 1,
+  '217-3532' => 1,
+  '217-2608' => 1,
+  '217-3742' => 1,
+  '217-2091' => 1,
+  '217-2587' => 1,
+  '217-2576' => 1,
+  '217-2589' => 1,
+  '217-2107' => 1,
+  '217-3554' => 1,
+  '217-3741' => 1,
+  '217-5069' => 1,
+  '217-4367' => 1,
+  '217-2667' => 1,
+  '217-2582' => 1,
+  '217-2186' => 1,
+  '217-3735' => 1,
+  '217-507' => 1,
+  '217-3748' => 1,
+  '217-2914' => 1,
+  '217-3743' => 1,
+  '217-2544' => 1,
+  '217-2588' => 1,
+  '217-2601' => 1,
+  '217-3749' => 1,
+  '217-3740' => 1,
+  '217-2580' => 1,
+  '217-2584' => 1,
+  '217-2573' => 1,
+  '217-3744' => 1,
+  '217-2581' => 1,
+  '217-3746' => 1,
+  '217-2188' => 1,
+  '217-2782' => 1,
+  '217-15541' => 1
+);
+
+my @f;
+
+my %birdByName;
+my %birdByCommonName;
+open BIRDS, "<birds.tab" or die "can't open birds.tab: $!";
+while (<BIRDS>) {
+  chomp;
+  @f = split "\t";
+  $birdByName{lc $f[4]} = $f[0] if $f[4] and $f[4] ne '\N';
+  $birdByCommonName{lc $f[5]} = $f[0] if $f[5];
+}
+open BIRDS, "<domestic_birds.tab" or die "can't open domestic_birds.tab: $!";
+while (<BIRDS>) {
+  chomp;
+  @f = split "\t";
+  $birdByName{lc $f[4]} = $f[0] if $f[4] and $f[4] ne '\N';
+  $birdByCommonName{lc $f[5]} = $f[0] if $f[5];
+}
+
+open SAMPLE, ">josanne-samples.tab" or die "can't open samples.tab: $!";
+open DIAG, ">josanne-diagnostics.tab" or die "can't open diagnostics.tab: $!";
+open CULT, ">josanne-cultures.tab" or die "can't open cultures.tab: $!";
+open REJECT, ">josanne-reject.tab" or die "can't open reject.tab: $!";
+
+$_  = <>;
+chomp;
+my @header = split "\t", $_;
+
+my %column;
+my %reject;
+foreach my $i (0 .. $#header) {
+  $column{$header[$i]} = $i;
+  $reject{$header[$i]} = $i;
+}
+
+my @fields;
+
+while (<>) {
+  # last if $. > 4;
+  chomp;
+  @f = split "\t", $_;
+  foreach my $i (0 .. $#f) {
+    $f[$i] = '\N' unless $f[$i] gt '';
+    $f[$i] = 'N/A' if $f[$i] eq '#N/A';
+    $f[$i] =~ s/^\s+//;
+    $f[$i] =~ s/\s+$//;
+  }
+
+  # ------------- Samples -------------
+  undef @fields;
+  foreach my $key ( @{$field{samples}} ) {
+    if ($key eq 'Host_Identifier') {
+      my $text = $f[$column{$key}];
+      if ($duplicate{$text}) {
+        my $suffixed = "$text-a";
+        if ($id{$suffixed}) {
+          $suffixed = "$text-b";
+          if ($id{$suffixed}) {
+            $suffixed = "$text-c";
+            if ($id{$suffixed}) {
+              $suffixed = "$text-d";
+            }
+          }
+        }
+        $id{$suffixed}++;
+        push @fields, $suffixed;
+      }
+      else {
+        push @fields, $text;
+      }
+      delete $reject{$key};
+    }
+    elsif ($key eq 'species') {
+      my $id;
+      my $text = lc $f[$column{'Host_Species'}];
+      $text = 'larus cachinnans' if $text eq 'larus cachinnans cachinnans';
+      $text = 'larus genei' if $text eq 'chroicocephalus genei';
+      $text = 'larus argentatus' if $text eq 'larus argentatus cachinnans';
+      $text = 'sterna caspia' if $text eq 'hydroprogne caspia';  # this should be reversed
+      $text = 'chlidonias hybrida' if $text eq 'chlidonias hybridus';
+      $text = 'alcedo atthis' if $text eq 'alcedinidae';
+      $text = 'anser cygnoides' if $text eq 'anser sp'; # they are all domestic geese in this spreadsheet
+      $text = 'anas platyrhynchos' if $text eq 'anas sp'; # they are all domestic ducks in this spreadsheet
+      $text = 'corvus corone' if $text eq 'corvus corone cornix';
+      $text = 'eudromias morinellus' if $text eq 'charadrius morinellus';  # probably should be reversed
+      $text = 'cattle egret' if $text eq 'western cattle egret';
+      $text = 'common moorhen' if $text eq 'moorhen';
+      $text = 'eurasian blackbird' if $text eq 'blackbird';
+      $text = 'eurasian woodcock' if $text eq 'woodcock';
+      $text = 'european bee-eater' if $text eq 'bee-eater';
+      $text = 'greater white-fronted Goose' if $text eq 'white-fronted goose';
+      #$text = 'mallard' if $text eq 'domestic duck';
+      # 'domestic duck' needs to be kept this way; a few more domestic birds
+      # have now been added to taxonomy
+      $text = 'northern pintail' if $text eq 'pintail';
+      $text = 'northern shoveler' if $text eq 'shoveler';
+      $text = 'red-throated loon' if $text eq 'red-throated diver';
+      $text = 'swan goose' if $text eq 'goose';
+      if ( $text eq '\n' or $text eq 'domestic' ) {
+        push @fields, '\N';
+      }
+      elsif ( $id = $birdByCommonName{lc $text} ) {
+        push @fields, $id;
+      }
+      elsif ( $id = $birdByName{lc $text} ) {
+        push @fields, $id;
+      }
+      else {
+        # print Dumper(\%birdByName);
+        die "can't match species: '$text'";
+      }
+      delete $reject{'Species (English)'};
+    }
+    elsif ($key eq 'Age') {
+      my $text = $f[$column{$key}];
+      push @fields, ($age{$text} or $text);
+      delete $reject{$key};
+    }
+    elsif ($key eq 'Location') {
+      my $text = $f[$column{$key}];
+      push @fields, ($location{lc $text} or $text);
+      delete $reject{$key};
+    }
+    elsif ($key eq 'LAT-Y' or $key eq 'LONG-X') {
+      my $text = $f[$column{$key}];
+      $text =~ s%N/A%\\N%; #can't have text in a float field
+      push @fields, $text;
+      delete $reject{$key};
+    }
+    elsif ($key eq 'Health') {
+      my $text = $f[$column{$key}];
+      if ($health{$text}) {
+        push @fields, $health{$text}->{clin_st};
+        push @fields, $health{$text}->{vital_st};
+      }
+      else {
+        push @fields, '\N', '\N';
+      }
+      delete $reject{$key};
+    }
+    elsif ($key eq 'Sample_Material') {
+      my $text = $f[$column{$key}];
+      push @fields, ($sample_type{$text} or $text);
+      delete $reject{$key};
+    }
+    else {
+      if (defined $column{$key}) {
+        push @fields, $f[$column{$key}];
+        delete $reject{$key};
+      }
+      else {
+        # field does not exist in the spreadsheet
+        push @fields, '\N';
+      }
+    }
+  }
+
+  next if join('', @fields[2 .. 11]) eq '\N\N\N\N\N\N\N\N\N\N';
+
+  say SAMPLE join("\t", @fields) if not grep !/\\N/, @fields[2 .. -1];
+
+
+  # ------------- Diagnostics -------------
+  undef @fields;
+  foreach my $key ( @{$field{diagnostics}} ) {
+    if (0) {
+      # special treatment of fields
+    }
+    else {
+      if (defined $column{$key}) {
+        my $text = $f[$column{$key}];
+        $text =~ s/^n$/-/;
+        $text =~ s/^p$/+/;
+        push @fields, $text;
+        delete $reject{$key};
+      }
+      else {
+        # field does not exist in the spreadsheet
+        push @fields, '\N';
+      }
+    }
+  }
+  say DIAG join("\t", @fields);
+
+
+  # ------------- Cultures -------------
+  undef @fields;
+  my $isolation_not_null = undef;
+  foreach my $key ( @{$field{cultures}} ) {
+    if ($key eq 'Virus isolation') {
+      my $text = $f[$column{$key}];
+      push @fields, $isolation{lc $text};
+      $isolation_not_null = 1 unless $text eq 'not performed';
+      delete $reject{$key};
+    }
+    elsif ($key eq 'Virus pathotype') {
+      my $text = $f[$column{'Virus pathotype'}];
+      $text =~ s/not identifiable/unidentifiable/i;
+      push @fields, $text;
+      delete $reject{$key};
+    }
+    elsif ($key eq 'HA subtype') {
+      my $text = $f[$column{'HA subtype'}];
+      $text =~ s/^H //;
+      $text =~ s/not identifiable/unidentifiable/i;
+      push @fields, $text;
+      delete $reject{$key};
+    }
+    elsif ($key eq 'NA subtype') {
+      my $text = $f[$column{'NA subtype'}];
+      $text =~ s/^N //;
+      $text =~ s/not identifiable/unidentifiable/i;
+      push @fields, $text;
+      delete $reject{$key};
+    }
+    else {
+      if (defined $column{$key}) {
+        push @fields, $f[$column{$key}];
+        delete $reject{$key};
+      }
+      else {
+        # field does not exist in the spreadsheet
+        push @fields, '\N';
+      }
+    }
+  }
+  if ($isolation_not_null) {
+    say CULT join("\t", @fields);
+  }
+
+  # ------------- Rejected fields -------------
+  undef @fields;
+  foreach my $key ( sort keys %reject ) {
+    push @fields, $f[$column{$key}];
+  }
+  say REJECT join("\t", @fields);
+}
+
+# Print rejected headers
+undef @fields;
+foreach my $key ( sort keys %reject ) {
+  push @fields, $key;
+}
+say REJECT join("\t", @fields);
