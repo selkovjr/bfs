@@ -155,11 +155,8 @@ my %health = (
 );
 
 my %age = (
-  j => 'juvenile',
-  H => 'juvenile',
-  a => 'adult',
-  A => 'adult',
-  U => '\N',
+  # Other EMC categories do not map to our age system
+  U => 'undetermined',
 );
 
 my %sample_type = (
