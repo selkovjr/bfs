@@ -25,6 +25,11 @@
       "verbs": ["get"],
       "path": "/location",
       "call": "@Locations.find"
+    },
+    "location map": {
+      "verbs": ["get"],
+      "path": "/map",
+      "call": "@Map.index"
     }
   }
 ]

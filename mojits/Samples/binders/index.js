@@ -23,6 +23,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       ring: {},
       clin_st: {},
       vital_st: {},
+      tos: {},
       capture_method: {},
       location: {},
       location_name: {}
@@ -73,6 +74,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         'ring',
         'clin_st',
         'vital_st',
+        'tos',
         'capture_method',
         'location',
         'location_name'
@@ -345,12 +347,18 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           },
 
           { /* 10 */
+            key: 'tos',
+            label: 'Type of surveillance',
+            sortable: true
+          },
+
+          { /* 11 */
             key: 'capture_method',
             label: 'Capture method',
             sortable: true
           },
 
-          { /* 11 */
+          { /* 12 */
             key: 'location_name',
             label: 'Location',
             sortable: true,
@@ -541,7 +549,31 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
               }
             });
 
-            Y.mix(tableConfig.columns[10], { // capture_method
+            Y.mix(tableConfig.columns[10], { // tos
+              editor: 'autocomplete',
+              editorConfig: {
+                autocompleteConfig: {
+                  minQueryLength: 0,
+                  activateFirstItem: true,
+                  source: acOptions.tos,
+                  resultFilters: function (query, results) {
+                    query = query.toLowerCase();
+                    return Y.Array.filter(results, function (result) {
+                      return result.text.toLowerCase().indexOf(query) !== -1;
+                    });
+                  },
+                  resultHighlighter: 'phraseMatch',
+                  on: {
+                    select: function (e) {
+                      this.editor.saveEditor(e.result.raw);
+                    }
+                  }
+                },
+                on: {editorShow: nudge}
+              }
+            });
+
+            Y.mix(tableConfig.columns[11], { // capture_method
               editor: 'autocomplete',
               editorConfig: {
                 autocompleteConfig: {
@@ -565,7 +597,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
               }
             });
 
-            Y.mix(tableConfig.columns[11], { // location_name
+            Y.mix(tableConfig.columns[12], { // location_name
               editor: 'locationAC',
               editorConfig: {
                 autocompleteConfig: {
