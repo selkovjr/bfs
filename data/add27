@@ -1,5 +1,7 @@
 #!/usr/bin/perl -n
 
+# Add the 27-th field to each row where it is missing
+
 use strict;
 use warnings;
 
