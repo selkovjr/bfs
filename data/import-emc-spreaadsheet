@@ -52,6 +52,7 @@ my %field = (
     'Sex',               # sex
     'Bird ring number',  # ring
     'Health',            # clin_st, vital_st
+    '-',                 # tos -- does not exist in the spreadsheet
     '-',                 # capture_method -- does not exist in the spreadsheet
     'Location',          # location
     'Sample type',       # type
