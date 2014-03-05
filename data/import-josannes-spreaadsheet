@@ -77,18 +77,18 @@ use Data::Dumper;
 
 my %field = (
   samples => [
-    'Host_Identifier',   # id
-    'source',            # emc_id
-    'Collection_Date',   # date
-    'species',           # species (matching 'Host_Species'
-    'Age',               # age
-    'Sex',               # sex
-    '-',                 # ring
-    'Health',            # clin_st
-    '-',                 # vital_st
-    '-',                 # capture_method -- does not exist in the spreadsheet
-    'Location',          # location
-    'Sample_Material'    # type
+    'Host_Identifier',   # 1.     id
+    'source',            # 2.     emc_id
+    'Collection_Date',   # 3.     date
+    'species',           # 4.     species (matching 'Host_Species'
+    'Age',               # 5.     age
+    'Sex',               # 6.     sex
+    '-',                 # 7.     ring
+    'Health',            # 8, 9.  clin_st
+    '-',                 # 10.    vital_st
+    '-',                 # 11.    capture_method -- does not exist in the spreadsheet
+    'Location',          # 12.    location
+    'Sample_Material'    # 13.    type
   ],
 
   sera => [
@@ -122,28 +122,43 @@ my %field = (
 
 
 my %location = map {lc $_->[1] => $_->[0]} (
-  [1,  'Alkhasikhe Lake 1'],
-  [2,  'Alkhasikhe Lake 2'],
-  [3,  'Beshkenti'],
-  [4,  'Grigoleti'],
-  [5,  'Heretskari'],
-  [6,  'Hunting shop 1'],
-  [7,  'Jandari Lake'],
-  [8,  'Kazbegi Brewery'],
-  [9,  'Kumisi Lake'],
-  [10, 'Lagodekhi'],
-  [11, 'Lekiani'],
-  [12, 'Napareuli'],
-  [13, 'Natanebi'],
-  [14, 'Paliastomi Lake'],
-  [15, 'Ponichala Park'],
-  [16, 'Poti'],
-  [17, 'Pumping station'],
+  [-2, 'other'],
+  [-1, 'village'],
+  [1,  'Poti Sea Port'],
+  [1,  'Poti'],
+  [2,  'Paliastomi'],
+  [2,  'Paliastomi Lake'],
+  [3,  'Grigoleti'],
+  [4,  'Hunting shop1'],
+  [4,  'Hunting shop 1'],
+  [5,  'Lekiani'],
+  [5,  'Natanebi'],
+  [6,  'Chorokhi Delta'],
+  [7,  'Alkhasikhe Lake 1'],
+  [7,  'Khanchali Lake'],
+  [8,  'Alkhasikhe Lake 2'],
+  [8,  'Bogdvchsheni'],
+  [8,  'Bughdasheni Lake'],
+  [9,  'Madapapa'],
+  [9,  'Madatapa'],
+  [9,  'Madatapha Lake'],
+  [10, 'Kazbegi Brewery'],
+  [10, 'Pumping station'],
+  [10, 'Stalin Bridge'],
+  [10, 'Tblisi River'],
+  [10, 'Tbilisi River'],
+  [10, 'Tbilisi'],
+  [11, 'Kumisi Lake'],
+  [12, 'Ponichala Park'],
+  [13, 'Rustavi'],
+  [14, 'Jandari Lake'],
+  [15, 'Krasnogorski'],
+  [16, 'Napareuli'],
+  [16, 'Telavi'],
+  [17, 'Heretskari'],
+  [18, 'Beshkenti'],
   [18, 'Rustavi'],
-  [19, 'Tbilisi River'],
-  [20, 'Telavi'],
-  [21, 'village'],
-  [22, 'other'],
+  [19, 'Lagodekhi'],
 );
 
 my %health = (

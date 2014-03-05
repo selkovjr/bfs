@@ -1,22 +1,21 @@
-1	Alkhasikhe Lake 1	41.1442	43.4600
-2	Alkhasikhe Lake 2	41.1980	43.0000
-3	Beshkenti	41.7009	46.1512
-4	Grigoleti	42.0600	41.7100
-5	Heretskari	41.7090	46.0871
-6	Hunting shop 1	42.1761	41.7500
-7	Jandari Lake	41.4458	45.1988
-8	Kazbegi Brewery	41.7118	44.7898
-9	Kumisi Lake	41.5849	44.8636
-10	Lagodekhi	41.6589	46.1908
-11	Lekiani	41.7741	41.9033
-12	Napareuli	\N	\N
-13	Natanebi	41.7741	41.9033
-14	Paliastomi Lake	42.2247	41.9194
-15	Ponichala Park	41.6293	44.9307
-16	Poti	42.1534	41.6485
-17	Pumping station	41.6833	44.8280
-18	Rustavi	41.5738	45.0044
-19	Tbilisi River	41.6714	44.8441
-20	Telavi	41.9674	45.5260
-21	village	\N	\N
-22	other	\N	\N
+Location	Province	lat	long	id
+Poti Sea Port	Samegrelo	42.1494	41.6549	1
+Paliastomi Lake	Samegrelo	42.1228	41.7345	2
+Grigoleti	Guria	42.0409	41.7375	3
+Hunting shop 1	Guria	42.01115	41.77978	4
+Natanebi	Guria	41.9046	41.8039	5
+Chorokhi Delta	Ajara	41.5952	41.5796	6
+Khanchali Lake	Samtskhe-Javakheti	41.2562	43.5502	7
+Bughdasheni Lake	Samtskhe-Javakheti	41.2014	43.6861	8
+Madatapha  Lake	Samtskhe-Javakheti	41.1781	43.7842	9
+Tbilisi	Tbilisi	41.7118	44.7898	10
+Kumisi Lake	Kvemo Kartli	41.5849	44.8636	11
+Ponichala Park	Tbilisi	41.6293	44.9307	12
+Rustavi	Tbilisi	41.5738	45.0044	13
+Jandari Lake	Kvemo Kartli	41.4458	45.1988	14
+Krasnogorski	Kakheti	41.7360	45.3400	15
+Telavi	Kakheti	41.9674	45.5260	16
+Heretskari	Kakheti	41.7090	46.0871	17
+Beshkenti	Kakheti	41.7009	46.1512	18
+Lagodekhi	Kakheti	41.6589	46.1908	19
+village		\N	\N	-1
