@@ -1,42 +1,5 @@
 #!/usr/bin/env perl
 
-# Erasmus spreadsheet fields
-#
-#  0: Serial No.
-#  1: Week No.
-#  2: Sample ID
-#  3: Sample type
-#  4: Species (English)
-#  5: Age
-#  6: Sex
-#  7: EURING code
-#  8: Location
-#  9: Bird ring number
-# 10: Location type
-# 11: Collection date
-# 12: Arrival date
-# 13: Pool ID
-# 14: Indiv. ID
-# 15: Alliquote date
-# 16: Taqman date
-# 17: MA
-# 18: MA-Ct
-# 19: H5
-# 20: H5-Ct
-# 21: H7
-# 22: H7-Ct
-# 23: Virus isolation
-# 24: E1
-# 25: E2
-# 26: Virus pathotype
-# 27: HA subtype
-# 28: NA subtype
-# 29: Remarks
-# 30: LAT-Y
-# 31: LONG-X
-# 32: Health
-
-
 # Josanne's spreadsheet fields
 #
 #  0: source
@@ -348,8 +311,18 @@ my %column;
 my %reject;
 foreach my $i (0 .. $#header) {
   $column{$header[$i]} = $i;
-  $reject{$header[$i]} = $i;
+  $reject{$header[$i]} = $i unless $header[$i] =~ /^Other/ # all NA in these fields
 }
+# These fields are useless
+delete $reject{Collecting_Institution}; # always CIP047
+delete $reject{Country}; # always Georgia
+delete $reject{Habitat}; # either unknown or null
+delete $reject{Host_ID_Type}; # all null
+delete $reject{Latitude}; # processed separately
+delete $reject{Longitude}; # processed separately
+delete $reject{State_Province}; # processed separately
+delete $reject{Sample_Identifier}; # always VTM/VMT
+delete $reject{Sample_Transport_Medium}; # copy of Host_Identifier
 
 my @fields;
 
@@ -427,7 +400,7 @@ while (<>) {
         # print Dumper(\%birdByName);
         die "can't match species: '$text'";
       }
-      delete $reject{'Species (English)'};
+      delete $reject{'Host_Species'};
     }
     elsif ($key eq 'Age') {
       my $text = $f[$column{$key}];
