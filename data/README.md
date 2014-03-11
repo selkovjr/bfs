@@ -29,11 +29,19 @@ tail reject.tab
 ```bash
 psql bfs < load_tables.sql
 ```
-To load Josanne's spreadsheet:
+To load the raw form of Josanne's spreadsheet:
 
 ```bash
 cut -f 1-27 131128_NicolaLewis-2.tab | ./add27 | ./fix-unknown-date | ./shift-dates > josanne.tab
 tail -n +2 josanne.tab | psql bfs -c '\copy josanne from STDIN'
+```
+
+To load parsed tables from Josanne's spreadsheet:
+
+```sql
+DROP TABLE j_samples;
+SELECT * INTO j_samples FROM samples LIMIT 0;
+\copy j_samples from josanne-samples.tab
 ```
 
 ## Finding non-ASCII characters in files:
@@ -41,3 +49,13 @@ tail -n +2 josanne.tab | psql bfs -c '\copy josanne from STDIN'
 ```bash
 cat NFB-DB_SpecList_final.tab | tr -s '[[:punct:][:space:]]' '\n' | perl -nE'say if/[\x80-\xFF]/' | sort -u
 ```
+
+## Merge conflicts
+
+### Sex
+```sql
+SELECT s.sex, j.sex FROM samples s, j_samples j WHERE s.id = j.id AND NOT (s.sex IS NULL AND j.sex = 'U') AND s.sex <> j.sex;
+```
+This query shows a perfect match except for `U` in Josanne's set corresponding
+to NULL in the earlier EMC set.
+
