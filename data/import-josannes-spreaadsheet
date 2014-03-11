@@ -326,6 +326,7 @@ delete $reject{Sample_Identifier}; # always VTM/VMT
 delete $reject{Sample_Transport_Medium}; # copy of Host_Identifier
 
 my @fields;
+my $suffixed;
 
 while (<>) {
   # last if $. > 4;
@@ -341,11 +342,12 @@ while (<>) {
 
   # ------------- Samples -------------
   undef @fields;
+  $suffixed = '';
   foreach my $key ( @{$field{samples}} ) {
     if ($key eq 'Host_Identifier') {
       my $text = $f[$column{$key}];
       if ($duplicate{$text}) {
-        my $suffixed = "$text-a";
+        $suffixed = "$text-a";
         if ($id{$suffixed}) {
           $suffixed = "$text-b";
           if ($id{$suffixed}) {
@@ -456,6 +458,15 @@ while (<>) {
   # ------------- Diagnostics -------------
   undef @fields;
   foreach my $key ( @{$field{diagnostics}} ) {
+    if ($key eq 'Host_Identifier') {
+      my $text = $f[$column{$key}];
+      if ($suffixed) {
+        push @fields, $suffixed;
+      }
+      else {
+        push @fields, $text;
+      }
+    }
     if ($key eq 'Influenza_Test_Result') {
       my $text = $f[$column{$key}];
       $text =~ s/^"//;
@@ -517,6 +528,15 @@ while (<>) {
   undef @fields;
   my $isolation_not_null = undef;
   foreach my $key ( @{$field{cultures}} ) {
+    if ($key eq 'Host_Identifier') {
+      my $text = $f[$column{$key}];
+      if ($suffixed) {
+        push @fields, $suffixed;
+      }
+      else {
+        push @fields, $text;
+      }
+    }
     if ($key eq 'Influenza_Test_Result') {
       my $text = $f[$column{$key}];
       $text =~ s/^"//;
