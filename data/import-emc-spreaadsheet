@@ -91,6 +91,7 @@ my %field = (
     'Virus pathotype', # pathotype
     'HA subtype',      # ha_subtype
     'NA subtype',      # na_subtype
+    '-'                # name
   ]
 );
 

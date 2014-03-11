@@ -31,7 +31,8 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
       h7_ct: {},
       h7_pt: {},
       h9_status: {},
-      h9_ct: {}
+      h9_ct: {},
+      name: {}
     }
   });
 
@@ -79,7 +80,8 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
         'h7_ct',
         'h7_pt',
         'h9_status',
-        'h9_ct'
+        'h9_ct',
+        'name'
       ]
     }
   });
@@ -157,6 +159,11 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
         nudge = function (e) {
           // make sure the autocomplete list opens when the cell is blank
           e.inputNode.ac.sendRequest('');
+          if (e.inputNode.get('value') === 'undefined') {
+            e.inputNode.set('value', '');
+          }
+        },
+        resetUndefined = function (e) {
           if (e.inputNode.get('value') === 'undefined') {
             e.inputNode.set('value', '');
           }
@@ -337,6 +344,15 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
                     key: 'h9_ct',
                     label: 'H9 Ct',
                     editor: 'inlineNumber'
+                  },
+
+                  {
+                    key: 'name',
+                    label: 'Name',
+                    editor: 'inline',
+                    editorConfig: {
+                      on: {editorShow: resetUndefined}
+                    }
                   }
                 ],
 

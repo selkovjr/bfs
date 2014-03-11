@@ -322,6 +322,10 @@ unidentifiable
         <description>Neuraminidase subtype</description>
         <source>user input</source>
       </attribute>
+      <attribute name="name" type="text">
+        <description>The name of the isolate</description>
+        <source>user input</source>
+      </attribute>
     </class>
 
 
