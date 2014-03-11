@@ -365,6 +365,10 @@ while (<>) {
       }
       delete $reject{$key};
     }
+    elsif ($key eq 'Sex') {
+      my $text = uc $f[$column{'Sex'}];
+      push @fields, $text;
+    }
     elsif ($key eq 'species') {
       my $id;
       my $text = lc $f[$column{'Host_Species'}];
