@@ -62,24 +62,25 @@ my %field = (
   ],
 
   diagnostics => [
-    'Sample ID',       # sample
-    'Receipt_Date',    # rec_date
-    '-',               # date
-    '-',               # pool
-    'Influenza_Test_Type',   # ma_status, h5_status, h7_status
-    'Influenza_Test_Result', # ma_status, h5_status, h7_status
+    'Host_Identifier',       # sample
+    'Receipt_Date',          # rec_date
+    '-',                     # date
+    '-',                     # pool
+    'Influenza_Test_Result', # ma_status, ma_ct, h5_status, h5_ct, h5_pt, h7_status, h7_ct, h7_pt
+    '-',                     # h9_status
+    '-',                     # h9_ct
   ],
 
   cultures => [
-    'Sample ID',       # sample
-    '-',               # id (AHVLA id)
-    '-',               # e1
-    '-',               # e2
-    '-',               # isolation
-    '-',               # pathotype
-    '-',               # ha_subtype
-    '-',               # na_subtype
-    'Strain_Name'      # name
+    'Host_Identifier',       # sample
+    '-',                     # id (AHVLA id)
+    '-',                     # e1
+    '-',                     # e2
+    'Influenza_Test_Result', # isolation
+    '-',                     # pathotype
+    '-',                     # ha_subtype
+    '-',                     # na_subtype
+    'Strain_Name'            # name
   ]
 );
 
@@ -328,8 +329,9 @@ my @fields;
 
 while (<>) {
   # last if $. > 4;
-  chomp;
-  @f = split "\t", $_;
+  chop;
+  @f = split /\t/, $_;
+  push @f, '' if (@f == 26);
   foreach my $i (0 .. $#f) {
     $f[$i] = '\N' unless $f[$i] gt '';
     $f[$i] = 'N/A' if $f[$i] eq '#N/A';
@@ -454,14 +456,51 @@ while (<>) {
   # ------------- Diagnostics -------------
   undef @fields;
   foreach my $key ( @{$field{diagnostics}} ) {
-    if (0) {
-      # special treatment of fields
+    if ($key eq 'Influenza_Test_Result') {
+      my $text = $f[$column{$key}];
+      $text =~ s/^"//;
+      $text =~ s/"$//;
+      my ($ma, $h5, $h7) = split /\s*,\s*/, $text;
+      if ($ma) { # ma_status
+        $ma =~ s/^n$/-/i;
+        $ma =~ s/^p$/+/i;
+        push @fields, $ma;
+      }
+      else {
+        push @fields, '\N';
+      }
+
+      push @fields, '\N'; # ma_ct
+
+      if ($h5) { # h5_status
+        $h5 =~ s/^n$/-/i;
+        $h5 =~ s/^p$/+/i;
+        push @fields, $h5;
+      }
+      else {
+        push @fields, '\N';
+      }
+
+      push @fields, '\N'; # h5_ct
+      push @fields, '\N'; # h5_pt
+
+      if ($h7) { # h7_status
+        $h7 =~ s/^n$/-/i;
+        $h7 =~ s/^p$/+/i;
+        push @fields, $h7;
+      }
+      else {
+        push @fields, '\N';
+      }
+
+      push @fields, '\N'; # h7_ct
+      push @fields, '\N'; # h7_pt
+
+      delete $reject{$key};
     }
     else {
       if (defined $column{$key}) {
         my $text = $f[$column{$key}];
-        $text =~ s/^n$/-/;
-        $text =~ s/^p$/+/;
         push @fields, $text;
         delete $reject{$key};
       }
@@ -478,34 +517,20 @@ while (<>) {
   undef @fields;
   my $isolation_not_null = undef;
   foreach my $key ( @{$field{cultures}} ) {
-    if ($key eq 'Virus isolation') {
+    if ($key eq 'Influenza_Test_Result') {
       my $text = $f[$column{$key}];
-      push @fields, $isolation{lc $text};
-      $isolation_not_null = 1 unless $text eq 'not performed';
-      delete $reject{$key};
-    }
-    elsif ($key eq 'Virus pathotype') {
-      my $text = $f[$column{'Virus pathotype'}];
-      $text =~ s/not identifiable/unidentifiable/i;
-      push @fields, $text;
-      delete $reject{$key};
-    }
-    elsif ($key eq 'HA subtype') {
-      my $text = $f[$column{'HA subtype'}];
-      $text =~ s/^H //;
-      $text =~ s/not identifiable/unidentifiable/i;
-      push @fields, $text;
-      delete $reject{$key};
-    }
-    elsif ($key eq 'NA subtype') {
-      my $text = $f[$column{'NA subtype'}];
-      $text =~ s/^N //;
-      $text =~ s/not identifiable/unidentifiable/i;
-      push @fields, $text;
-      delete $reject{$key};
+      $text =~ s/^"//;
+      $text =~ s/"$//;
+      my ($ma, $h5, $h7, $isolation) = split /\s*,\s*/, $text;
+      if ($isolation) { # ma_status
+        $isolation =~ s/^n$/f/i;
+        $isolation =~ s/^p$/t/i;
+        push @fields, $isolation;
+        $isolation_not_null = 1;
+      }
     }
     else {
-      if (defined $column{$key}) {
+      if (defined $column{$key} and defined $f[$column{$key}]) {
         push @fields, $f[$column{$key}];
         delete $reject{$key};
       }
