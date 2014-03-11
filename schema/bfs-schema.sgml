@@ -161,27 +161,26 @@ other
         <source>user input</source>
       </attribute>
       <init>
-1	Alkhasikhe Lake 1	Samtskhe-Javakheti	041.1442	43.4600
-2	Alkhasikhe Lake 2	Samtskhe-Javakheti	041.1980	43.0000
-3	Beshkenti	Kakheti	041.7009	46.1512
-4	Grigoleti	Guria	042.0600	41.7100
-5	Heretskari	Kakheti	041.7090	46.0871
-6	Hunting shop 1	Guria	042.1761	41.7500
-7	Jandari Lake	Kvemo Kartli	041.4458	45.1988
-8	Kazbegi Brewery	Tbilisi	041.7118	44.7898
-9	Kumisi Lake	Kvemo Kartli	041.5849	44.8636
-10	Lagodekhi	Kakheti	041.6589	46.1908
-11	Lekiani	Guria	041.7741	41.9033
-12	Napareuli	Kakheti	41.9674	45.526
-13	Natanebi	Guria	041.7741	41.9033
-14	Paliastomi Lake	Samegrelo	042.2247	41.9194
-15	Ponichala Park	Tbilisi	041.6293	44.9307
-16	Poti	Samegrelo	042.1534	41.6485
-17	Pumping station	Tbilisi	041.6833	44.8280
-18	Rustavi	Tbilisi	041.5738	45.0044
-19	Tbilisi River	Tbilisi	041.6714	44.8441
-20	Telavi	Kakheti	041.9674	45.5260
-21	village		\N	\N
+1	Poti Sea Port	Samegrelo	42.1494	41.6549
+2	Paliastomi Lake	Samegrelo	42.1228	41.7345
+3	Grigoleti	Guria	42.0409	41.7375
+4	Hunting shop 1	Guria	42.01115	41.77978
+5	Natanebi	Guria	41.9046	41.8039
+6	Chorokhi Delta	Ajara	41.5952	41.5796
+7	Khanchali Lake	Samtskhe-Javakheti	41.2562	43.5502
+8	Bughdasheni Lake	Samtskhe-Javakheti	41.2014	43.6861
+9	Madatapha  Lake	Samtskhe-Javakheti	41.1781	43.7842
+10	Tbilisi	Tbilisi	41.7118	44.7898
+11	Kumisi Lake	Kvemo Kartli	41.5849	44.8636
+12	Ponichala Park	Tbilisi	41.6293	44.9307
+13	Rustavi	Tbilisi	41.5738	45.0044
+14	Jandari Lake	Kvemo Kartli	41.4458	45.1988
+15	Krasnogorski	Kakheti	41.7360	45.3400
+16	Telavi	Kakheti	41.9674	45.5260
+17	Heretskari	Kakheti	41.7090	46.0871
+18	Beshkenti	Kakheti	41.7009	46.1512
+19	Lagodekhi	Kakheti	41.6589	46.1908
+-1	village		\N	\N
       </init>
     </class>
 
