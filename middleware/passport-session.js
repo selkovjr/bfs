@@ -16,7 +16,6 @@ module.exports = function (req, res, next) {
     // Not sure if i attach to anything
     if (!req.isAuthenticated() && !req.url.match(/login|static/)) {
       // console.log('middleware/passport-session/passport session(): unauthenticated; redirecting');
-      // res.send('Please <a href="/login">log in</a>');
       req.method = 'post';
       res.redirect('/login');
     }

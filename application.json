@@ -1,13 +1,6 @@
 [
   {
     "settings": [ "master" ],
-    "appPort": "3300",
-    "middleware": [
-      "./middleware/connect-cookie-parser.js",
-      "./middleware/connect-session.js",
-      "./middleware/passport.js",
-      "./middleware/passport-session.js"
-    ],
     "yui": {
       "dependencyCalculations": "precomputed+ondemand",
       "config": {
