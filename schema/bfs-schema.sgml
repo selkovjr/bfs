@@ -357,6 +357,36 @@ NS
       </attribute>
     </class>
 
+    <!-- ***************=** N O T E S *********************** -->
+    <class name="notes" group="fact">
+      <description>Annotations for table data</description>
+      <source>user input</source>
+      <attribute name="class" type="text">
+        <description>Database class (table)</description>
+        <source>schema</source>
+      </attribute>
+      <attribute name="id" type="text">
+        <description>Row id</description>
+        <source>auto</source>
+      </attribute>
+      <attribute name="attr" type="text">
+        <description>Class attribute</description>
+        <source>auto</source>
+      </attribute>
+      <attribute name="user" type="text">
+        <description>The id of the user who left the note</description>
+        <source>auto</source>
+      </attribute>
+      <attribute name="when" type="timestamp">
+        <description>Autocomplete option</description>
+        <source>auto</source>
+      </attribute>
+      <attribute name="text" type="text">
+        <description>Note text</description>
+        <source>user input</source>
+      </attribute>
+    </class>
+
     <!-- ******************* B I R D S ************************ -->
     <class name="birds" group="reference">
       <description>Bird taxonomy</description>
