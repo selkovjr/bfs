@@ -59,7 +59,8 @@ YUI.add('SamplesModel', function (Y, NAME) {
         itemsPerPage = arg.itemsPerPage || 3,
         sortKeys = [{'id': 1}],
         sql,
-        totalItems;
+        totalItems,
+        idList = [];
 
       if (typeof arg.sortBy === 'string') {
         sortKeys = Y.JSON.parse(arg.sortBy);
@@ -91,6 +92,7 @@ YUI.add('SamplesModel', function (Y, NAME) {
         if (err) {
           callback(err);
         }
+
         this.pgClient.query(
           'SELECT count(*) FROM "samples"',
           function (err, result) {
@@ -100,13 +102,13 @@ YUI.add('SamplesModel', function (Y, NAME) {
             totalItems = parseInt(result.rows[0].count, 10); // Pg client stringifies numbers. There is an ongoing discussion about that.
           }
         );
+
         console.log(sql);
         this.pgClient.query(
           sql,
           Y.bind(function (err, result) {
-            this.pgClient.end();
+            var notesQuery;
 
-            var ac = {};
             if (err) {
               callback(err);
             }
@@ -118,6 +120,7 @@ YUI.add('SamplesModel', function (Y, NAME) {
             };
             // find out about the use of node pg parsers for this
             Y.each(result.rows, function (row) {
+              idList.push(row.id);
               row.date = Y.DataType.Date.format(row.date, {format: "%Y-%m-%d"});
               Y.each(row, function (v, k) {
                 if (v === null) {
@@ -126,7 +129,30 @@ YUI.add('SamplesModel', function (Y, NAME) {
               });
             });
 
-            callback(null, result);
+            notesQuery = 'SELECT * FROM notes WHERE "class" = \'samples\' AND id IN (' + Y.Array.map(idList, function (arg) {
+              return "'" + arg + "'";
+            }).join(', ') + ')';
+
+            console.log(notesQuery);
+            this.pgClient.query(
+              notesQuery,
+              function (err, notesResult) {
+                if (err) {
+                  callback(err);
+                }
+                result.notes = {};
+                Y.each(notesResult.rows, function (note) {
+                  result.notes[note.id] = {
+                    attr: note.attr,
+                    user: note.user,
+                    when: note.when,
+                    text: note.text
+                  };
+                });
+                callback(null, result);
+              }
+            );
+            this.pgClient.end();
           }, this)
         );
       }, this));

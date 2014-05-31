@@ -7,7 +7,7 @@ h2 {
   text-shadow: 2px 2px 3px #ccc;
 }
 
-div.mod{
+div.mod {
   background-color: #F9F9FC;
   border: 1px solid #D4D8EB;
   border-radius: 4px;
@@ -79,6 +79,14 @@ div.mod div.inner {
 /** collapse module **/
 div.mod.collapse div.inner {
   display:none;
+}
+
+/* Annotations */
+
+.annotated {
+  background-image: url(images/annotated.png);
+  background-position: right bottom;
+  background-repeat: no-repeat;
 }
 
 .page-footer {

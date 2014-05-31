@@ -82,7 +82,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       metaFields: {
         indexStart: 'paging.itemIndexStart',
         pageRecs:   'paging.itemsPerPage',
-        totalItems: 'paging.totalItems' // corresponds to 'totalItems' in  serverPaginationMap
+        totalItems: 'paging.totalItems', // corresponds to 'totalItems' in  serverPaginationMap
+        notes: 'notes'
       }
     }
   });
@@ -388,13 +389,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
         paginatorResize:    true,
         paginationSource:  'server',
-
-        // No mapping is needed as the names match paginator's defaults.
-        // serverPaginationMap: {
-        //   totalItems:     'totalItems',
-        //   itemsPerPage:   'itemsPerPage',
-        //   itemIndexStart: 'itemIndexStart'
-        // },
 
         highlightMode: 'row',
         selectionMode: 'row',
@@ -783,9 +777,29 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                 }
               }
             });
+
+            // Mark annotated data cells
+            table.data.after('load', function (e) {
+              var notes = e.details[0].response.notes;
+              Y.each(notes, function (note, id) {
+                var key = (note.attr === 'species') ? 'bird' : note.attr;
+                var record = table.getRecord(id);
+                table.getRow(record).one('.yui3-datatable-col-' + key).addClass('annotated');
+              });
+            });
+
           } // got autocomplete options
         }); // invoke autocomplete data
       }, this)); // on domready
+
+      // Show annotation button on mouseenter
+      Y.one('#samples-table').delegate('mouseenter', function (e) {
+        var
+          target = e.currentTarget,
+          cellIndex = target.getDOMNode().cellIndex;
+        // col = this.get('columnset')._conf.data.value.definitions[cellIndex];
+        Y.log([cellIndex, table, table.get('columnset'), table.get('data')]);
+      }, 'td');
 
       // Refresh the content when user clicks refresh button.
       Y.one('#samples').delegate('click', function (e) {
