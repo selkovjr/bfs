@@ -806,6 +806,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
             // Mark annotated data cells
             table.data.after('load', function (e) {
               var notes = e.details[0].response.notes;
+              console.log(notes);
               Y.each(notes, function (attrNotes, id) {
                 var
                   key = (attrNotes.attr === 'species') ? 'bird' : attrNotes.attr, // Data comes from a view, so species becomes bird
@@ -813,13 +814,19 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                   cell = table.getRow(record).one('.yui3-datatable-col-' + key),
                   text = [];
 
-                Y.each(attrNotes.list, function (note) {
-                  text.push(note.text);
-                });
+                // Sort notes by date
+                Y.each(
+                  attrNotes.list.sort(function (a, b) {
+                    return new Date(a.when) - new Date(b.when);
+                  }),
+                  function (note) {
+                    text.push(note.text);
+                  }
+                );
 
                 cell.addClass('annotated');
                 cell.annotated = true;
-                cell.note = text.join('; ');
+                cell.notes = text;
               });
             });
 
@@ -831,7 +838,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       Y.one('#samples-table').delegate('mousedown', function (e) {
         var
           target = e.currentTarget,
-          cellIndex = target.getDOMNode().cellIndex;
+          html;
 
         if ((e.metaKey || e.shiftKey) && !noteEditorShown) {
           // While it's still hidden, center the noteHeader over the cell
@@ -858,10 +865,10 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           // Set content
           if (target.annotated) {
             Y.log('this cell is annotated');
-            Y.log(target.note);
-            noteBody.setStdModContent('body', target.note);
-            noteBody.set('width', '300px');
-            noteBody.set('height', '200px');
+            Y.log(target.notes);
+            noteBody.setStdModContent('body', target.notes.join('<br>'));
+            // noteBody.set('width', '300px');
+            // noteBody.set('height', '200px');
             noteBody.set("align", {
               node: noteHeader.get('contentBox'),
               points: [Y.WidgetPositionAlign.TL, Y.WidgetPositionAlign.BL]
