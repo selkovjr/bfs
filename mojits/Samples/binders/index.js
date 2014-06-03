@@ -833,7 +833,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           target = e.currentTarget,
           cellIndex = target.getDOMNode().cellIndex;
 
-        if (e.shiftKey && !noteEditorShown) {
+        if ((e.metaKey || e.shiftKey) && !noteEditorShown) {
           // While it's still hidden, center the noteHeader over the cell
           Y.one('#note-overlay-header').setStyle('opacity', '0');
           Y.one('#note-overlay-body').setStyle('opacity', '0');
@@ -859,7 +859,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           if (target.annotated) {
             Y.log('this cell is annotated');
             Y.log(target.note);
-            noteBody.setStdModContent('body', target.getAttribute('note-text'));
+            noteBody.setStdModContent('body', target.note);
             noteBody.set('width', '300px');
             noteBody.set('height', '200px');
             noteBody.set("align", {
