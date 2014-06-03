@@ -11,9 +11,11 @@ YUI.add('Samples', function (Y, NAME) {
 
       if (user) {
         // Using the index action as a sort of initialize() method
-        // to attach username to ll models.
+        // to attach username to ll models. It will appear in models as
+        // Y.namespace('mojito.models')[NAME].user]);
         Y.each(Y.namespace('mojito.models'), function (model) {
           model.user = user.username;
+          model.pgClient = ac.pg.client();
         });
 
         model.count(null, function (err, data) {
@@ -111,4 +113,4 @@ YUI.add('Samples', function (Y, NAME) {
       });
     }
   };
-}, '0.0.1', {requires: ['mojito', 'mojito-http-addon', 'mojito-models-addon', 'mojito-data-addon', 'mojito-assets-addon']});
+}, '0.0.1', {requires: ['mojito', 'mojito-http-addon', 'mojito-models-addon', 'mojito-data-addon', 'mojito-assets-addon', 'addon-ac-pg']});
