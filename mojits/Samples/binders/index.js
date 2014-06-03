@@ -260,10 +260,10 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         mp = this.mojitProxy,
         tableConfig,
         acOptions,
-        tooltip,
-        tooltipBody,
-        waitingToShowTooltip = false,
-        mouseleaveListener,
+        noteHeader,
+        noteBody,
+        noteEditorShown = false,
+        keyUpListener,
         sizeSyncMethod = '_syncPaginatorSize',
         autocompleteFilter = function (query, results) {
           query = query.toLowerCase();
@@ -409,23 +409,25 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           Y.one('.samples-controls').setStyle('display', 'block');
         }
 
-        tooltip = new Y.Overlay({
-          srcNode: "#note-overlay",
+        noteHeader = new Y.Overlay({
+          srcNode: "#note-overlay-header",
           zIndex: 10,
           visible: false
-        }).plug(Y.Plugin.WidgetAnim);
-        tooltip.anim.get('animHide').set('duration', 0.01);
-        tooltip.anim.get('animShow').set('duration', 0.3);
-        tooltip.render();
+        });
+        //.plug(Y.Plugin.WidgetAnim);
+        //noteHeader.anim.get('animHide').set('duration', 0.01);
+        //noteHeader.anim.get('animShow').set('duration', 0.3);
+        noteHeader.render();
 
-        tooltipBody = new Y.Overlay({
+        noteBody = new Y.Overlay({
           srcNode: "#note-overlay-body",
           zIndex: 10,
           visible: false
-        }).plug(Y.Plugin.WidgetAnim);
-        tooltipBody.anim.get('animHide').set('duration', 0.01);
-        tooltipBody.anim.get('animShow').set('duration', 0.3);
-        tooltipBody.render();
+        });
+        // .plug(Y.Plugin.WidgetAnim);
+        // noteBody.anim.get('animHide').set('duration', 0.01);
+        // noteBody.anim.get('animShow').set('duration', 0.3);
+        noteBody.render();
 
         // Get the list of autocomplete options
         mp.invoke('autocomplete', null, function (err, data) {
@@ -826,61 +828,66 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       }, this)); // on domready
 
       // Show annotation button or annotation text (if available) on mouseenter
-      Y.one('#samples-table').delegate('mouseenter', function (e) {
+      Y.one('#samples-table').delegate('mousedown', function (e) {
         var
           target = e.currentTarget,
           cellIndex = target.getDOMNode().cellIndex;
 
-        if (tooltip.get('visible') === false) {
-          // While it's still hidden, center the tooltip over the cell
-          Y.one('#note-overlay').setStyle('opacity', '0');
+        if (e.shiftKey && !noteEditorShown) {
+          // While it's still hidden, center the noteHeader over the cell
+          Y.one('#note-overlay-header').setStyle('opacity', '0');
           Y.one('#note-overlay-body').setStyle('opacity', '0');
-          if (target.note) {
+          noteHeader.set(
+            'width',
+            parseInt(target.getComputedStyle('border-left-width'), 10) +
+            parseInt(target.getComputedStyle('padding-left'), 10) +
+            parseInt(target.getComputedStyle('width'), 10) +
+            parseInt(target.getComputedStyle('padding-right'), 10) +
+            parseInt(target.getComputedStyle('border-right-width'), 10)
+          );
+          noteHeader.set(
+            'height',
+            parseInt(target.getComputedStyle('border-top-width'), 10) +
+            parseInt(target.getComputedStyle('padding-top'), 10) +
+            parseInt(target.getComputedStyle('height'), 10) +
+            parseInt(target.getComputedStyle('padding-bottom'), 10) +
+            parseInt(target.getComputedStyle('border-bottom-width'), 10)
+          );
+          noteHeader.set("centered", target);
+
+          // Set content
+          if (target.annotated) {
             Y.log('this cell is annotated');
             Y.log(target.note);
-            tooltipBody.setStdModContent('body', target.getAttribute('note-text'));
-            tooltipBody.set('width', '300px');
-            tooltipBody.set('height', '200px');
-            tooltipBody.set("align", {
-              node: target,
+            noteBody.setStdModContent('body', target.getAttribute('note-text'));
+            noteBody.set('width', '300px');
+            noteBody.set('height', '200px');
+            noteBody.set("align", {
+              node: noteHeader.get('contentBox'),
               points: [Y.WidgetPositionAlign.TL, Y.WidgetPositionAlign.BL]
             });
           }
           else {
             Y.log('not annotated');
           }
-          tooltip.set('width', target.getComputedStyle('width'));
-          tooltip.set('height', target.getComputedStyle('height'));
-          tooltip.set("centered", target);
-        }
 
-        if (waitingToShowTooltip === false) {
-          // wait half a second, then show tooltip
-          setTimeout(function () {
-            Y.one('#note-overlay').setStyle('opacity', '1');
-            tooltip.show();
-            if (target.note) {
-              Y.one('#note-overlay-body').setStyle('opacity', '1');
-              tooltipBody.show();
-            }
-          }, 500);
-
-          // while waiting to show tooltip, don't let other mousemoves try
-          // to show tooltip too.
-          waitingToShowTooltip = true;
+          Y.one('#note-overlay-header').setStyle('opacity', '0.5');
+          Y.one('#note-overlay-body').setStyle('opacity', '1');
+          noteHeader.show();
+          noteBody.show();
+          noteEditorShown = true;
         }
       }, 'td');
 
-      mouseleaveListener = function (e) {
-        // this check prevents hiding the tooltip when the cursor moves over the tooltip itself
-        if ((e.relatedTarget) && (e.relatedTarget.hasClass('yui3-widget-bd') === false)) {
-          tooltip.hide();
-          waitingToShowTooltip = false;
+      keyUpListener = function (e) {
+        if (noteEditorShown) {
+          noteHeader.hide();
+          noteBody.hide();
+          noteEditorShown = false;
         }
       };
 
-      Y.one('#samples-table').delegate('mouseleave', mouseleaveListener, 'td');
-      Y.one('#note-overlay').on('mouseleave', mouseleaveListener);
+      Y.one('document').on('key', keyUpListener, 'esc');
 
       // Refresh the content when user clicks refresh button.
       Y.one('#samples').delegate('click', function (e) {
