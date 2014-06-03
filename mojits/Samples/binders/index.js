@@ -804,7 +804,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
             // Mark annotated data cells
             table.data.after('load', function (e) {
               var notes = e.details[0].response.notes;
-              console.log(['notes', notes]);
               Y.each(notes, function (attrNotes, id) {
                 var
                   key = (attrNotes.attr === 'species') ? 'bird' : attrNotes.attr, // Data comes from a view, so species becomes bird
@@ -812,12 +811,9 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                   cell = table.getRow(record).one('.yui3-datatable-col-' + key),
                   text = [];
 
-                console.log(['attrNotes', attrNotes]);
-                console.log(['attrNotes.list', attrNotes.list]);
                 Y.each(attrNotes.list, function (note) {
                   text.push(note.text);
                 });
-                console.log(['text', text]);
 
                 cell.addClass('annotated');
                 cell.annotated = true;
@@ -849,10 +845,9 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
               node: target,
               points: [Y.WidgetPositionAlign.TL, Y.WidgetPositionAlign.BL]
             });
-            Y.one('#note-overlay').removeClass('annotated').addClass('annotated-open');
           }
           else {
-            Y.one('#note-overlay').addClass('add-new-note');
+            Y.log('not annotated');
           }
           tooltip.set('width', target.getComputedStyle('width'));
           tooltip.set('height', target.getComputedStyle('height'));
@@ -873,11 +868,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           // while waiting to show tooltip, don't let other mousemoves try
           // to show tooltip too.
           waitingToShowTooltip = true;
-          // col = this.get('columnset')._conf.data.value.definitions[cellIndex];
-          Y.log([target, target.getDOMNode(), cellIndex, table, table.get('columnset'), table.get('data')]);
-          // Dumper.setMaxIterations(5000);
-          // Dumper.setMaxDepth(5);
-          // Dumper.popup(table);
         }
       }, 'td');
 
@@ -886,12 +876,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         if ((e.relatedTarget) && (e.relatedTarget.hasClass('yui3-widget-bd') === false)) {
           tooltip.hide();
           waitingToShowTooltip = false;
-          if (Y.one('#note-overlay').hasClass('add-new-note')) {
-            Y.one('#note-overlay').removeClass('add-new-note');
-          }
-          if (Y.one('#note-overlay').hasClass('annotated-open')) {
-            Y.one('#note-overlay').removeClass('annotated-open').addClass('annotated');
-          }
         }
       };
 

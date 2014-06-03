@@ -89,17 +89,6 @@ div.mod.collapse div.inner {
   background-repeat: no-repeat;
 }
 
-.annotated-open {
-  background-color: rgba(255, 255, 200, 0.4);
-}
-
-.add-new-note {
-  background-image: url(images/add-note.png);
-  background-position: right center;
-  background-repeat: no-repeat;
-  background-color: rgba(200, 200, 255, 0.4);
-}
-
 .yui3-overlay-content {
   background-color: #ECEFFB;
   border: 1px solid #9EA8C6;
