@@ -413,20 +413,18 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           srcNode: "#note-overlay-header",
           zIndex: 10,
           visible: false
-        });
-        //.plug(Y.Plugin.WidgetAnim);
-        //noteHeader.anim.get('animHide').set('duration', 0.01);
-        //noteHeader.anim.get('animShow').set('duration', 0.3);
+        }).plug(Y.Plugin.WidgetAnim);
+        noteHeader.anim.get('animHide').set('duration', 0.01);
+        noteHeader.anim.get('animShow').set('duration', 0.3);
         noteHeader.render();
 
         noteBody = new Y.Overlay({
           srcNode: "#note-overlay-body",
           zIndex: 10,
           visible: false
-        });
-        // .plug(Y.Plugin.WidgetAnim);
-        // noteBody.anim.get('animHide').set('duration', 0.01);
-        // noteBody.anim.get('animShow').set('duration', 0.3);
+        }).plug(Y.Plugin.WidgetAnim);
+        noteBody.anim.get('animHide').set('duration', 0.01);
+        noteBody.anim.get('animShow').set('duration', 0.3);
         noteBody.render();
 
         // Get the list of autocomplete options
@@ -827,12 +825,24 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
       // Show annotation button or annotation text (if available) on mouseenter
       Y.one('#samples-table').delegate('mousedown', function (e) {
+        Y.log('hello');
         var
           target = e.currentTarget,
-          listItems = [],
-          html;
+          listItems = [
+            '<li>' +
+            '<div class="annotation-text">' +
+            '<textarea id="annotation-input" rows="4" value="Add a note here"></textarea>' +
+            '</div>' +
+            '</li>'
+          ];
 
-        if ((e.metaKey || e.shiftKey) && !noteEditorShown) {
+        if (e.metaKey || e.shiftKey) {
+          if (noteEditorShown) {
+            noteHeader.hide();
+            noteBody.hide();
+            noteBody.setStdModContent('body', '');
+          }
+          Y.log(target);
           // While it's still hidden, center the noteHeader over the cell
           Y.one('#note-overlay-header').setStyle('opacity', '0');
           Y.one('#note-overlay-body').setStyle('opacity', '0');
@@ -858,19 +868,27 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           if (target.annotated) {
             Y.log('this cell is annotated');
             Y.log(target.notes);
-            Y.each(target.notes, function (note) {
-              Y.log(note);
-              listItems.push('<li><div class="annotation-author">' + note.user + '</div><div class="annotation-text">' + note.text + '</div></li>');
-            });
-            noteBody.setStdModContent('body', '<ul>' + listItems.join('') + '</ul>');
-            noteBody.set("align", {
-              node: noteHeader.get('contentBox'),
-              points: [Y.WidgetPositionAlign.TL, Y.WidgetPositionAlign.BL]
+            Y.each(target.notes.reverse(), function (note) {
+              note.when = note.when.replace(/T[0-9].+$/, '');
+              listItems.unshift(
+                '<li>' +
+                '<div class="annotation-meta">' +
+                  '<span class="annotation-author">' + note.user + '</span> on ' +
+                  '<span class="annotation-date">' + note.when + '</span>' +
+                '</div>' +
+                '<div class="annotation-text">' + note.text + '</div>' +
+                '</li>'
+              );
             });
           }
           else {
             Y.log('not annotated');
           }
+          noteBody.setStdModContent('body', '<ul>' + listItems.join('') + '</ul>');
+          noteBody.set("align", {
+            node: noteHeader.get('contentBox'),
+            points: [Y.WidgetPositionAlign.TL, Y.WidgetPositionAlign.BL]
+          });
 
           Y.one('#note-overlay-header').setStyle('opacity', '0.5');
           Y.one('#note-overlay-body').setStyle('opacity', '1');
@@ -884,6 +902,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         if (noteEditorShown) {
           noteHeader.hide();
           noteBody.hide();
+          noteBody.setStdModContent('body', '');
           noteEditorShown = false;
         }
       };
