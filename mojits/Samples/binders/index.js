@@ -811,22 +811,13 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                 var
                   key = (attrNotes.attr === 'species') ? 'bird' : attrNotes.attr, // Data comes from a view, so species becomes bird
                   record = table.getRecord(id),
-                  cell = table.getRow(record).one('.yui3-datatable-col-' + key),
-                  text = [];
-
-                // Sort notes by date
-                Y.each(
-                  attrNotes.list.sort(function (a, b) {
-                    return new Date(a.when) - new Date(b.when);
-                  }),
-                  function (note) {
-                    text.push(note.text);
-                  }
-                );
+                  cell = table.getRow(record).one('.yui3-datatable-col-' + key);
 
                 cell.addClass('annotated');
                 cell.annotated = true;
-                cell.notes = text;
+                cell.notes = attrNotes.list.sort(function (a, b) {
+                  return new Date(a.when) - new Date(b.when);
+                });
               });
             });
 
@@ -838,6 +829,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       Y.one('#samples-table').delegate('mousedown', function (e) {
         var
           target = e.currentTarget,
+          listItems = [],
           html;
 
         if ((e.metaKey || e.shiftKey) && !noteEditorShown) {
@@ -866,9 +858,11 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           if (target.annotated) {
             Y.log('this cell is annotated');
             Y.log(target.notes);
-            noteBody.setStdModContent('body', target.notes.join('<br>'));
-            // noteBody.set('width', '300px');
-            // noteBody.set('height', '200px');
+            Y.each(target.notes, function (note) {
+              Y.log(note);
+              listItems.push('<li><div class="annotation-author">' + note.user + '</div><div class="annotation-text">' + note.text + '</div></li>');
+            });
+            noteBody.setStdModContent('body', '<ul>' + listItems.join('') + '</ul>');
             noteBody.set("align", {
               node: noteHeader.get('contentBox'),
               points: [Y.WidgetPositionAlign.TL, Y.WidgetPositionAlign.BL]
