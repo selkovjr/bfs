@@ -89,6 +89,28 @@ div.mod.collapse div.inner {
   background-repeat: no-repeat;
 }
 
+.annotated-open {
+  background-color: rgba(255, 255, 200, 0.4);
+}
+
+.add-new-note {
+  background-image: url(images/add-note.png);
+  background-position: right center;
+  background-repeat: no-repeat;
+  background-color: rgba(200, 200, 255, 0.4);
+}
+
+.yui3-overlay-content {
+  background-color: #ECEFFB;
+  border: 1px solid #9EA8C6;
+  border-radius: 3px;
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.25);
+}
+
+.yui3-overlay-content .yui3-widget-bd {
+  padding: 0.4em 0.6em 0.5em;
+}
+
 .page-footer {
   clear: left;
 }

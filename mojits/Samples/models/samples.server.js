@@ -142,13 +142,19 @@ YUI.add('SamplesModel', function (Y, NAME) {
                 }
                 result.notes = {};
                 Y.each(notesResult.rows, function (note) {
-                  result.notes[note.id] = {
-                    attr: note.attr,
+                  if (result.notes[note.id] === undefined) {
+                    result.notes[note.id] = {
+                      attr: note.attr,
+                      list: []
+                    };
+                  }
+                  result.notes[note.id].list.push({
                     user: note.user,
                     when: note.when,
                     text: note.text
-                  };
+                  });
                 });
+                console.log(result.notes);
                 callback(null, result);
               }
             );

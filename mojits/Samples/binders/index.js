@@ -2,6 +2,7 @@
 /*jslint regexp: true, indent: 2 */
 YUI.add('SamplesBinderIndex', function (Y, NAME) {
   'use strict';
+
 /**
  * The SamplesBinderIndex module.
  *
@@ -259,6 +260,10 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         mp = this.mojitProxy,
         tableConfig,
         acOptions,
+        tooltip,
+        tooltipBody,
+        waitingToShowTooltip = false,
+        mouseleaveListener,
         sizeSyncMethod = '_syncPaginatorSize',
         autocompleteFilter = function (query, results) {
           query = query.toLowerCase();
@@ -403,6 +408,24 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           tableConfig.editOpenType = 'dblclick';
           Y.one('.samples-controls').setStyle('display', 'block');
         }
+
+        tooltip = new Y.Overlay({
+          srcNode: "#note-overlay",
+          zIndex: 10,
+          visible: false
+        }).plug(Y.Plugin.WidgetAnim);
+        tooltip.anim.get('animHide').set('duration', 0.01);
+        tooltip.anim.get('animShow').set('duration', 0.3);
+        tooltip.render();
+
+        tooltipBody = new Y.Overlay({
+          srcNode: "#note-overlay-body",
+          zIndex: 10,
+          visible: false
+        }).plug(Y.Plugin.WidgetAnim);
+        tooltipBody.anim.get('animHide').set('duration', 0.01);
+        tooltipBody.anim.get('animShow').set('duration', 0.3);
+        tooltipBody.render();
 
         // Get the list of autocomplete options
         mp.invoke('autocomplete', null, function (err, data) {
@@ -781,10 +804,24 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
             // Mark annotated data cells
             table.data.after('load', function (e) {
               var notes = e.details[0].response.notes;
-              Y.each(notes, function (note, id) {
-                var key = (note.attr === 'species') ? 'bird' : note.attr;
-                var record = table.getRecord(id);
-                table.getRow(record).one('.yui3-datatable-col-' + key).addClass('annotated');
+              console.log(['notes', notes]);
+              Y.each(notes, function (attrNotes, id) {
+                var
+                  key = (attrNotes.attr === 'species') ? 'bird' : attrNotes.attr, // Data comes from a view, so species becomes bird
+                  record = table.getRecord(id),
+                  cell = table.getRow(record).one('.yui3-datatable-col-' + key),
+                  text = [];
+
+                console.log(['attrNotes', attrNotes]);
+                console.log(['attrNotes.list', attrNotes.list]);
+                Y.each(attrNotes.list, function (note) {
+                  text.push(note.text);
+                });
+                console.log(['text', text]);
+
+                cell.addClass('annotated');
+                cell.annotated = true;
+                cell.note = text.join('; ');
               });
             });
 
@@ -792,14 +829,74 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         }); // invoke autocomplete data
       }, this)); // on domready
 
-      // Show annotation button on mouseenter
+      // Show annotation button or annotation text (if available) on mouseenter
       Y.one('#samples-table').delegate('mouseenter', function (e) {
         var
           target = e.currentTarget,
           cellIndex = target.getDOMNode().cellIndex;
-        // col = this.get('columnset')._conf.data.value.definitions[cellIndex];
-        Y.log([cellIndex, table, table.get('columnset'), table.get('data')]);
+
+        if (tooltip.get('visible') === false) {
+          // While it's still hidden, center the tooltip over the cell
+          Y.one('#note-overlay').setStyle('opacity', '0');
+          Y.one('#note-overlay-body').setStyle('opacity', '0');
+          if (target.note) {
+            Y.log('this cell is annotated');
+            Y.log(target.note);
+            tooltipBody.setStdModContent('body', target.getAttribute('note-text'));
+            tooltipBody.set('width', '300px');
+            tooltipBody.set('height', '200px');
+            tooltipBody.set("align", {
+              node: target,
+              points: [Y.WidgetPositionAlign.TL, Y.WidgetPositionAlign.BL]
+            });
+            Y.one('#note-overlay').removeClass('annotated').addClass('annotated-open');
+          }
+          else {
+            Y.one('#note-overlay').addClass('add-new-note');
+          }
+          tooltip.set('width', target.getComputedStyle('width'));
+          tooltip.set('height', target.getComputedStyle('height'));
+          tooltip.set("centered", target);
+        }
+
+        if (waitingToShowTooltip === false) {
+          // wait half a second, then show tooltip
+          setTimeout(function () {
+            Y.one('#note-overlay').setStyle('opacity', '1');
+            tooltip.show();
+            if (target.note) {
+              Y.one('#note-overlay-body').setStyle('opacity', '1');
+              tooltipBody.show();
+            }
+          }, 500);
+
+          // while waiting to show tooltip, don't let other mousemoves try
+          // to show tooltip too.
+          waitingToShowTooltip = true;
+          // col = this.get('columnset')._conf.data.value.definitions[cellIndex];
+          Y.log([target, target.getDOMNode(), cellIndex, table, table.get('columnset'), table.get('data')]);
+          // Dumper.setMaxIterations(5000);
+          // Dumper.setMaxDepth(5);
+          // Dumper.popup(table);
+        }
       }, 'td');
+
+      mouseleaveListener = function (e) {
+        // this check prevents hiding the tooltip when the cursor moves over the tooltip itself
+        if ((e.relatedTarget) && (e.relatedTarget.hasClass('yui3-widget-bd') === false)) {
+          tooltip.hide();
+          waitingToShowTooltip = false;
+          if (Y.one('#note-overlay').hasClass('add-new-note')) {
+            Y.one('#note-overlay').removeClass('add-new-note');
+          }
+          if (Y.one('#note-overlay').hasClass('annotated-open')) {
+            Y.one('#note-overlay').removeClass('annotated-open').addClass('annotated');
+          }
+        }
+      };
+
+      Y.one('#samples-table').delegate('mouseleave', mouseleaveListener, 'td');
+      Y.one('#note-overlay').on('mouseleave', mouseleaveListener);
 
       // Refresh the content when user clicks refresh button.
       Y.one('#samples').delegate('click', function (e) {
@@ -892,6 +989,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
     'gallery-datatable-editable',
     'gallery-datatable-celleditor-popup',
     'gallery-datatable-paginator',
-    'gallery-paginator-view'
+    'gallery-paginator-view',
+    'overlay',
+    'widget-anim'
   ]
 });
