@@ -263,7 +263,13 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         noteHeader,
         noteBody,
         noteEditorShown = false,
-        keyUpListener,
+        noteSaveFn,
+        closeNoteEditor = function () {
+          noteHeader.hide();
+          noteBody.hide();
+          noteBody.setStdModContent('body', '');
+          noteEditorShown = false;
+        },
         sizeSyncMethod = '_syncPaginatorSize',
         autocompleteFilter = function (query, results) {
           query = query.toLowerCase();
@@ -831,16 +837,16 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           listItems = [
             '<li>' +
             '<div class="annotation-text">' +
-            '<textarea id="annotation-input" rows="4" value="Add a note here"></textarea>' +
+            '<textarea id="annotation-input" rows="4" title="Add a note here. Meta+Enter to save, Esc to cancel."></textarea>' +
+            '</div>' +
+            '<div><button class="annotation-save">Save</button>' +
             '</div>' +
             '</li>'
           ];
 
         if (e.metaKey || e.shiftKey) {
           if (noteEditorShown) {
-            noteHeader.hide();
-            noteBody.hide();
-            noteBody.setStdModContent('body', '');
+            closeNoteEditor();
           }
           Y.log(target);
           // While it's still hidden, center the noteHeader over the cell
@@ -898,16 +904,19 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         }
       }, 'td');
 
-      keyUpListener = function (e) {
+      Y.one('document').on('key', function (e) {
         if (noteEditorShown) {
-          noteHeader.hide();
-          noteBody.hide();
-          noteBody.setStdModContent('body', '');
-          noteEditorShown = false;
+          closeNoteEditor();
         }
+      }, 'esc');
+
+      noteSaveFn = function (e) {
+        Y.log('saving');
+        closeNoteEditor();
       };
 
-      Y.one('document').on('key', keyUpListener, 'esc');
+      Y.one('document').on('key', noteSaveFn, 'enter+meta');
+      // Y.one('.annotation-save').on('click', noteSaveFn);
 
       // Refresh the content when user clicks refresh button.
       Y.one('#samples').delegate('click', function (e) {
