@@ -90,6 +90,9 @@
             "top": {
               "css": [
                 "/static/bfs/assets/common.css"
+              ],
+              "js": [
+                "/static/bfs/assets/dumper.js"
               ]
             }
           }
@@ -105,6 +108,9 @@
     "settings": [ "environment:development" ],
     "staticHandling": {
       "forceUpdate": true
+    },
+    "viewEngine": {
+      "cacheTemplates": false
     }
   }
 ]
