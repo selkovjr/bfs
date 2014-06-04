@@ -14,12 +14,16 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
    * @class DiagnosticsModel
    * @constructor
    */
+  var
+    pg,
+    connectionString;
+
   Y.namespace('mojito.models')[NAME] = {
+
     init: function (config) {
-      var user = Y.namespace('mojito.models')[NAME].user || 'postgres';
       this.config = config;
-      this.pg = require('pg');
-      this.pgClient = new this.pg.Client('postgres://' + user + ':@localhost/bfs');
+      pg = this.pg;
+      connectionString = this.connectionString;
     },
 
     /**
@@ -38,20 +42,22 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
         {query: arg.id}
       );
 
-      this.pgClient.connect(Y.bind(function (err) {
+      pg.connect(connectionString, function (err, client, done) {
         if (err) {
-          return console.error('could not connect to postgres', err);
+          console.error('could not connect to postgres', err);
+          callback(err);
         }
-        this.pgClient.query(
+        client.query(
           sql,
-          Y.bind(function (err, result) {
-            var data = result.rows[0];
+          function (err, result) {
+            var data;
 
-            this.pgClient.end();
             if (err) {
               callback(err);
             }
 
+            done();
+            data = result.rows[0];
             Y.each(data, function (v, k) {
               if (v === null) {
                 data[k] = '';
@@ -62,24 +68,27 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
             });
 
             callback(null, result.rows[0]);
-          }, this)
+          }
         );
-      }, this));
+      });
     },
 
     autocomplete: function (arg, callback) {
-      this.pgClient.connect(Y.bind(function (err) {
+      pg.connect(connectionString, function (err, client, done) {
         if (err) {
-          return console.error('could not connect to postgres', err);
+          console.error('could not connect to postgres', err);
+          callback(err);
         }
-        this.pgClient.query(
+        client.query(
           'SELECT "attr", "val", "desc" FROM "ac" WHERE "class" = \'diagnostics\' ORDER BY "ord"',
-          Y.bind(function (err, result) {
+          function (err, result) {
             var ac = {};
+
             if (err) {
               callback(err);
             }
-            this.pgClient.end();
+
+            done();
             Y.each(result.rows, function (option) {
               if (ac[option.attr] === undefined) {
                 ac[option.attr] = [];
@@ -88,17 +97,18 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
               ac[option.attr].push(option.val);
             });
             callback(null, ac);
-          }, this)
+          }
         );
-      }, this));
+      });
     },
 
     update: function (arg, callback) {
-      this.pgClient.connect(Y.bind(function (err) {
+      pg.connect(connectionString, function (err, client, done) {
         var sql;
 
         if (err) {
-          return console.error('could not connect to postgres', err);
+          console.error('could not connect to postgres', err);
+          callback(err);
         }
 
         if (arg.value !== '' && arg.value !== null && arg.value !== undefined) {
@@ -106,43 +116,44 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
         } else {
           sql = Y.substitute("UPDATE diagnostics SET {attr} = NULL WHERE sample = '{id}'", arg);
         }
-        this.pgClient.query(
+        client.query(
           sql,
-          Y.bind(function (err, result) {
+          function (err, result) {
             if (err) {
               callback(err);
             }
+            done();
             console.log('update successful');
             console.log(result);
-            this.pgClient.end();
             callback(null, result);
-          }, this)
+          }
         );
-      }, this));
+      });
     },
 
     create: function (arg, callback) {
-      this.pgClient.connect(Y.bind(function (err) {
+      pg.connect(connectionString, function (err, client, done) {
         var sql = Y.substitute("INSERT into diagnostics (sample) VALUES ('{id}')", arg);
 
         if (err) {
-          return console.error('could not connect to postgres', err);
+          console.error('could not connect to postgres', err);
+          callback(err);
         }
 
         console.log(sql);
-        this.pgClient.query(
+        client.query(
           sql,
-          Y.bind(function (err, result) {
+          function (err, result) {
             if (err) {
               callback(err);
             }
+            done();
             console.log('create successful');
             console.log(result);
-            this.pgClient.end();
             callback(null, result);
-          }, this)
+          }
         );
-      }, this));
+      });
     }
   };
 }, '0.0.1', {requires: []});
