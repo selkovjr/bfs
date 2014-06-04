@@ -11,11 +11,11 @@ YUI.add('Samples', function (Y, NAME) {
 
       if (user) {
         // Using the index action as a sort of initialize() method
-        // to attach username to all models. It will appear in models as
-        // Y.namespace('mojito.models')[NAME].user]);
+        // to attach common properties to all models.
         Y.each(Y.namespace('mojito.models'), function (model) {
           model.user = user.username;
           model.pg = ac.pg.module();
+          model.connectionString = ac.pg.connectionString();
         });
 
         model = ac.models.get('samples');
