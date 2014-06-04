@@ -18,10 +18,9 @@ YUI.add('SamplesModel', function (Y, NAME) {
   Y.namespace('mojito.models')[NAME] = {
 
     init: function (config) {
-      var user = Y.namespace('mojito.models')[NAME].user || 'postgres';
       this.config = config;
-      this.pg = require('pg');
-      this.pgClient = new this.pg.Client('postgres://' + user + ':@localhost/bfs');
+      this.user = Y.namespace('mojito.models')[NAME].user || 'postgres';
+      this.pgClient = Y.namespace('mojito.models')[NAME].pgClient;
     },
 
     /**
