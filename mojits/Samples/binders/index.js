@@ -9,7 +9,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
  * @module SamplesBinderIndex
  */
 
-  var table, Sample, SampleList, sampleList;
+  var self, table, Sample, SampleList, sampleList;
 
   // Table row model
   Sample = Y.Base.create('sample-record', Y.Model, [], {}, {
@@ -264,10 +264,13 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         noteBody,
         noteEditorShown = false,
         noteSaveFn,
+        metaEnterListener,
+        closeButtonListener,
         closeNoteEditor = function () {
-          noteHeader.hide();
-          noteBody.hide();
-          noteBody.setStdModContent('body', '');
+          metaEnterListener.detach();
+          closeButtonListener.detach();
+          noteHeader.destroy();
+          noteBody.destroy();
           noteEditorShown = false;
         },
         sizeSyncMethod = '_syncPaginatorSize',
@@ -407,31 +410,13 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       }; // tableConfig
 
       Y.on('domready', Y.bind(function () {
-        var self = this;
+        self = this;
 
         if (this.editable) {
           tableConfig.editable = true;
           tableConfig.editOpenType = 'dblclick';
           Y.one('.samples-controls').setStyle('display', 'block');
         }
-
-        noteHeader = new Y.Overlay({
-          srcNode: "#note-overlay-header",
-          zIndex: 10,
-          visible: false
-        }).plug(Y.Plugin.WidgetAnim);
-        noteHeader.anim.get('animHide').set('duration', 0.01);
-        noteHeader.anim.get('animShow').set('duration', 0.3);
-        noteHeader.render();
-
-        noteBody = new Y.Overlay({
-          srcNode: "#note-overlay-body",
-          zIndex: 10,
-          visible: false
-        }).plug(Y.Plugin.WidgetAnim);
-        noteBody.anim.get('animHide').set('duration', 0.01);
-        noteBody.anim.get('animShow').set('duration', 0.3);
-        noteBody.render();
 
         // Get the list of autocomplete options
         mp.invoke('autocomplete', null, function (err, data) {
@@ -819,6 +804,9 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
                 cell.addClass('annotated');
                 cell.annotated = true;
+                cell.id = id;
+                cell.attr = attrNotes.attr;
+                cell.key = key;
                 cell.notes = attrNotes.list.sort(function (a, b) {
                   return new Date(a.when) - new Date(b.when);
                 });
@@ -829,17 +817,16 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         }); // invoke autocomplete data
       }, this)); // on domready
 
-      // Show annotation button or annotation text (if available) on mouseenter
+      // Show note editor on mouseenter
       Y.one('#samples-table').delegate('mousedown', function (e) {
-        Y.log('hello');
         var
           target = e.currentTarget,
           listItems = [
             '<li>' +
             '<div class="annotation-text">' +
-            '<textarea id="annotation-input" rows="4" title="Add a note here. Meta+Enter to save, Esc to cancel."></textarea>' +
+            '<textarea id="annotation-input" rows="4" autofocus="1" placeholder="Add a note here. Meta+Enter to save, Esc to cancel."></textarea>' +
             '</div>' +
-            '<div><button class="annotation-save">Save</button>' +
+            '<div><button id="annotation-save">Save</button>' +
             '</div>' +
             '</li>'
           ];
@@ -848,10 +835,46 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           if (noteEditorShown) {
             closeNoteEditor();
           }
-          Y.log(target);
+          // Set content
+          if (target.annotated) {
+            Y.log('this cell is annotated');
+            Y.each(target.notes.reverse(), function (note) {
+              note.when = note.when.replace(/T[0-9].+$/, '');
+              listItems.unshift(
+                '<li>' +
+                '<div class="annotation-meta">' +
+                  '<span class="annotation-author">' + note.user + '</span> on ' +
+                  '<span class="annotation-date">' + note.when + '</span>' +
+                '</div>' +
+                '<div class="annotation-text">' + note.text + '</div>' +
+                '</li>'
+              );
+            });
+          }
+          else {
+            Y.log('not annotated');
+          }
+
+          noteHeader = new Y.Overlay({
+            zIndex: 10,
+            visible: false
+          }).plug(Y.Plugin.WidgetAnim);
+          noteHeader.anim.get('animHide').set('duration', 0.01);
+          noteHeader.anim.get('animShow').set('duration', 0.3);
+          noteHeader.render();
+
+          noteBody = new Y.Overlay({
+            zIndex: 10,
+            visible: false
+          }).plug(Y.Plugin.WidgetAnim);
+          noteBody.anim.get('animHide').set('duration', 0.01);
+          noteBody.anim.get('animShow').set('duration', 0.3);
+          noteBody.setStdModContent('body', '<ul>' + listItems.join('') + '</ul>');
+          noteBody.render();
+
           // While it's still hidden, center the noteHeader over the cell
-          Y.one('#note-overlay-header').setStyle('opacity', '0');
-          Y.one('#note-overlay-body').setStyle('opacity', '0');
+          noteHeader.get('contentBox').setStyle('opacity', '0');
+          noteBody.get('contentBox').setStyle('opacity', '0');
           noteHeader.set(
             'width',
             parseInt(target.getComputedStyle('border-left-width'), 10) +
@@ -870,37 +893,63 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           );
           noteHeader.set("centered", target);
 
-          // Set content
-          if (target.annotated) {
-            Y.log('this cell is annotated');
-            Y.log(target.notes);
-            Y.each(target.notes.reverse(), function (note) {
-              note.when = note.when.replace(/T[0-9].+$/, '');
-              listItems.unshift(
-                '<li>' +
-                '<div class="annotation-meta">' +
-                  '<span class="annotation-author">' + note.user + '</span> on ' +
-                  '<span class="annotation-date">' + note.when + '</span>' +
-                '</div>' +
-                '<div class="annotation-text">' + note.text + '</div>' +
-                '</li>'
-              );
-            });
-          }
-          else {
-            Y.log('not annotated');
-          }
-          noteBody.setStdModContent('body', '<ul>' + listItems.join('') + '</ul>');
           noteBody.set("align", {
             node: noteHeader.get('contentBox'),
             points: [Y.WidgetPositionAlign.TL, Y.WidgetPositionAlign.BL]
           });
 
-          Y.one('#note-overlay-header').setStyle('opacity', '0.5');
-          Y.one('#note-overlay-body').setStyle('opacity', '1');
+          noteHeader.get('contentBox').setStyle('opacity', '0.5');
+          noteBody.get('contentBox').setStyle('opacity', '1');
           noteHeader.show();
           noteBody.show();
+
+          // Without a delay, focus fails to work except
+          // for the first time the widget is shown.
+          setTimeout(function () {
+            Y.one('#annotation-input').focus();
+          }, 300);
           noteEditorShown = true;
+
+          // CLose note editor
+          noteSaveFn = function (e) {
+            e.halt();
+            Y.log(['noteSaveFn', noteEditorShown]);
+            var
+              input = Y.one('#annotation-input').get('value').replace(/^\s+|\s+$/g, ''),
+              record = table.getRecord(target),
+              index = target.getDOMNode().cellIndex,
+              attr = table.get('columns')[index].key,
+              options;
+
+            e.halt();
+
+            if (input) {
+              options = {
+                params: {
+                  body: {
+                    id: record.get('id'),
+                    attr: attr,
+                    text: input
+                  }
+                },
+                rpc: true
+              };
+              self.mojitProxy.invoke('addNote', options, function (err, data) {
+                if (err) {
+                  Y.log('addNote failed: ' + err);
+                } else {
+                  Y.log('addNote successful');
+                  // refresh
+                  table.processPageRequest(table.pagModel.get('page'));
+                }
+              });
+            }
+
+            closeNoteEditor();
+          };
+
+          metaEnterListener = Y.one('document').on('key', noteSaveFn, 'enter+meta');
+          closeButtonListener = Y.one('#annotation-save').on('click', noteSaveFn);
         }
       }, 'td');
 
@@ -910,13 +959,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         }
       }, 'esc');
 
-      noteSaveFn = function (e) {
-        Y.log('saving');
-        closeNoteEditor();
-      };
-
-      Y.one('document').on('key', noteSaveFn, 'enter+meta');
-      // Y.one('.annotation-save').on('click', noteSaveFn);
 
       // Refresh the content when user clicks refresh button.
       Y.one('#samples').delegate('click', function (e) {
@@ -932,7 +974,6 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
     // insert a new sample
     insert: function () {
       var
-        self = this,
         id = Y.Lang.trim(Y.one('#new-sample-id').get('value')),
         options = {
           params: {

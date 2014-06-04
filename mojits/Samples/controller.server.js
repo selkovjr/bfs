@@ -112,6 +112,17 @@ YUI.add('Samples', function (Y, NAME) {
         }
         ac.done(data, 'json');
       });
+    },
+
+    addNote: function (ac) {
+      var model = ac.models.get('samples');
+      model.addNote(ac.command.params.body, function (err, data) {
+        if (err) {
+          console.error('error condition');
+          ac.error(err);
+        }
+        ac.done();
+      });
     }
   };
 }, '0.0.1', {requires: ['mojito', 'mojito-http-addon', 'mojito-models-addon', 'mojito-data-addon', 'mojito-assets-addon', 'addon-ac-pg']});
