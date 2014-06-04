@@ -85,7 +85,7 @@ div.mod.collapse div.inner {
 
 .annotated {
   background-image: url(images/annotated.png);
-  background-position: right bottom;
+  background-position: left bottom;
   background-repeat: no-repeat;
 }
 
