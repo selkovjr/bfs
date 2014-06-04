@@ -6,18 +6,19 @@ YUI.add('Samples', function (Y, NAME) {
   Y.namespace('mojito.controllers')[NAME] = {
     index: function (ac) {
       var
-        model = ac.models.get('samples'),
+        model,
         user = ac.http.getRequest().user;
 
       if (user) {
         // Using the index action as a sort of initialize() method
-        // to attach username to ll models. It will appear in models as
+        // to attach username to all models. It will appear in models as
         // Y.namespace('mojito.models')[NAME].user]);
         Y.each(Y.namespace('mojito.models'), function (model) {
           model.user = user.username;
-          model.pgClient = ac.pg.client();
+          model.pg = ac.pg.module();
         });
 
+        model = ac.models.get('samples');
         model.count(null, function (err, data) {
           if (err) {
             console.error('error condition');

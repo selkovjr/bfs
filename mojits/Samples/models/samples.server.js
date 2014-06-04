@@ -15,12 +15,17 @@ YUI.add('SamplesModel', function (Y, NAME) {
    * @class SamplesModel
    * @constructor
    */
+  var
+    pg,
+    connectionString;
+
   Y.namespace('mojito.models')[NAME] = {
 
     init: function (config) {
       this.config = config;
-      this.user = Y.namespace('mojito.models')[NAME].user || 'postgres';
-      this.pgClient = Y.namespace('mojito.models')[NAME].pgClient;
+      pg = this.pg;
+      connectionString = 'postgres://' + this.user + ':@localhost/bfs';
+      this.pgClient = new this.pg.Client('postgres://' + this.user + ':@localhost/bfs');
     },
 
     /**
@@ -30,20 +35,21 @@ YUI.add('SamplesModel', function (Y, NAME) {
      *        data has been retrieved.
      */
     count: function (arg, callback) {
-      this.pgClient.connect(Y.bind(function (err) {
+      pg.connect(connectionString, function (err, client, done) {
         if (err) {
           callback(err);
         }
-        this.pgClient.query(
+        client.query(
           'SELECT count(*) FROM "samples"',
           function (err, result) {
+            done();
             if (err) {
               callback(err);
             }
             callback(null, parseInt(result.rows[0].count, 10)); // Pg client stringifies numbers. There is an ongoing discussion about that.
           }
         );
-      }, this));
+      });
     },
 
     /**
@@ -87,12 +93,12 @@ YUI.add('SamplesModel', function (Y, NAME) {
         }
       );
 
-      this.pgClient.connect(Y.bind(function (err) {
+      pg.connect(connectionString, function (err, client, done) {
         if (err) {
           callback(err);
         }
 
-        this.pgClient.query(
+        client.query(
           'SELECT count(*) FROM "samples"',
           function (err, result) {
             if (err) {
@@ -103,9 +109,9 @@ YUI.add('SamplesModel', function (Y, NAME) {
         );
 
         console.log(sql);
-        this.pgClient.query(
+        client.query(
           sql,
-          Y.bind(function (err, result) {
+          function (err, result) {
             var notesQuery;
 
             if (err) {
@@ -133,7 +139,7 @@ YUI.add('SamplesModel', function (Y, NAME) {
             }).join(', ') + ')';
 
             console.log(notesQuery);
-            this.pgClient.query(
+            client.query(
               notesQuery,
               function (err, notesResult) {
                 if (err) {
@@ -157,10 +163,10 @@ YUI.add('SamplesModel', function (Y, NAME) {
                 callback(null, result);
               }
             );
-            this.pgClient.end();
-          }, this)
+            done();
+          }
         );
-      }, this));
+      });
     },
 
     autocomplete: function (arg, callback) {
