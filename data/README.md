@@ -26,9 +26,8 @@ tail reject.tab
 
 ## Extracting tables from Josanne's spreadsheet
 
-(see below for how to make `josanne.tab`)
-
 ```bash
+cut -f 1-27 131128_NicolaLewis-2.tab | ./add27 | ./fix-unknown-date | ./shift-dates > josanne.tab
 ./import-josannes-spreaadsheet josanne.tab
 ```
 
@@ -48,7 +47,6 @@ psql bfs < load_tables.sql
 To load the raw form of Josanne's spreadsheet:
 
 ```bash
-cut -f 1-27 131128_NicolaLewis-2.tab | ./add27 | ./fix-unknown-date | ./shift-dates > josanne.tab
 tail -n +2 josanne.tab | psql bfs -c '\copy josanne from STDIN'
 ```
 
