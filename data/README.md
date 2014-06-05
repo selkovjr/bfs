@@ -81,7 +81,7 @@ Perfect match.
 
 #### species
 
-1. Some mismatches or ambiguities may be due to mapping rules. They need to be
+ * Some mismatches or ambiguities may be due to mapping rules. They need to be
    reviewed. The rules that only apply to Josanne’s file are at the top of the
    list, separated by a blank line — they don’t match anything in the old EMC
    file.
@@ -127,7 +127,7 @@ Perfect match.
       }
     }
     ```
-*. Conflict summary
+ * Conflict summary
 
     ```sql
 SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS "j.name" FROM samples s, j_samples j, birds b1, birds b2 WHERE s.id = j.id AND b1.id = s.species AND b2.id = j.species AND s.species <> j.species GROUP BY s, j, "s.name", "j.name";
@@ -144,7 +144,7 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
         20 |  3101 | 32105 | Himantopus himantopus | Himantopus himantopus
        664 |   435 |    -2 | Anas platyrhynchos    | Anas platyrhynchos
 
-* Gallinago gallinago
+ * Gallinago gallinago
 
     ```sql
     SELECT * FROM birds WHERE name = 'Gallinago galling';
@@ -177,7 +177,8 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
 
        UPDATE j_samples SET species = '31051' WHERE species = '2990';
       ```
-      **Remember to update the complement in `notes` after the merge!**
+      *Remember to propagate the same note to the complement of the merge!*
+      *Review!*
 
 #### sex
 ```sql
