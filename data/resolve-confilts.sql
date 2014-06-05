@@ -158,8 +158,7 @@ INSERT INTO notes (class, id, attr, "user", "when", text)
     'now',
     'merge conflict; overrode Josanne''s age: U -> adult'
   FROM j_samples
- WHERE age = 'U'
-   AND j_samples.id IN ('217-1825', '217-1828', '217-1831', '217-1839', '217-1841', '217-1842', '217-1843', '217-1844', '217-1845', '217-1846', '217-1847', '217-1848');
+ WHERE j_samples.id IN ('217-1825', '217-1828', '217-1831', '217-1839', '217-1841', '217-1842', '217-1843', '217-1844', '217-1845', '217-1846', '217-1847', '217-1848');
 
 UPDATE j_samples SET age = 'adult'
  WHERE j_samples.id IN ('217-1825', '217-1828', '217-1831', '217-1839', '217-1841', '217-1842', '217-1843', '217-1844', '217-1845', '217-1846', '217-1847', '217-1848');
@@ -175,10 +174,41 @@ INSERT INTO notes (class, id, attr, "user", "when", text)
     'now',
     'merge conflict; overrode Josanne''s age: H -> juvenile'
   FROM j_samples
- WHERE age = 'H'
-   AND j_samples.id IN ('217-318', '217-1', '217-8', '217-363', '217-430', '217-684', '217-685');
+ WHERE j_samples.id IN ('217-318', '217-1', '217-8', '217-363', '217-430', '217-684', '217-685');
 
 UPDATE j_samples SET age = 'juvenile'
  WHERE j_samples.id IN ('217-318', '217-1', '217-8', '217-363', '217-430', '217-684', '217-685');
+
+
+-- 3. Location
+
+INSERT INTO notes (class, id, attr, "user", "when", text)
+  SELECT
+    'samples',
+    id,
+    'location',
+    'selkovjr',
+    'now',
+    'merge conflict; overrode earlier -1 (village) with Josanne''s 3 (Grigoleti)'
+  FROM j_samples
+ WHERE j_samples.id IN ('217-1996', '217-1997', '217-1998', '217-1999', '217-2001', '217-2002', '217-2003', '217-2004', '217-2005', '217-2006', '217-2007', '217-2008', '217-2009', '217-2010', '217-2013', '217-2014', '217-2015', '217-2016', '217-2017', '217-2018', '217-2019', '217-2020', '217-2023', '217-2025', '217-2026', '217-2027');
+
+UPDATE samples SET location = '3'
+ WHERE samples.id IN ('217-1996', '217-1997', '217-1998', '217-1999', '217-2001', '217-2002', '217-2003', '217-2004', '217-2005', '217-2006', '217-2007', '217-2008', '217-2009', '217-2010', '217-2013', '217-2014', '217-2015', '217-2016', '217-2017', '217-2018', '217-2019', '217-2020', '217-2023', '217-2025', '217-2026', '217-2027');
+
+
+INSERT INTO notes (class, id, attr, "user", "when", text)
+  SELECT
+    'samples',
+    id,
+    'location',
+    'selkovjr',
+    'now',
+    'merge conflict; overrode earlier -1 (village) with Josanne''s 6 (Chorokhi Delta)'
+  FROM j_samples
+ WHERE j_samples.id IN ('217-2028', '217-2029');
+
+UPDATE samples SET location = '6'
+ WHERE samples.id IN ('217-2028', '217-2029');
 
 END TRANSACTION;
