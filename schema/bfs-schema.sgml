@@ -473,6 +473,8 @@ CREATE EXTENSION SEG;
   <constraints>
   </constraints>
   <functions>
+SET datestyle TO "postgres, DMY";
+
 ALTER SEQUENCE location_id_seq RESTART WITH 22;
 
 CREATE VIEW v_samples_birds_cn AS
