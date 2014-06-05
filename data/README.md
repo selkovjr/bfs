@@ -92,3 +92,11 @@ to NULL in the earlier EMC set.
 We have later decided to replace all `U`'s with NULLs and now there is a
 perfect match.
 
+
+## Merging
+
+```sql
+INSERT INTO samples SELECT * FROM j_samples WHERE id NOT IN (SELECT id FROM samples);
+```
+
+
