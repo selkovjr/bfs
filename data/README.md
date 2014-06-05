@@ -127,6 +127,13 @@ Perfect match.
       }
     }
     ```
+ * Duplicate phylogeny entries can cause mismatches or spurious matches
+
+   ```
+   SELECT * FROM (SELECT count(*), name FROM birds GROUP BY name ORDER BY count DESC, name ASC) AS multiple WHERE count > 1;
+   ```
+
+
  * Conflict summary
 
     ```sql
@@ -144,42 +151,89 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
         20 |  3101 | 32105 | Himantopus himantopus | Himantopus himantopus
        664 |   435 |    -2 | Anas platyrhynchos    | Anas platyrhynchos
 
- * *Gallinago gallinago*
+ * *Gallinago gallinago, Anas crecca, Himantopus himantopus*
 
     ```sql
     SELECT * FROM birds WHERE name = 'Gallinago gallinago';
     ```
-
       id   |    family    |   genus   |  species  |        name         | common_name
     ------:|--------------|-----------|-----------|---------------------|--------------
      31051 | Scolopacidae | Gallinago | gallinago | Gallinago gallinago | Common Snipe
       2990 | Scolopacidae | Gallinago | gallinago | Gallinago gallinago |
 
-      This is strange. Systematic names are supposed to be unique. It looks
-      like the bird was matched by common name in the old spreadsheet but in
-      the absence of it the first instance of the systematic name was picked
-      (2990).
+    ```sql
+    SELECT * FROM birds WHERE name = 'Anas crecca';
+    ```
+      id   |  family  | genus | species |    name     | common_name
+    ------:|----------+-------|---------|-------------|-------------
+     31027 | Anatidae | Anas  | crecca  | Anas crecca | Common Teal
+       462 | Anatidae | Anas  | crecca  | Anas crecca |
 
-      Solution:
+    ```sql
+    SELECT * FROM birds WHERE name = 'Himantopus himantopus';
+   ```
+      id   |      family      |   genus    |  species   |         name          |    common_name
+    ------:|------------------|------------|------------|-----------------------|--------------------
+      3101 | Recurvirostridae | Himantopus | himantopus | Himantopus himantopus | Black-winged Stilt
+     32105 | Recurvirostridae | Himantopus | himantopus | Himantopus himantopus |
 
-      ```sql
-      INSERT INTO notes (class, id, attr, "user", "when", text)
-        SELECT
-          'samples',
-          id,
-          'species',
-          'selkovjr',
-          'now',
-          'merge conflict; overrode Josanne''s id of 2990: Gallinago galinago / NULL -> Gallinago gallinago / Common Snipe'
-        FROM j_samples
-       WHERE species = '2990'
-         AND j_samples.id IN (SELECT id FROM samples);
+    That is strange. Systematic names are supposed to be unique. It looks
+    like the birds were matched by common name in the old spreadsheet but in
+    the absence of it the first instance of the systematic name was picked.
 
-       UPDATE j_samples SET species = '31051' WHERE species = '2990';
-      ```
-      > Remember to propagate the same note to the complement of the merge!
+    Solution: pick the variants that include common names
 
-      > Review!
+    ```sql
+    -- Gallinago gallinago
+    INSERT INTO notes (class, id, attr, "user", "when", text)
+      SELECT
+        'samples',
+        id,
+        'species',
+        'selkovjr',
+        'now',
+        'merge conflict; overrode Josanne''s id of 2990: Gallinago galinago / NULL -> Gallinago gallinago / Common Snipe'
+      FROM j_samples
+     WHERE species = '2990'
+       AND j_samples.id IN (SELECT id FROM samples);
+
+    UPDATE j_samples SET species = '31051' WHERE species = '2990';
+
+    -- Anas crecca
+    INSERT INTO notes (class, id, attr, "user", "when", text)
+      SELECT
+        'samples',
+        id,
+        'species',
+        'selkovjr',
+        'now',
+        'merge conflict; overrode Josanne''s id of 462: Anas crecca / NULL -> Anas crecca / Common Teal'
+      FROM j_samples
+     WHERE species = '462'
+       AND j_samples.id IN (SELECT id FROM samples);
+
+    UPDATE j_samples SET species = '31027' WHERE species = '462';
+
+    -- Himantopus himantopus
+    INSERT INTO notes (class, id, attr, "user", "when", text)
+      SELECT
+        'samples',
+        id,
+        'species',
+        'selkovjr',
+        'now',
+        'merge conflict; overrode Josanne''s id of 32105: Himantopus himantopus / NULL -> Himantopus himantopus / Common Snipe'
+      FROM j_samples
+     WHERE species = '32105'
+       AND j_samples.id IN (SELECT id FROM samples);
+
+    UPDATE j_samples SET species = '3101' WHERE species = '32105';
+
+    ```
+    > Remember to propagate the note to the complement of the merge after it's
+    > done!
+
+    > Review!
 
 #### sex
 ```sql
