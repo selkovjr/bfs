@@ -82,10 +82,13 @@ Perfect match.
 #### species
 
 
-#### Sex
+#### sex
 ```sql
 SELECT s.sex, j.sex FROM samples s, j_samples j WHERE s.id = j.id AND NOT (s.sex IS NULL AND j.sex = 'U') AND s.sex <> j.sex;
 ```
 This query shows a perfect match except for `U` in Josanne's set corresponding
 to NULL in the earlier EMC set.
+
+We have later decided to replace all `U`'s with NULLs and now there is a
+perfect match.
 

@@ -389,7 +389,7 @@ NS
         <description>Database class (table)</description>
         <source>schema</source>
       </attribute>
-      <attribute name="id" type="text">
+      <attribute name="id" type="text" ref="samples">
         <description>Row id</description>
         <source>auto</source>
       </attribute>
