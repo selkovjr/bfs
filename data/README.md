@@ -89,6 +89,8 @@ Perfect match.
    ```perl
     elsif ($key eq 'species') {
       my $text = lc $f[$column{'Host_Species'}];
+
+      # Josanne only
       $text = 'larus cachinnans' if $text eq 'larus cachinnans cachinnans';
       $text = 'larus genei' if $text eq 'chroicocephalus genei';
       $text = 'larus argentatus' if $text eq 'larus argentatus cachinnans';
@@ -100,6 +102,7 @@ Perfect match.
       $text = 'corvus corone' if $text eq 'corvus corone cornix';
       $text = 'eudromias morinellus' if $text eq 'charadrius morinellus';  # probably should be reversed
 
+      # Josanne and old EMC spreadsheet
       $text = 'cattle egret' if $text eq 'western cattle egret';
       $text = 'common moorhen' if $text eq 'moorhen';
       $text = 'eurasian blackbird' if $text eq 'blackbird';
@@ -123,6 +126,23 @@ Perfect match.
         push @fields, $id;
       }
     }
+    ```
+2. Conflict summary
+
+    ```sql
+SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS "j.name" FROM samples s, j_samples j, birds b1, birds b2 WHERE s.id = j.id AND b1.id = s.species AND b2.id = j.species AND s.species <> j.species GROUP BY s, j, "s.name", "j.name";
+ count |   s   |   j   |        s.name         |        j.name
+-------+-------+-------+-----------------------+-----------------------
+    26 | 31051 |  2990 | Gallinago gallinago   | Gallinago gallinago
+     4 |   304 |    -4 | Meleagris gallopavo   | Meleagris gallopavo
+     1 | 31641 |  5783 | Corvus cornix         | Corvus corone
+   133 | 31675 |  3227 | Larus michahellis     | Larus argentatus
+    10 |   373 |    -3 | Anser cygnoides       | Anser cygnoides
+    14 |  3000 |  2989 | Lymnocryptes minimus  | Gallinago media
+    22 | 31027 |   462 | Anas crecca           | Anas crecca
+    20 |  3101 | 32105 | Himantopus himantopus | Himantopus himantopus
+   664 |   435 |    -2 | Anas platyrhynchos    | Anas platyrhynchos
+(9 rows)
     ```
 
 #### sex
