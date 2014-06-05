@@ -6,16 +6,19 @@ YUI.add('Samples', function (Y, NAME) {
   Y.namespace('mojito.controllers')[NAME] = {
     index: function (ac) {
       var
-        model = ac.models.get('samples'),
+        model,
         user = ac.http.getRequest().user;
 
       if (user) {
         // Using the index action as a sort of initialize() method
-        // to attach username to ll models.
+        // to attach common properties to all models.
         Y.each(Y.namespace('mojito.models'), function (model) {
           model.user = user.username;
+          model.pg = ac.pg.module();
+          model.connectionString = ac.pg.connectionString();
         });
 
+        model = ac.models.get('samples');
         model.count(null, function (err, data) {
           if (err) {
             console.error('error condition');
@@ -109,6 +112,17 @@ YUI.add('Samples', function (Y, NAME) {
         }
         ac.done(data, 'json');
       });
+    },
+
+    addNote: function (ac) {
+      var model = ac.models.get('samples');
+      model.addNote(ac.command.params.body, function (err, data) {
+        if (err) {
+          console.error('error condition');
+          ac.error(err);
+        }
+        ac.done();
+      });
     }
   };
-}, '0.0.1', {requires: ['mojito', 'mojito-http-addon', 'mojito-models-addon', 'mojito-data-addon', 'mojito-assets-addon']});
+}, '0.0.1', {requires: ['mojito', 'mojito-http-addon', 'mojito-models-addon', 'mojito-data-addon', 'mojito-assets-addon', 'addon-ac-pg']});

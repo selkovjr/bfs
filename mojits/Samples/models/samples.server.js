@@ -15,13 +15,18 @@ YUI.add('SamplesModel', function (Y, NAME) {
    * @class SamplesModel
    * @constructor
    */
+  var
+    pg,
+    user,
+    connectionString;
+
   Y.namespace('mojito.models')[NAME] = {
 
     init: function (config) {
-      var user = Y.namespace('mojito.models')[NAME].user || 'postgres';
       this.config = config;
-      this.pg = require('pg');
-      this.pgClient = new this.pg.Client('postgres://' + user + ':@localhost/bfs');
+      pg = this.pg;
+      user = this.user;
+      connectionString = this.connectionString;
     },
 
     /**
@@ -31,20 +36,22 @@ YUI.add('SamplesModel', function (Y, NAME) {
      *        data has been retrieved.
      */
     count: function (arg, callback) {
-      this.pgClient.connect(Y.bind(function (err) {
+      pg.connect(connectionString, function (err, client, done) {
         if (err) {
+          console.error('could not connect to postgres', err);
           callback(err);
         }
-        this.pgClient.query(
+        client.query(
           'SELECT count(*) FROM "samples"',
           function (err, result) {
+            done();
             if (err) {
               callback(err);
             }
             callback(null, parseInt(result.rows[0].count, 10)); // Pg client stringifies numbers. There is an ongoing discussion about that.
           }
         );
-      }, this));
+      });
     },
 
     /**
@@ -59,7 +66,8 @@ YUI.add('SamplesModel', function (Y, NAME) {
         itemsPerPage = arg.itemsPerPage || 3,
         sortKeys = [{'id': 1}],
         sql,
-        totalItems;
+        totalItems,
+        idList = [];
 
       if (typeof arg.sortBy === 'string') {
         sortKeys = Y.JSON.parse(arg.sortBy);
@@ -87,11 +95,13 @@ YUI.add('SamplesModel', function (Y, NAME) {
         }
       );
 
-      this.pgClient.connect(Y.bind(function (err) {
+      pg.connect(connectionString, function (err, client, done) {
         if (err) {
+          console.error('could not connect to postgres', err);
           callback(err);
         }
-        this.pgClient.query(
+
+        client.query(
           'SELECT count(*) FROM "samples"',
           function (err, result) {
             if (err) {
@@ -100,13 +110,13 @@ YUI.add('SamplesModel', function (Y, NAME) {
             totalItems = parseInt(result.rows[0].count, 10); // Pg client stringifies numbers. There is an ongoing discussion about that.
           }
         );
-        console.log(sql);
-        this.pgClient.query(
-          sql,
-          Y.bind(function (err, result) {
-            this.pgClient.end();
 
-            var ac = {};
+        console.log(sql);
+        client.query(
+          sql,
+          function (err, result) {
+            var notesQuery;
+
             if (err) {
               callback(err);
             }
@@ -118,6 +128,7 @@ YUI.add('SamplesModel', function (Y, NAME) {
             };
             // find out about the use of node pg parsers for this
             Y.each(result.rows, function (row) {
+              idList.push(row.id);
               row.date = Y.DataType.Date.format(row.date, {format: "%Y-%m-%d"});
               Y.each(row, function (v, k) {
                 if (v === null) {
@@ -126,22 +137,52 @@ YUI.add('SamplesModel', function (Y, NAME) {
               });
             });
 
-            callback(null, result);
-          }, this)
+            notesQuery = 'SELECT * FROM notes WHERE "class" = \'samples\' AND id IN (' + Y.Array.map(idList, function (arg) {
+              return "'" + arg + "'";
+            }).join(', ') + ')';
+
+            console.log(notesQuery);
+            client.query(
+              notesQuery,
+              function (err, notesResult) {
+                if (err) {
+                  callback(err);
+                }
+                result.notes = {};
+                Y.each(notesResult.rows, function (note) {
+                  if (result.notes[note.id] === undefined) {
+                    result.notes[note.id] = {
+                      attr: note.attr,
+                      list: []
+                    };
+                  }
+                  result.notes[note.id].list.push({
+                    user: note.user,
+                    when: note.when,
+                    text: note.text
+                  });
+                });
+                console.log(result.notes);
+                callback(null, result);
+              }
+            );
+            done();
+          }
         );
-      }, this));
+      });
     },
 
     autocomplete: function (arg, callback) {
-      this.pgClient.connect(Y.bind(function (err) {
+      pg.connect(connectionString, function (err, client, done) {
         if (err) {
-          return console.error('could not connect to postgres', err);
+          console.error('could not connect to postgres', err);
+          callback(err);
         }
-        this.pgClient.query(
+        client.query(
           'SELECT "attr", "val", "desc" FROM "ac" WHERE "class" = \'samples\' ORDER BY "ord"',
-          Y.bind(function (err, result) {
+          function (err, result) {
             var ac = {};
-            this.pgClient.end();
+            done();
             if (err) {
               callback(err);
             }
@@ -149,13 +190,12 @@ YUI.add('SamplesModel', function (Y, NAME) {
               if (ac[option.attr] === undefined) {
                 ac[option.attr] = [];
               }
-              // ac[option.attr].push({val: option.val, desc: option.desc});
               ac[option.attr].push(option.val);
             });
             callback(null, ac);
-          }, this)
+          }
         );
-      }, this));
+      });
     },
 
     bird: function (arg, callback) {
@@ -173,84 +213,87 @@ YUI.add('SamplesModel', function (Y, NAME) {
         {query: query}
       );
 
-      this.pgClient.connect(Y.bind(function (err) {
+      pg.connect(connectionString, function (err, client, done) {
         if (err) {
-          callback('could not connect to postgres; ' + err);
+          console.error('could not connect to postgres', err);
+          callback(err);
         }
-        this.pgClient.query(
+        client.query(
           sql,
-          Y.bind(function (err, result) {
-            this.pgClient.end();
+          function (err, result) {
             if (err) {
               callback(err);
             }
+            done();
             if (result) {
               callback(null, result.rows);
             }
             else {
               callback(null, {rows: []});
             }
-          }, this)
+          }
         );
-      }, this));
+      });
     },
 
     create: function (arg, callback) {
-      this.pgClient.connect(Y.bind(function (err) {
+      pg.connect(connectionString, function (err, client, done) {
         var sql = Y.substitute("INSERT INTO samples (id) VALUES ('{id}')", arg);
 
         if (err) {
-          return console.error('could not connect to postgres', err);
+          console.error('could not connect to postgres', err);
+          callback(err);
         }
 
         console.log(sql);
-        this.pgClient.query(
+        client.query(
           sql,
-          Y.bind(function (err, result) {
-            this.pgClient.end();
+          function (err, result) {
             if (err) {
               callback(err);
             }
+
+            done();
             console.log('create successful');
             console.log(result);
             callback(null, result);
-          }, this)
+          }
         );
-      }, this));
+      });
     },
 
     'delete': function (arg, callback) {
-      this.pgClient.connect(Y.bind(function (err) {
+      pg.connect(connectionString, function (err, client, done) {
         var sql = Y.substitute("DELETE FROM samples WHERE id = '{id}'", arg);
 
         if (err) {
-          return console.error('could not connect to postgres', err);
+          console.error('could not connect to postgres', err);
+          callback(err);
         }
 
         console.log(sql);
-        this.pgClient.query(
+        client.query(
           sql,
-          Y.bind(function (err, result) {
-            this.pgClient.end();
+          function (err, result) {
             if (err) {
               callback(err);
             }
-            else {
-              if (result.rowCount) {
-                console.log('delete successful');
-                callback(null, result);
-              } else {
-                console.log('update error');
-                callback('DELETE: no rows matching "' + arg.id  + '"');
-              }
+
+            done();
+            if (result.rowCount) {
+              console.log('delete successful');
+              callback(null, result);
+            } else {
+              console.log('update error');
+              callback('DELETE: no rows matching "' + arg.id  + '"');
             }
-          }, this)
+          }
         );
-      }, this));
+      });
     },
 
     update: function (arg, callback) {
-      this.pgClient.connect(Y.bind(function (err) {
+      pg.connect(connectionString, function (err, client, done) {
         var sql;
 
         if (err) {
@@ -264,12 +307,12 @@ YUI.add('SamplesModel', function (Y, NAME) {
           sql = Y.substitute("UPDATE samples SET {attr} = NULL WHERE id = '{id}'", arg);
         }
         console.log(sql);
-        this.pgClient.query(
+        client.query(
           sql,
-          Y.bind(function (err, result) {
+          function (err, result) {
             console.log('-------- update query --------');
             console.log([err, result]);
-            this.pgClient.end();
+            done();
             if (err) {
               callback(err);
             }
@@ -282,13 +325,13 @@ YUI.add('SamplesModel', function (Y, NAME) {
                 callback('UPDATE: no rows matching "' + arg.id  + '"');
               }
             }
-          }, this)
+          }
         );
-      }, this));
+      });
     },
 
     find: function (arg, callback) {
-      this.pgClient.connect(Y.bind(function (err) {
+      pg.connect(connectionString, function (err, client, done) {
         var sql;
 
         if (err) {
@@ -297,19 +340,56 @@ YUI.add('SamplesModel', function (Y, NAME) {
         }
 
         sql = Y.substitute("SELECT * FROM samples WHERE id = '{id}'", arg);
-        this.pgClient.query(
+        client.query(
           sql,
-          Y.bind(function (err, result) {
+          function (err, result) {
             console.log('-------- find query --------');
             console.log([err, result]);
-            this.pgClient.end();
             if (err) {
               callback(err);
             }
+
+            done();
             callback(null, result);
-          }, this)
+          }
         );
-      }, this));
+      });
+    },
+
+    addNote: function (arg, callback) {
+      pg.connect(connectionString, function (err, client, done) {
+        Y.log(arg);
+        var sql = Y.substitute(
+          "INSERT INTO notes (\"class\", \"id\", \"attr\", \"user\", \"when\", \"text\") VALUES ('samples', '{id}', '{attr}', '{user}', 'now', $1)",
+          {
+            id: arg.id,
+            attr: arg.attr,
+            user: user
+          }
+        );
+
+        if (err) {
+          console.error('could not connect to postgres', err);
+          callback(err);
+        }
+
+        console.log(sql);
+        console.log("$1 = " + arg.text + "'");
+        client.query(
+          sql,
+          [arg.text],
+          function (err, result) {
+            if (err) {
+              callback(err);
+            }
+
+            done();
+            console.log('create successful');
+            console.log(result);
+            callback(null, result);
+          }
+        );
+      });
     }
   };
 }, '0.0.1', {requires: ['mojito', 'mojito-rest-lib', 'json', 'substitute']});

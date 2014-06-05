@@ -7,7 +7,7 @@ h2 {
   text-shadow: 2px 2px 3px #ccc;
 }
 
-div.mod{
+div.mod {
   background-color: #F9F9FC;
   border: 1px solid #D4D8EB;
   border-radius: 4px;
@@ -79,6 +79,46 @@ div.mod div.inner {
 /** collapse module **/
 div.mod.collapse div.inner {
   display:none;
+}
+
+/* Annotations */
+
+.annotated {
+  background-image: url(images/annotated.png);
+  background-position: left bottom;
+  background-repeat: no-repeat;
+}
+
+.annotation-meta {
+  color: grey;
+  margin-bottom: 0.2em;
+}
+
+.annotation-author {
+  font-weight: bold;
+}
+
+.yui3-overlay-content {
+  background-color: #fff8dc;
+  border: 1px solid #9EA8C6;
+  border-radius: 3px;
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.25);
+}
+
+.yui3-overlay-content .yui3-widget-bd {
+  padding: 0.4em 0.6em 0.5em;
+}
+
+.yui3-overlay-content .yui3-widget-bd ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.yui3-overlay-content .yui3-widget-bd li {
+  padding: 7px;
+}
+.yui3-overlay-content .yui3-widget-bd textarea {
+  min-width: 300px;
 }
 
 .page-footer {

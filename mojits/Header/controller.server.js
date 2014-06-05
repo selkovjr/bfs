@@ -29,7 +29,8 @@ YUI.add('Header', function (Y, NAME) {
       ac.assets.addCss('./index.css');
       if (user) {
         ac.done({
-          title: 'user: ' + user.name
+          name: user.name,
+          id: user.username
         });
       } else {
         ac.done({

@@ -14,11 +14,15 @@ YUI.add('LocationsModel', function (Y, NAME) {
    * @class LocationsModel
    * @constructor
    */
+  var
+    pg,
+    connectionString;
+
   Y.namespace('mojito.models')[NAME] = {
     init: function (config) {
       this.config = config;
-      this.pg = require('pg');
-      this.pgClient = new this.pg.Client('postgres://postgres:@localhost/bfs');
+      pg = this.pg;
+      connectionString = this.connectionString;
     },
 
     /**
@@ -38,22 +42,24 @@ YUI.add('LocationsModel', function (Y, NAME) {
           {query: arg.location}
         );
 
-        this.pgClient.connect(Y.bind(function (err) {
+        pg.connect(connectionString, function (err, client, done) {
           if (err) {
-            return console.error('could not connect to postgres', err);
+            console.error('could not connect to postgres', err);
+            callback(err);
           }
-          this.pgClient.query(
+
+          client.query(
             sql,
-            Y.bind(function (err, result) {
+            function (err, result) {
               var ac = {};
-              this.pgClient.end();
               if (err) {
                 callback(err);
               }
+              done();
               callback(null, result.rows[0]);
-            }, this)
+            }
           );
-        }, this));
+        });
       }
       else {
         callback(null, {
@@ -76,22 +82,23 @@ YUI.add('LocationsModel', function (Y, NAME) {
         {query: query}
       );
 
-      this.pgClient.connect(Y.bind(function (err) {
+      pg.connect(connectionString, function (err, client, done) {
         if (err) {
-          return console.error('could not connect to postgres', err);
+          console.error('could not connect to postgres', err);
+          callback(err);
         }
-        this.pgClient.query(
+        client.query(
           sql,
-          Y.bind(function (err, result) {
+          function (err, result) {
             var ac = {};
-            this.pgClient.end();
             if (err) {
               callback(err);
             }
+            done();
             callback(null, result.rows);
-          }, this)
+          }
         );
-      }, this));
+      });
     }
   };
 }, '0.0.1', {requires: []});

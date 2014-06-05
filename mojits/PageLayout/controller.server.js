@@ -22,7 +22,7 @@ YUI.add('PageLayout', function(Y, NAME) {
     */
     index: function(ac) {
       ac.composite.done({
-        title: "PageLayout title"
+        title: "Georgia Bird Virus Database"
       });
     }
   };
