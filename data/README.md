@@ -132,20 +132,17 @@ Perfect match.
     ```sql
 SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS "j.name" FROM samples s, j_samples j, birds b1, birds b2 WHERE s.id = j.id AND b1.id = s.species AND b2.id = j.species AND s.species <> j.species GROUP BY s, j, "s.name", "j.name";
     ```
-    <pre>
- count |   s   |   j   |        s.name         |        j.name
--------+-------+-------+-----------------------+-----------------------
-    26 | 31051 |  2990 | Gallinago gallinago   | Gallinago gallinago
-     4 |   304 |    -4 | Meleagris gallopavo   | Meleagris gallopavo
-     1 | 31641 |  5783 | Corvus cornix         | Corvus corone
-   133 | 31675 |  3227 | Larus michahellis     | Larus argentatus
-    10 |   373 |    -3 | Anser cygnoides       | Anser cygnoides
-    14 |  3000 |  2989 | Lymnocryptes minimus  | Gallinago media
-    22 | 31027 |   462 | Anas crecca           | Anas crecca
-    20 |  3101 | 32105 | Himantopus himantopus | Himantopus himantopus
-   664 |   435 |    -2 | Anas platyrhynchos    | Anas platyrhynchos
-(9 rows)
-    </pre>
+     count |   s   |   j   |        s.name         |        j.name
+    -------|-------|-------|-----------------------|-----------------------
+        26 | 31051 |  2990 | Gallinago gallinago   | Gallinago gallinago
+         4 |   304 |    -4 | Meleagris gallopavo   | Meleagris gallopavo
+         1 | 31641 |  5783 | Corvus cornix         | Corvus corone
+       133 | 31675 |  3227 | Larus michahellis     | Larus argentatus
+        10 |   373 |    -3 | Anser cygnoides       | Anser cygnoides
+        14 |  3000 |  2989 | Lymnocryptes minimus  | Gallinago media
+        22 | 31027 |   462 | Anas crecca           | Anas crecca
+        20 |  3101 | 32105 | Himantopus himantopus | Himantopus himantopus
+       664 |   435 |    -2 | Anas platyrhynchos    | Anas platyrhynchos
 
 #### sex
 ```sql
