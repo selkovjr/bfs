@@ -273,7 +273,6 @@ unidentifiable
         <description>H9 Ct value</description>
         <source>user input</source>
       </attribute>
-    </class>
       <attribute name="ndv_status" type="char" length="1">
         <description>Newcastle Disease Virus test</description>
         <source>user input</source>
