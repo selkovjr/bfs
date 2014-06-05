@@ -46,7 +46,6 @@ SELECT * INTO j_samples FROM samples LIMIT 0;
 DROP TABLE j_diagnostics;
 SELECT * INTO j_diagnostics FROM diagnostics LIMIT 0;
 \copy j_diagnostics from josanne-diagnostics.tab
- ```
 ```
 
 ## Finding non-ASCII characters in files:
@@ -69,8 +68,7 @@ Perfect match.
 #### species
 
 
-### Sex
-
+#### Sex
 ```sql
 SELECT s.sex, j.sex FROM samples s, j_samples j WHERE s.id = j.id AND NOT (s.sex IS NULL AND j.sex = 'U') AND s.sex <> j.sex;
 ```
