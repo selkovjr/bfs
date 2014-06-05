@@ -219,11 +219,7 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
 
      > Review!
 
- * ** -- species mismatch
-
-     **Solution: prefer the old EMC version*"
-
-     In: `resolve-confilts.sql`
+ * *Corvus cornix|Corvus corone, Larus michahellis|Larus argentatus, Lymnocryptes minimus|Gallinago media* -- species mismatch
 
     ```sql
     SELECT * FROM birds WHERE name ~ 'Corvus cornix|Corvus corone';
@@ -249,6 +245,10 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
     -----:|--------------|--------------|---------|----------------------|-------------
      2989 | Scolopacidae | Gallinago    | media   | Gallinago media      | Great Snipe
      3000 | Scolopacidae | Lymnocryptes | minimus | Lymnocryptes minimus | Jack Snipe
+
+     **Solution: prefer the old EMC version**
+
+     In: `resolve-confilts.sql`
 
     > Review!
 
@@ -307,7 +307,7 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
      217-684  | juvenile | H
      217-685  | juvenile | H
 
-     **Solution: override U -> adult, H -> juvenile; assume J is juvenile*"
+     **Solution: override U -> adult, H -> juvenile; assume J is juvenile**
 
      In: `resolve-confilts.sql`
 
