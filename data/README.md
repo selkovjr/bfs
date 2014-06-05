@@ -7,7 +7,7 @@
   Last update: 2008-06-10
 
 ```
-  ./extract-birds NFB-DB_SpecList_final.tab > birds.tab
+./extract-birds NFB-DB_SpecList_final.tab > birds.tab
 ```
 
 ## Extracting tables from the Erasmus spreadsheet
@@ -153,6 +153,8 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
 
  * *Gallinago gallinago, Anas crecca, Himantopus himantopus*
 
+    The absence of common names
+
     ```sql
     SELECT * FROM birds WHERE name = 'Gallinago gallinago';
     ```
@@ -235,6 +237,88 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
 
     > Review!
 
+ * *Meleagris gallopavo, Anser cygnoides, Anas platyrhynchos*
+
+    Wild or domestic?
+
+    ```sql
+    SELECT * FROM birds WHERE name = 'Meleagris gallopavo';
+    ```
+     id  |   family    |   genus   |  species  |        name         |   common_name
+    ----:|-------------|-----------|-----------|---------------------|-----------------
+      -4 | Phasianidae | Meleagris | gallopavo | Meleagris gallopavo | Domestic Turkey
+     304 | Phasianidae | Meleagris | gallopavo | Meleagris gallopavo | Wild Turkey
+
+    ```sql
+    SELECT * FROM birds WHERE name = 'Anser cygnoides';
+    ```
+     id  |  family  | genus |  species  |      name       |  common_name
+    ----:|----------|-------|-----------|-----------------|----------------
+      -3 | Anatidae | Anser | cygnoides | Anser cygnoides | Domestic Goose
+     373 | Anatidae | Anser | cygnoides | Anser cygnoides | Swan Goose
+
+    ```sql
+    SELECT * FROM birds WHERE name = 'Anas platyrhynchos';
+    ```
+     id  |  family  | genus |    species    |        name        |  common_name
+    ----:|----------|-------|---------------|--------------------|---------------
+      -2 | Anatidae | Anas  | platyrhynchos | Anas platyrhynchos | Domestic Duck
+     435 | Anatidae | Anas  | platyrhynchos | Anas platyrhynchos | Mallard
+
+     *Solution: prefer wild to domestic*
+
+    ```sql
+    -- Meleagris gallopavo
+    INSERT INTO notes (class, id, attr, "user", "when", text)
+      SELECT
+        'samples',
+        id,
+        'species',
+        'selkovjr',
+        'now',
+        'merge conflict; overrode Josanne''s id of -4: Meleagris gallopavo / Domestic Turkey -> Meleagris gallopavo / Wild Turkey'
+      FROM j_samples
+     WHERE species = '-4'
+       AND j_samples.id IN (SELECT id FROM samples);
+
+    UPDATE j_samples SET species = '304' WHERE species = '-4'; -- no complement in merege
+
+    -- Anser cygnoides
+    INSERT INTO notes (class, id, attr, "user", "when", text)
+      SELECT
+        'samples',
+        id,
+        'species',
+        'selkovjr',
+        'now',
+        'merge conflict; overrode Josanne''s id of -3: Anser cygnoides / Domestic Goose -> Anser cygnoides / Swan Goose'
+      FROM j_samples
+     WHERE species = '-3'
+       AND j_samples.id IN (SELECT id FROM samples);
+
+    UPDATE j_samples SET species = '373' WHERE species = '-3';
+
+    -- Anas platyrhynchos
+    INSERT INTO notes (class, id, attr, "user", "when", text)
+      SELECT
+        'samples',
+        id,
+        'species',
+        'selkovjr',
+        'now',
+        'merge conflict; overrode Josanne''s id of -2: Anas platyrhynchos / Domestic Duck -> Anas platyrhynchos / Mallard'
+      FROM j_samples
+     WHERE species = '-2'
+       AND j_samples.id IN (SELECT id FROM samples);
+
+    UPDATE j_samples SET species = '435' WHERE species = '-2'; -- huge complement
+
+    ```
+    > Remember to propagate the note to the complement of the merge after it's
+    > done!
+
+    > Review!
+
 #### sex
 ```sql
 SELECT s.sex, j.sex FROM samples s, j_samples j WHERE s.id = j.id AND NOT (s.sex IS NULL AND j.sex = 'U') AND s.sex <> j.sex;
@@ -245,5 +329,3 @@ to NULL in the earlier EMC set.
 We have later decided to replace all `U`'s with NULLs and now there is a
 perfect match.
 
-fs=# SELECT * FROM birds WHERE name = 'Anas crecca'
-bfs-# ;
