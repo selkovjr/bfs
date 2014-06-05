@@ -144,10 +144,10 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
         20 |  3101 | 32105 | Himantopus himantopus | Himantopus himantopus
        664 |   435 |    -2 | Anas platyrhynchos    | Anas platyrhynchos
 
- * Gallinago gallinago
+ * *Gallinago gallinago*
 
     ```sql
-    SELECT * FROM birds WHERE name = 'Gallinago galling';
+    SELECT * FROM birds WHERE name = 'Gallinago gallinago';
     ```
 
       id   |    family    |   genus   |  species  |        name         | common_name
@@ -177,8 +177,9 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
 
        UPDATE j_samples SET species = '31051' WHERE species = '2990';
       ```
-      *Remember to propagate the same note to the complement of the merge!*
-      *Review!*
+      <font color="green">Remember to propagate the same note to the complement of the merge!</font>
+
+      <font color="green">Review!</font>
 
 #### sex
 ```sql
