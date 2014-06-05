@@ -32,7 +32,8 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
       h7_pt: {},
       h9_status: {},
       h9_ct: {},
-      name: {}
+      ndv_status: {},
+      ndv_ct: {}
     }
   });
 
@@ -81,7 +82,8 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
         'h7_pt',
         'h9_status',
         'h9_ct',
-        'name'
+        'ndv_status',
+        'ndv_ct'
       ]
     }
   });
@@ -240,7 +242,7 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
                   {
                     key: 'ma_ct',
                     label: 'MA Ct',
-                    editor: 'inlineNumber'
+                    editor: 'inline'
                   },
 
                   {
@@ -263,7 +265,7 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
                   {
                     key: 'h5_ct',
                     label: 'H5 Ct',
-                    editor: 'inlineNumber'
+                    editor: 'inline'
                   },
 
                   {
@@ -303,7 +305,7 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
                   {
                     key: 'h7_ct',
                     label: 'H7 Ct',
-                    editor: 'inlineNumber'
+                    editor: 'inline'
                   },
 
                   {
@@ -342,18 +344,41 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
 
                   {
                     key: 'h9_ct',
-                    label: 'H9 Ct',
-                    editor: 'inlineNumber'
+                    label: 'h9 Ct',
+                    editor: 'inline'
                   },
 
                   {
-                    key: 'name',
-                    label: 'Name',
-                    editor: 'inline',
+                    key: 'ndv_status',
+                    label: 'NDV Status',
+                    editor: 'inlineAC',
                     editorConfig: {
-                      on: {editorShow: resetUndefined}
+                      autocompleteConfig: {
+                        source: acOptions.ndv_status,
+                        minQueryLength: 0,
+                        activateFirstItem: true,
+                        resultFilters: autocompleteFilter,
+                        resultHighlighter: 'phraseMatch',
+                        on: {select: highlightCleanup}
+                      },
+                      on: {editorShow: nudge}
                     }
+                  },
+
+                  {
+                    key: 'ndv_ct',
+                    label: 'NDV Ct',
+                    editor: 'inline'
                   }
+
+                  // {
+                  //   key: 'name',
+                  //   label: 'Name',
+                  //   editor: 'inline',
+                  //   editorConfig: {
+                  //     on: {editorShow: resetUndefined}
+                  //   }
+                  // }
                 ],
 
                 data: modelList,
