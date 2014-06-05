@@ -213,7 +213,7 @@ other
 -	negative
         </values>
       </attribute>
-      <attribute name="ma_ct" type="text">
+      <attribute name="ma_ct" type="seg">
         <description>MA Ct value</description>
         <source>user input</source>
       </attribute>
@@ -226,7 +226,7 @@ other
 i	inconclusive
         </values>
       </attribute>
-      <attribute name="h5_ct" type="text">
+      <attribute name="h5_ct" type="seg">
         <description>H5 Ct value</description>
         <source>user input</source>
       </attribute>
@@ -248,7 +248,7 @@ unidentifiable
 i	inconclusive
         </values>
       </attribute>
-      <attribute name="h7_ct" type="text">
+      <attribute name="h7_ct" type="seg">
         <description>H7 Ct value</description>
         <source>user input</source>
       </attribute>
@@ -269,8 +269,21 @@ unidentifiable
 -	negative
         </values>
       </attribute>
-      <attribute name="h9_ct" type="text">
+      <attribute name="h9_ct" type="seg">
         <description>H9 Ct value</description>
+        <source>user input</source>
+      </attribute>
+    </class>
+      <attribute name="ndv_status" type="char" length="1">
+        <description>Newcastle Disease Virus test</description>
+        <source>user input</source>
+        <values>
++	positive
+-	negative
+        </values>
+      </attribute>
+      <attribute name="ndv_ct" type="seg">
+        <description>Ct value of the NDV test</description>
         <source>user input</source>
       </attribute>
     </class>
@@ -304,6 +317,18 @@ unidentifiable
 t
 f
         </values>
+      </attribute>
+      <attribute name="ndv" type="bool">
+        <description>Newcastle Disease Virus culture</description>
+        <source>user input</source>
+        <values>
+t
+f
+        </values>
+      </attribute>
+      <attribute name="ndv-f-seq" type="seg">
+        <description>NDV F-protein sequence</description>
+        <source>user input</source>
       </attribute>
       <attribute name="pathotype" type="text">
         <description>Virus pathotype</description>
