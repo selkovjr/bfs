@@ -346,17 +346,17 @@ SELECT s.id, s.location AS "s.location", j.location AS "j.location" FROM samples
     217-2028 |         -1 |          6
     217-2029 |         -1 |          6
 
-    From this it appears that the ‘village’ in the old spreadsheet is actually
-    Grigoleti. True? Not true?
+From this it appears that the ‘village’ in the old spreadsheet is actually
+Grigoleti. True? Not true?
 
-    There is only one record in the old set with the reference to this
-    mysterious village whose key (217-1995) is not in the merge. It also
-    refers to a mysterious bird called ‘domestic’ (which we convert to null,
-    not knowing what it is).
+There is only one record in the old set with the reference to this
+mysterious village whose key (217-1995) is not in the merge. It also
+refers to a mysterious bird called ‘domestic’ (which we convert to null,
+not knowing what it is).
 
-    **Solution: override -1's with Josanne's locations**
+**Solution: override -1's with Josanne's locations**
 
-    In: `resolve-confilts.sql`
+In: `resolve-confilts.sql`
 
 
 #### clin_st
@@ -365,9 +365,9 @@ SELECT s.id, s.location AS "s.location", j.location AS "j.location" FROM samples
 SELECT s.id, s.clin_st AS "s.clin_st", s.vital_st AS "s.vital_st", j.health AS "j.health" INTO clin_st_mismatch FROM samples s, josanne j WHERE s.id = j.sample_identifier;
 ```
 
-    Result in: `clin_st-merge-conflicts.tab`
+Result in: `clin_st-merge-conflicts.tab`
 
-    **No solution. Ignore the mismatch and don't even enter notes in the database.**
+**No solution. Ignore the mismatch and don't even enter notes in the database.**
 
 #### sex
 ```sql
