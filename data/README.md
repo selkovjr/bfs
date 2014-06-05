@@ -42,6 +42,10 @@ To load parsed tables from Josanne's spreadsheet:
 DROP TABLE j_samples;
 SELECT * INTO j_samples FROM samples LIMIT 0;
 \copy j_samples from josanne-samples.tab
+
+DROP TABLE j_diagnostics;
+SELECT * INTO j_diagnostics FROM diagnostics LIMIT 0;
+\copy j_diagnostics from josanne-diagnostics.tab
 ```
 
 ## Finding non-ASCII characters in files:
@@ -52,7 +56,19 @@ cat NFB-DB_SpecList_final.tab | tr -s '[[:punct:][:space:]]' '\n' | perl -nE'say
 
 ## Merge conflicts
 
-### Sex
+### In the samples table
+
+#### date
+
+```sql
+SELECT s."date", j."date" FROM samples s, j_samples j WHERE s.id = j.id AND s."date" <> j."date";
+```
+Perfect match.
+
+#### species
+
+
+#### Sex
 ```sql
 SELECT s.sex, j.sex FROM samples s, j_samples j WHERE s.id = j.id AND NOT (s.sex IS NULL AND j.sex = 'U') AND s.sex <> j.sex;
 ```

@@ -134,14 +134,14 @@ my %health = (
 
 my %age = (
   # Other EMC categories do not map to our age system
-  U => 'undetermined',
+  # U => 'undetermined',
 );
 
 my %sample_type = (
   F => 'freash faeces',
   OP => 'oral-pharyngeal',
   COP => 'cloacal/op',
-  C => 'cloacal',
+  C => 'cloacal swab',
   TS => 'tracheal swab'
 );
 
@@ -471,7 +471,7 @@ while (<>) {
         push @fields, $text;
       }
     }
-    if ($key eq 'Influenza_Test_Result') {
+    elsif ($key eq 'Influenza_Test_Result') {
       my $text = $f[$column{$key}];
       $text =~ s/^"//;
       $text =~ s/"$//;
