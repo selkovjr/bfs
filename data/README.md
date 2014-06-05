@@ -164,6 +164,7 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
     ```sql
     SELECT * FROM birds WHERE name = 'Anas crecca';
     ```
+
       id   |  family  | genus | species |    name     | common_name
     ------:|----------+-------|---------|-------------|-------------
      31027 | Anatidae | Anas  | crecca  | Anas crecca | Common Teal
@@ -171,7 +172,7 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
 
     ```sql
     SELECT * FROM birds WHERE name = 'Himantopus himantopus';
-   ```
+    ```
       id   |      family      |   genus    |  species   |         name          |    common_name
     ------:|------------------|------------|------------|-----------------------|--------------------
       3101 | Recurvirostridae | Himantopus | himantopus | Himantopus himantopus | Black-winged Stilt
@@ -181,7 +182,7 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
     like the birds were matched by common name in the old spreadsheet but in
     the absence of it the first instance of the systematic name was picked.
 
-    Solution: pick the variants that include common names
+    **Solution: pick the variants that include common names**
 
     ```sql
     -- Gallinago gallinago
