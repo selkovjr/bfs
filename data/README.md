@@ -262,7 +262,7 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
     SELECT s.id, s.age AS "s.age", j.age AS "j.age" FROM samples s, j_samples j WHERE s.id = j.id AND NOT ((s.age IS NULL AND j.age = 'U') OR (s.age = 'adult' AND j.age = 'A'));
     ```
         id    |  s.age   | j.age
-    ---------:|---------:|-------
+    ---------:|----------|-------
      217-1825 | adult    | U
      217-1828 | adult    | U
      217-1831 | adult    | U
