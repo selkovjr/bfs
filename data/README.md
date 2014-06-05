@@ -131,6 +131,8 @@ Perfect match.
 
     ```sql
 SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS "j.name" FROM samples s, j_samples j, birds b1, birds b2 WHERE s.id = j.id AND b1.id = s.species AND b2.id = j.species AND s.species <> j.species GROUP BY s, j, "s.name", "j.name";
+    ```
+    ```
  count |   s   |   j   |        s.name         |        j.name
 -------+-------+-------+-----------------------+-----------------------
     26 | 31051 |  2990 | Gallinago gallinago   | Gallinago gallinago
