@@ -369,6 +369,27 @@ Result in: `clin_st-merge-conflicts.tab`
 
 **No solution. Ignore the mismatch and don't even enter notes in the database.**
 
+
+#### type
+
+```sql
+SELECT s.id, s.type AS "s.type", j.type AS "j.type" INTO type FROM samples s, j_samples j WHERE s.id = j.id AND s.type <> j.type;
+```
+
+Result in: `type-merge-conflicts.tab`
+
+  * In Josanne’s file both ‘oral-pharyngeal’ and ‘tracheal swab’ robustly map to
+  ‘tracheal/op swab’ (except where tracheal is swapped with cloacal)
+
+  * There are a couple dozen samples where tracheal and cloacal are swapped
+
+  * 'cloacal/op' robustly maps to ‘other’
+
+  **Solution: ignore the mismatch without entering notes in the database.**
+
+  > Review!
+
+
 #### sex
 ```sql
 SELECT s.sex, j.sex FROM samples s, j_samples j WHERE s.id = j.id AND NOT (s.sex IS NULL AND j.sex = 'U') AND s.sex <> j.sex;
