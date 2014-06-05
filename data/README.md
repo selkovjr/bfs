@@ -127,7 +127,7 @@ Perfect match.
       }
     }
     ```
-2. Conflict summary
+*. Conflict summary
 
     ```sql
 SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS "j.name" FROM samples s, j_samples j, birds b1, birds b2 WHERE s.id = j.id AND b1.id = s.species AND b2.id = j.species AND s.species <> j.species GROUP BY s, j, "s.name", "j.name";
@@ -143,6 +143,41 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
         22 | 31027 |   462 | Anas crecca           | Anas crecca
         20 |  3101 | 32105 | Himantopus himantopus | Himantopus himantopus
        664 |   435 |    -2 | Anas platyrhynchos    | Anas platyrhynchos
+
+* Gallinago gallinago
+
+    ```sql
+    SELECT * FROM birds WHERE name = 'Gallinago galling';
+    ```
+
+      id   |    family    |   genus   |  species  |        name         | common_name
+    -------|--------------|-----------|-----------|---------------------|--------------
+     31051 | Scolopacidae | Gallinago | gallinago | Gallinago gallinago | Common Snipe
+      2990 | Scolopacidae | Gallinago | gallinago | Gallinago gallinago |
+
+      This is strange. Systematic names are supposed to be unique. It looks
+      like the bird was matched by common name in the old spreadsheet but in
+      the absence of it the first instance of the systematic name was picked
+      (2990).
+
+      Solution:
+
+      ```sql
+      INSERT INTO notes (class, id, attr, "user", "when", text)
+        SELECT
+          'samples',
+          id,
+          'species',
+          'selkovjr',
+          'now',
+          'merge conflict; overrode Josanne''s id of 2990: Gallinago galinago / NULL -> Gallinago gallinago / Common Snipe'
+        FROM j_samples
+       WHERE species = '2990'
+         AND j_samples.id IN (SELECT id FROM samples);
+
+       UPDATE j_samples SET species = '31051' WHERE species = '2990';
+      ```
+      **Remember to update the complement in `notes` after the merge!**
 
 #### sex
 ```sql
