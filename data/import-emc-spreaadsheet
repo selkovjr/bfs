@@ -80,8 +80,8 @@ my %field = (
     '-',               # h7_pt
     'H9',              # h9_status
     'H9-Ct',           # h9_ct
-    'NDV',             # ndv_status
-    'NDV-Ct'           # ndv_ct
+    '-',               # ndv_status
+    '-'                # ndv_ct
   ],
 
   cultures => [
@@ -90,8 +90,8 @@ my %field = (
     'E1',              # e1
     'E2',              # e2
     'Virus isolation', # isolation
-    'NDV culture',     # ndv
-    'NDV F sequence',  # ndv-f-seq
+    '-',               # ndv
+    '-',               # ndv-f-seq
     'Virus pathotype', # pathotype
     'HA subtype',      # ha_subtype
     'NA subtype',      # na_subtype

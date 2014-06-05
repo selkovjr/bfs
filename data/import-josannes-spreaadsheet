@@ -69,6 +69,8 @@ my %field = (
     'Influenza_Test_Result', # ma_status, ma_ct, h5_status, h5_ct, h5_pt, h7_status, h7_ct, h7_pt
     '-',                     # h9_status
     '-',                     # h9_ct
+    '-',                     # ndv_status
+    '-'                      # ndv_ct
   ],
 
   cultures => [
@@ -77,6 +79,8 @@ my %field = (
     '-',                     # e1
     '-',                     # e2
     'Influenza_Test_Result', # isolation
+    '-',                     # ndv
+    '-',                     # ndv-f-seq
     '-',                     # pathotype
     '-',                     # ha_subtype
     '-',                     # na_subtype
