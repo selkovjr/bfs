@@ -164,9 +164,8 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
     ```sql
     SELECT * FROM birds WHERE name = 'Anas crecca';
     ```
-
       id   |  family  | genus | species |    name     | common_name
-    ------:|----------+-------|---------|-------------|-------------
+    ------:|----------|-------|---------|-------------|-------------
      31027 | Anatidae | Anas  | crecca  | Anas crecca | Common Teal
        462 | Anatidae | Anas  | crecca  | Anas crecca |
 
@@ -246,3 +245,5 @@ to NULL in the earlier EMC set.
 We have later decided to replace all `U`'s with NULLs and now there is a
 perfect match.
 
+fs=# SELECT * FROM birds WHERE name = 'Anas crecca'
+bfs-# ;
