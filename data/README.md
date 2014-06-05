@@ -81,6 +81,49 @@ Perfect match.
 
 #### species
 
+1. Some mismatches or ambiguities may be due to mapping rules. They need to be
+   reviewed. The rules that only apply to Josanne’s file are at the top of the
+   list, separated by a blank line — they don’t match anything in the old EMC
+   file.
+
+   ```perl
+    elsif ($key eq 'species') {
+      my $text = lc $f[$column{'Host_Species'}];
+      $text = 'larus cachinnans' if $text eq 'larus cachinnans cachinnans';
+      $text = 'larus genei' if $text eq 'chroicocephalus genei';
+      $text = 'larus argentatus' if $text eq 'larus argentatus cachinnans';
+      $text = 'sterna caspia' if $text eq 'hydroprogne caspia';  # this should be reversed
+      $text = 'chlidonias hybrida' if $text eq 'chlidonias hybridus';
+      $text = 'alcedo atthis' if $text eq 'alcedinidae';
+      $text = 'anser cygnoides' if $text eq 'anser sp'; # they are all domestic geese in this spreadsheet
+      $text = 'anas platyrhynchos' if $text eq 'anas sp'; # they are all domestic ducks in this spreadsheet
+      $text = 'corvus corone' if $text eq 'corvus corone cornix';
+      $text = 'eudromias morinellus' if $text eq 'charadrius morinellus';  # probably should be reversed
+
+      $text = 'cattle egret' if $text eq 'western cattle egret';
+      $text = 'common moorhen' if $text eq 'moorhen';
+      $text = 'eurasian blackbird' if $text eq 'blackbird';
+      $text = 'eurasian woodcock' if $text eq 'woodcock';
+      $text = 'european bee-eater' if $text eq 'bee-eater';
+      $text = 'greater white-fronted Goose' if $text eq 'white-fronted goose';
+      #$text = 'mallard' if $text eq 'domestic duck';
+      # 'domestic duck' needs to be kept this way; a few more domestic birds
+      # have now been added to taxonomy
+      $text = 'northern pintail' if $text eq 'pintail';
+      $text = 'northern shoveler' if $text eq 'shoveler';
+      $text = 'red-throated loon' if $text eq 'red-throated diver';
+      $text = 'swan goose' if $text eq 'goose';
+      if ( $text eq '\n' or $text eq 'domestic' ) {
+        push @fields, '\N';
+      }
+      elsif ( $id = $birdByCommonName{lc $text} ) {
+        push @fields, $id;
+      }
+      elsif ( $id = $birdByName{lc $text} ) {
+        push @fields, $id;
+      }
+    }
+    ```
 
 #### sex
 ```sql
