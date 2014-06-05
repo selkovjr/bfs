@@ -151,9 +151,7 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
         20 |  3101 | 32105 | Himantopus himantopus | Himantopus himantopus
        664 |   435 |    -2 | Anas platyrhynchos    | Anas platyrhynchos
 
- * *Gallinago gallinago, Anas crecca, Himantopus himantopus*
-
-    The absence of common names
+ * *Gallinago gallinago, Anas crecca, Himantopus himantopus* -- the absence of common names
 
     ```sql
     SELECT * FROM birds WHERE name = 'Gallinago gallinago';
@@ -185,61 +183,11 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
 
     **Solution: pick the variants that include common names**
 
-    ```sql
-    -- Gallinago gallinago
-    INSERT INTO notes (class, id, attr, "user", "when", text)
-      SELECT
-        'samples',
-        id,
-        'species',
-        'selkovjr',
-        'now',
-        'merge conflict; overrode Josanne''s id of 2990: Gallinago galinago / NULL -> Gallinago gallinago / Common Snipe'
-      FROM j_samples
-     WHERE species = '2990'
-       AND j_samples.id IN (SELECT id FROM samples);
-
-    UPDATE j_samples SET species = '31051' WHERE species = '2990';
-
-    -- Anas crecca
-    INSERT INTO notes (class, id, attr, "user", "when", text)
-      SELECT
-        'samples',
-        id,
-        'species',
-        'selkovjr',
-        'now',
-        'merge conflict; overrode Josanne''s id of 462: Anas crecca / NULL -> Anas crecca / Common Teal'
-      FROM j_samples
-     WHERE species = '462'
-       AND j_samples.id IN (SELECT id FROM samples);
-
-    UPDATE j_samples SET species = '31027' WHERE species = '462';
-
-    -- Himantopus himantopus
-    INSERT INTO notes (class, id, attr, "user", "when", text)
-      SELECT
-        'samples',
-        id,
-        'species',
-        'selkovjr',
-        'now',
-        'merge conflict; overrode Josanne''s id of 32105: Himantopus himantopus / NULL -> Himantopus himantopus / Common Snipe'
-      FROM j_samples
-     WHERE species = '32105'
-       AND j_samples.id IN (SELECT id FROM samples);
-
-    UPDATE j_samples SET species = '3101' WHERE species = '32105';
-
-    ```
-    > Remember to propagate the note to the complement of the merge after it's
-    > done!
+    In: `resolve-confilts.sql`
 
     > Review!
 
- * *Meleagris gallopavo, Anser cygnoides, Anas platyrhynchos*
-
-    Wild or domestic?
+ * *Meleagris gallopavo, Anser cygnoides, Anas platyrhynchos* -- wild or domestic?
 
     ```sql
     SELECT * FROM birds WHERE name = 'Meleagris gallopavo';
@@ -267,55 +215,40 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
 
      *Solution: prefer wild to domestic*
 
+     In: `resolve-confilts.sql`
+
+     > Review!
+
+ * ** -- species mismatch
+
+     *Solution: prefer the old EMC version"
+
+     In: `resolve-confilts.sql`
+
     ```sql
-    -- Meleagris gallopavo
-    INSERT INTO notes (class, id, attr, "user", "when", text)
-      SELECT
-        'samples',
-        id,
-        'species',
-        'selkovjr',
-        'now',
-        'merge conflict; overrode Josanne''s id of -4: Meleagris gallopavo / Domestic Turkey -> Meleagris gallopavo / Wild Turkey'
-      FROM j_samples
-     WHERE species = '-4'
-       AND j_samples.id IN (SELECT id FROM samples);
-
-    UPDATE j_samples SET species = '304' WHERE species = '-4'; -- no complement in merege
-
-    -- Anser cygnoides
-    INSERT INTO notes (class, id, attr, "user", "when", text)
-      SELECT
-        'samples',
-        id,
-        'species',
-        'selkovjr',
-        'now',
-        'merge conflict; overrode Josanne''s id of -3: Anser cygnoides / Domestic Goose -> Anser cygnoides / Swan Goose'
-      FROM j_samples
-     WHERE species = '-3'
-       AND j_samples.id IN (SELECT id FROM samples);
-
-    UPDATE j_samples SET species = '373' WHERE species = '-3';
-
-    -- Anas platyrhynchos
-    INSERT INTO notes (class, id, attr, "user", "when", text)
-      SELECT
-        'samples',
-        id,
-        'species',
-        'selkovjr',
-        'now',
-        'merge conflict; overrode Josanne''s id of -2: Anas platyrhynchos / Domestic Duck -> Anas platyrhynchos / Mallard'
-      FROM j_samples
-     WHERE species = '-2'
-       AND j_samples.id IN (SELECT id FROM samples);
-
-    UPDATE j_samples SET species = '435' WHERE species = '-2'; -- huge complement
-
+    SELECT * FROM birds WHERE name ~ 'Corvus cornix|Corvus corone';
     ```
-    > Remember to propagate the note to the complement of the merge after it's
-    > done!
+
+      id   |  family  | genus  | species |     name      | common_name
+    ------:|----------|--------|---------|---------------|--------------
+      5783 | Corvidae | Corvus | corone  | Corvus corone | Carrion Crow
+     31641 | Corvidae | Corvus | cornix  | Corvus cornix | Hooded Crow
+
+    ```sql
+    SELECT * FROM birds WHERE name ~ 'Larus michahellis|Larus argentatus';
+    ```
+      id   | family  | genus |   species   |       name        |    common_name
+    ------:|---------|-------|-------------|-------------------|--------------------
+      3227 | Laridae | Larus | argentatus  | Larus argentatus  | Herring Gull
+     31675 | Laridae | Larus | michahellis | Larus michahellis | Yellow-legged Gull
+
+    ```sql
+    SELECT * FROM birds WHERE name ~ 'Lymnocryptes minimus|Gallinago media';
+    ```
+      id  |    family    |    genus     | species |         name         | common_name
+    -----:|--------------|--------------|---------|----------------------|-------------
+     2989 | Scolopacidae | Gallinago    | media   | Gallinago media      | Great Snipe
+     3000 | Scolopacidae | Lymnocryptes | minimus | Lymnocryptes minimus | Jack Snipe
 
     > Review!
 
