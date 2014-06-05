@@ -213,7 +213,7 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
       -2 | Anatidae | Anas  | platyrhynchos | Anas platyrhynchos | Domestic Duck
      435 | Anatidae | Anas  | platyrhynchos | Anas platyrhynchos | Mallard
 
-     *Solution: prefer wild to domestic*
+     **Solution: prefer wild to domestic**
 
      In: `resolve-confilts.sql`
 
@@ -221,7 +221,7 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
 
  * ** -- species mismatch
 
-     *Solution: prefer the old EMC version"
+     **Solution: prefer the old EMC version*"
 
      In: `resolve-confilts.sql`
 
@@ -251,6 +251,65 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
      3000 | Scolopacidae | Lymnocryptes | minimus | Lymnocryptes minimus | Jack Snipe
 
     > Review!
+
+#### age
+
+  * With age, we found that Josanne’s categories do not map to those we adopted, so we decided to leave them as they are. But within the merge zone, we are going to override them and so it is interesting to see how they correspond where we have versions of the same record.
+
+    Most of the records in the merge have the (adult, A) pair, and I filtered those out as tentatively matching. There are a couple dozen (juvenile, J) pairings, and I left them in because we also have (juvenile, H). Here’s the remainder that is left after the (adult, A) are removed:
+
+    ```sql
+    SELECT s.id, s.age AS "s.age", j.age AS "j.age" FROM samples s, j_samples j WHERE s.id = j.id AND NOT ((s.age IS NULL AND j.age = 'U') OR (s.age = 'adult' AND j.age = 'A'));
+    ```
+        id    |  s.age   | j.age
+    ---------:|---------:|-------
+     217-1825 | adult    | U
+     217-1828 | adult    | U
+     217-1831 | adult    | U
+     217-1839 | adult    | U
+     217-1841 | adult    | U
+     217-1842 | adult    | U
+     217-1843 | adult    | U
+     217-1844 | adult    | U
+     217-1845 | adult    | U
+     217-1846 | adult    | U
+     217-1847 | adult    | U
+     217-1848 | adult    | U
+     217-1623 | juvenile | J
+     217-1626 | juvenile | J
+     217-1627 | juvenile | J
+     217-1628 | juvenile | J
+     217-1629 | juvenile | J
+     217-1630 | juvenile | J
+     217-1631 | juvenile | J
+     217-1632 | juvenile | J
+     217-1634 | juvenile | J
+     217-1636 | juvenile | J
+     217-1637 | juvenile | J
+     217-1638 | juvenile | J
+     217-1640 | juvenile | J
+     217-1641 | juvenile | J
+     217-1643 | juvenile | J
+     217-1644 | juvenile | J
+     217-1645 | juvenile | J
+     217-1647 | juvenile | J
+     217-1656 | juvenile | J
+     217-1657 | juvenile | J
+     217-1661 | juvenile | J
+     217-1663 | juvenile | J
+     217-1877 | juvenile | J
+     217-2310 | juvenile | J
+     217-1    | juvenile | H
+     217-8    | juvenile | H
+     217-318  | juvenile | H
+     217-363  | juvenile | H
+     217-430  | juvenile | H
+     217-684  | juvenile | H
+     217-685  | juvenile | H
+
+     **Solution: override U -> adult, H -> juvenile; assume J is juvenile*"
+
+     In: `resolve-confilts.sql`
 
 #### sex
 ```sql
