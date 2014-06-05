@@ -312,58 +312,58 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
      In: `resolve-confilts.sql`
 
 #### location
-    ```sql
-    SELECT s.id, s.location AS "s.location", j.location AS "j.location" FROM samples s, j_samples j WHERE s.id = j.id AND s.location <> j.location;
-    ```
-        id    | s.location | j.location
-    ---------:|------------|------------
-     217-1996 |         -1 |          3
-     217-1997 |         -1 |          3
-     217-1998 |         -1 |          3
-     217-1999 |         -1 |          3
-     217-2001 |         -1 |          3
-     217-2002 |         -1 |          3
-     217-2003 |         -1 |          3
-     217-2004 |         -1 |          3
-     217-2005 |         -1 |          3
-     217-2006 |         -1 |          3
-     217-2007 |         -1 |          3
-     217-2008 |         -1 |          3
-     217-2009 |         -1 |          3
-     217-2010 |         -1 |          3
-     217-2013 |         -1 |          3
-     217-2014 |         -1 |          3
-     217-2015 |         -1 |          3
-     217-2016 |         -1 |          3
-     217-2017 |         -1 |          3
-     217-2018 |         -1 |          3
-     217-2019 |         -1 |          3
-     217-2020 |         -1 |          3
-     217-2023 |         -1 |          3
-     217-2025 |         -1 |          3
-     217-2026 |         -1 |          3
-     217-2027 |         -1 |          3
-     217-2028 |         -1 |          6
-     217-2029 |         -1 |          6
+```sql
+SELECT s.id, s.location AS "s.location", j.location AS "j.location" FROM samples s, j_samples j WHERE s.id = j.id AND s.location <> j.location;
+```
+       id    | s.location | j.location
+   ---------:|------------|------------
+    217-1996 |         -1 |          3
+    217-1997 |         -1 |          3
+    217-1998 |         -1 |          3
+    217-1999 |         -1 |          3
+    217-2001 |         -1 |          3
+    217-2002 |         -1 |          3
+    217-2003 |         -1 |          3
+    217-2004 |         -1 |          3
+    217-2005 |         -1 |          3
+    217-2006 |         -1 |          3
+    217-2007 |         -1 |          3
+    217-2008 |         -1 |          3
+    217-2009 |         -1 |          3
+    217-2010 |         -1 |          3
+    217-2013 |         -1 |          3
+    217-2014 |         -1 |          3
+    217-2015 |         -1 |          3
+    217-2016 |         -1 |          3
+    217-2017 |         -1 |          3
+    217-2018 |         -1 |          3
+    217-2019 |         -1 |          3
+    217-2020 |         -1 |          3
+    217-2023 |         -1 |          3
+    217-2025 |         -1 |          3
+    217-2026 |         -1 |          3
+    217-2027 |         -1 |          3
+    217-2028 |         -1 |          6
+    217-2029 |         -1 |          6
 
-     From this it appears that the ‘village’ in the old spreadsheet is actually
-     Grigoleti. True? Not true?
+    From this it appears that the ‘village’ in the old spreadsheet is actually
+    Grigoleti. True? Not true?
 
-     There is only one record in the old set with the reference to this
-     mysterious village whose key (217-1995) is not in the merge. It also
-     refers to a mysterious bird called ‘domestic’ (which we convert to null,
-     not knowing what it is).
+    There is only one record in the old set with the reference to this
+    mysterious village whose key (217-1995) is not in the merge. It also
+    refers to a mysterious bird called ‘domestic’ (which we convert to null,
+    not knowing what it is).
 
-     **Solution: override -1's with Josanne's locations**
+    **Solution: override -1's with Josanne's locations**
 
-     In: `resolve-confilts.sql`
+    In: `resolve-confilts.sql`
 
 
 #### clin_st
 
-    ```sql
-    SELECT s.id, s.clin_st AS "s.clin_st", s.vital_st AS "s.vital_st", j.health AS "j.health" INTO clin_st_mismatch FROM samples s, josanne j WHERE s.id = j.sample_identifier;
-    ```
+```sql
+SELECT s.id, s.clin_st AS "s.clin_st", s.vital_st AS "s.vital_st", j.health AS "j.health" INTO clin_st_mismatch FROM samples s, josanne j WHERE s.id = j.sample_identifier;
+```
 
     Result in: `clin_st-merge-conflicts.tab`
 
