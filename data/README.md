@@ -133,7 +133,7 @@ Perfect match.
 SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS "j.name" FROM samples s, j_samples j, birds b1, birds b2 WHERE s.id = j.id AND b1.id = s.species AND b2.id = j.species AND s.species <> j.species GROUP BY s, j, "s.name", "j.name";
     ```
      count |   s   |   j   |        s.name         |        j.name
-    -------|-------|-------|-----------------------|-----------------------
+    ------:|------:|------:|:----------------------|:----------------------
         26 | 31051 |  2990 | Gallinago gallinago   | Gallinago gallinago
          4 |   304 |    -4 | Meleagris gallopavo   | Meleagris gallopavo
          1 | 31641 |  5783 | Corvus cornix         | Corvus corone
@@ -151,7 +151,7 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
     ```
 
       id   |    family    |   genus   |  species  |        name         | common_name
-    -------|--------------|-----------|-----------|---------------------|--------------
+    ------:|--------------|-----------|-----------|---------------------|--------------
      31051 | Scolopacidae | Gallinago | gallinago | Gallinago gallinago | Common Snipe
       2990 | Scolopacidae | Gallinago | gallinago | Gallinago gallinago |
 
@@ -177,9 +177,9 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
 
        UPDATE j_samples SET species = '31051' WHERE species = '2990';
       ```
-      <font color="green">Remember to propagate the same note to the complement of the merge!</font>
+      > Remember to propagate the same note to the complement of the merge!
 
-      <font color="green">Review!</font>
+      > Review!
 
 #### sex
 ```sql
