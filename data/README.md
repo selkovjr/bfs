@@ -24,6 +24,22 @@ header is at its tail:
 tail reject.tab
 ```
 
+## Extracting tables from Josanne's spreadsheet
+
+(see below for how to make `josanne.tab`)
+
+```bash
+./import-josannes-spreaadsheet josanne.tab
+```
+
+Tables will be created in the current directory. Examine `josanne-reject.tab` for the
+elements not processed by the import script. Note that this table's column
+header is at its tail:
+
+```bash
+tail josanne-reject.tab
+```
+
 ## Loading tables into the database
 
 ```bash
