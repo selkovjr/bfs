@@ -473,7 +473,7 @@ CREATE EXTENSION SEG;
   <constraints>
   </constraints>
   <functions>
-SET datestyle TO "postgres, DMY";
+ALTER DATABASE bfs SET datestyle TO "postgres, DMY";
 
 ALTER SEQUENCE location_id_seq RESTART WITH 22;
 
