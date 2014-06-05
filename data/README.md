@@ -315,7 +315,6 @@ SELECT count(*), s.species AS s, j.species AS j, b1.name AS "s.name", b2.name AS
     ```sql
     SELECT s.id, s.location AS "s.location", j.location AS "j.location" FROM samples s, j_samples j WHERE s.id = j.id AND s.location <> j.location;
     ```
-
         id    | s.location | j.location
     ---------:|------------|------------
      217-1996 |         -1 |          3
