@@ -155,6 +155,7 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
         noteBody,
         noteEditorShown = false,
         noteSaveFn,
+        attachNotesToCells,
         metaEnterListener,
         closeButtonListener,
         closeNoteEditor = function () {
@@ -452,17 +453,11 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
                 }
               }); // after cellEditorSave
 
-              // Mark annotated data cells
-              table.data.after('load', function (e) {
-                // This is a kludgy way to attach note data to the table.
-                // Once the table has been rendered, there is no access to
-                // response details.
-                table.notes = e.details[0].response.notes;
-              });
-
-              table.after('render', function (e) {
-                Y.log(['notes receieved', table.notes]);
-
+              // Mark annotated data cells.
+              // This function may end up getting called twice because of the
+              // uncertain load/render sequence, but better that than not
+              // called at all.
+              attachNotesToCells = function (e) {
                 Y.each(table.notes, function (attrNotes, attr) {
                   var
                     record = table.getRecord(0),
@@ -480,6 +475,20 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
                     return new Date(a.when) - new Date(b.when);
                   });
                 });
+              };
+
+              table.data.after('load', function (e) {
+                // This is a kludgy way to attach note data to the table.
+                // Once the table has been rendered, there is no access to
+                // response details.
+                table.notes = e.details[0].response.notes;
+                Y.log(['notes adter load', table.notes]);
+                attachNotesToCells();
+              });
+
+              table.after('render', function (e) {
+                Y.log(['notes after render', table.notes]);
+                attachNotesToCells();
               });
 
             }); // invoke autocomplete data
