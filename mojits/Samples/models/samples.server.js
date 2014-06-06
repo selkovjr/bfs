@@ -151,12 +151,12 @@ YUI.add('SamplesModel', function (Y, NAME) {
                 result.notes = {};
                 Y.each(notesResult.rows, function (note) {
                   if (result.notes[note.id] === undefined) {
-                    result.notes[note.id] = {
-                      attr: note.attr,
-                      list: []
-                    };
+                    result.notes[note.id] = {};
                   }
-                  result.notes[note.id].list.push({
+                  if (result.notes[note.id][note.attr] === undefined) {
+                    result.notes[note.id][note.attr] = [];
+                  }
+                  result.notes[note.id][note.attr].push({
                     user: note.user,
                     when: note.when,
                     text: note.text

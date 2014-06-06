@@ -795,20 +795,22 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
             // Mark annotated data cells
             table.data.after('load', function (e) {
               var notes = e.details[0].response.notes;
-              console.log(notes);
-              Y.each(notes, function (attrNotes, id) {
-                var
-                  key = (attrNotes.attr === 'species') ? 'bird' : attrNotes.attr, // Data comes from a view, so species becomes bird
-                  record = table.getRecord(id),
-                  cell = table.getRow(record).one('.yui3-datatable-col-' + key);
+              Y.log(notes, 'warn');
+              Y.each(notes, function (recordNotes, id) {
+                var record = table.getRecord(id);
+                Y.each(recordNotes, function (attrNotes, attr) {
+                  var
+                    key = (attr === 'species') ? 'bird' : attr, // Data comes from a view, so species becomes bird
+                    cell = table.getRow(record).one('.yui3-datatable-col-' + key);
 
-                cell.addClass('annotated');
-                cell.annotated = true;
-                cell.id = id;
-                cell.attr = attrNotes.attr;
-                cell.key = key;
-                cell.notes = attrNotes.list.sort(function (a, b) {
-                  return new Date(a.when) - new Date(b.when);
+                  cell.addClass('annotated');
+                  cell.annotated = true;
+                  cell.id = id;
+                  cell.attr = attr;
+                  cell.key = key;
+                  cell.notes = attrNotes.sort(function (a, b) {
+                    return new Date(a.when) - new Date(b.when);
+                  });
                 });
               });
             });
