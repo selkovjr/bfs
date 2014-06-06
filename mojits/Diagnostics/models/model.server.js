@@ -79,9 +79,12 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
                 if (err) {
                   callback(err);
                 }
-                result.notes = [];
+                result.notes = {};
                 Y.each(notesResult.rows, function (note) {
-                  result.notes.push({
+                  if (result.notes[note.attr] === undefined) {
+                    result.notes[note.attr] = [];
+                  }
+                  result.notes[note.attr].push({
                     user: note.user,
                     when: note.when,
                     text: note.text

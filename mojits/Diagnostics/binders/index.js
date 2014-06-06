@@ -454,19 +454,31 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
 
               // Mark annotated data cells
               table.data.after('load', function (e) {
-                var notes = e.details[0].response.notes;
-                Y.log(['notes receieved', notes]);
-                Y.each(notes, function (attrNotes, id) {
-                  var
-                    record = table.getRecord(id),
-                    cell = table.getRow(record).one('.yui3-datatable-col-' + attrNotes.attr);
+                // This is a kludgy way to attach note data to the table.
+                // Once the table has been rendered, there is no access to
+                // response details.
+                table.notes = e.details[0].response.notes;
+              });
 
+              table.after('render', function (e) {
+                Y.log(['notes receieved', table.notes]);
+
+                Y.each(table.notes, function (attrNotes, attr) {
+                  var
+                    record = table.getRecord(0),
+                    columns = table.get('columns'),
+                    index = columns.map(function (o) {
+                      return o.key;
+                    }).indexOf(attr),
+                    cell = table.getCell([0, index]);
+
+                  Y.log(cell);
                   cell.addClass('annotated');
                   cell.annotated = true;
-                  cell.id = id;
-                  cell.attr = attrNotes.attr;
+                  cell.id = sampleID;
+                  cell.attr = attr;
                   cell.key = key;
-                  cell.notes = attrNotes.list.sort(function (a, b) {
+                  cell.notes = attrNotes.sort(function (a, b) {
                     return new Date(a.when) - new Date(b.when);
                   });
                 });
