@@ -2,6 +2,7 @@
 /*jslint regexp: true, indent: 2 */
 YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
   'use strict';
+
 /**
  * The DiagnosticsBinderIndex module.
  *
@@ -9,6 +10,8 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
  */
 
   var
+    self,
+    table,
     Model,
     ModelList,
     modelList,
@@ -67,6 +70,7 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
 
     // This attribute describes the structure of server responses
     dsSchema: {
+      resultListLocator: 'rows',
       resultFields: [
         'sample',
         'rec_date',
@@ -84,7 +88,10 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
         'h9_ct',
         'ndv_status',
         'ndv_ct'
-      ]
+      ],
+      metaFields: {
+        notes: 'notes'
+      }
     }
   });
 
@@ -122,7 +129,7 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
             if (err) {
               callback('server transaction error: ' + err);
             } else {
-              callback(null, [data]); // data is a single row
+              callback(null, data);
             }
           });
         } else {
@@ -143,9 +150,21 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
       var
         sampleID = Y.one('#sample').get('value'),
         mp = this.mojitProxy,
-        table,
         tableConfig,
         acOptions,
+        noteHeader,
+        noteBody,
+        noteEditorShown = false,
+        noteSaveFn,
+        metaEnterListener,
+        closeButtonListener,
+        closeNoteEditor = function () {
+          metaEnterListener.detach();
+          closeButtonListener.detach();
+          noteHeader.destroy();
+          noteBody.destroy();
+          noteEditorShown = false;
+        },
         render,
         autocompleteFilter = function (query, results) {
           query = query.toLowerCase();
@@ -172,6 +191,7 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
         };
 
       render = Y.bind(function () {
+        self = this;
         Y.log(['render sample id', sampleID, mp.pageData.get('sample')]);
         if (this.editable) {
           if (sampleID !== '') {
@@ -430,10 +450,32 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
                     }
                   });
                 }
+              }); // after cellEditorSave
+
+              // Mark annotated data cells
+              table.data.after('load', function (e) {
+                var notes = e.details[0].response.notes;
+                Y.log(['notes receieved', notes]);
+                Y.each(notes, function (attrNotes, id) {
+                  var
+                    record = table.getRecord(id),
+                    cell = table.getRow(record).one('.yui3-datatable-col-' + attrNotes.attr);
+
+                  cell.addClass('annotated');
+                  cell.annotated = true;
+                  cell.id = id;
+                  cell.attr = attrNotes.attr;
+                  cell.key = key;
+                  cell.notes = attrNotes.list.sort(function (a, b) {
+                    return new Date(a.when) - new Date(b.when);
+                  });
+                });
               });
+
             }); // invoke autocomplete data
           } // sampleID non-null
           else {
+            // No diagnostics record exists; offer a button to create one.
             Y.one('#diagnostics-na').append('<button id="diagnostics-create" type="button">Create</button>');
             createListener = Y.one('#diagnostics-create').on('click', function (e) {
               var options = {
@@ -454,8 +496,8 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
                 }
               });
             });
-          }
-        } // editable
+          } // render the Create button
+        } // editable by this user
       }, this); // render()
 
       Y.on('domready', render, this);

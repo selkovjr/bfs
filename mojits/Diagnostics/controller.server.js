@@ -40,8 +40,9 @@ YUI.add('Diagnostics', function(Y, NAME) {
           data = {};
         }
         data.auth = user.auth.diagnostics;
+        // This is a creepy way to pass an ID through the view, but as long as
+        // it works, I'm not touching it.
         data.sampleID = ac.params.getFromMerged('id');
-        console.log(data);
         ac.done(data);
       });
     },

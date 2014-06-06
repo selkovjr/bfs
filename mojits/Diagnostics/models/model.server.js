@@ -33,7 +33,7 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
      *        data has been retrieved.
      */
     getData: function (arg, callback) {
-      console.log(['getData', arg]);
+      console.log(['diagnostics.model.getData', arg]);
       var
         sql;
 
@@ -47,16 +47,19 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
           console.error('could not connect to postgres', err);
           callback(err);
         }
+        console.log(sql);
         client.query(
           sql,
           function (err, result) {
-            var data;
+            var
+              data,
+              notesQuery;
 
             if (err) {
+              console.error('could not run diagnostics query: ' + err);
               callback(err);
             }
 
-            done();
             data = result.rows[0];
             Y.each(data, function (v, k) {
               if (v === null) {
@@ -67,7 +70,28 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
               }
             });
 
-            callback(null, result.rows[0]);
+            notesQuery = 'SELECT * FROM notes WHERE "class" = \'diagnostics\' AND id = \'' + arg.id + '\'';
+
+            console.log(notesQuery);
+            client.query(
+              notesQuery,
+              function (err, notesResult) {
+                if (err) {
+                  callback(err);
+                }
+                result.notes = [];
+                Y.each(notesResult.rows, function (note) {
+                  result.notes.push({
+                    user: note.user,
+                    when: note.when,
+                    text: note.text
+                  });
+                });
+
+                done();
+                callback(null, result);
+              }
+            );
           }
         );
       });
