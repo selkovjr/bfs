@@ -162,11 +162,13 @@ YUI.add('SamplesModel', function (Y, NAME) {
                     text: note.text
                   });
                 });
+
+                done();
+
                 console.log(result.notes);
                 callback(null, result);
               }
             );
-            done();
           }
         );
       });
