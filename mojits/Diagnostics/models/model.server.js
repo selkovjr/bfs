@@ -16,6 +16,7 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
    */
   var
     pg,
+    user,
     connectionString;
 
   Y.namespace('mojito.models')[NAME] = {
@@ -23,6 +24,7 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
     init: function (config) {
       this.config = config;
       pg = this.pg;
+      user = this.user;
       connectionString = this.connectionString;
     },
 
@@ -174,6 +176,42 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
             if (err) {
               callback(err);
             }
+            done();
+            console.log('create successful');
+            console.log(result);
+            callback(null, result);
+          }
+        );
+      });
+    },
+
+    addNote: function (arg, callback) {
+      pg.connect(connectionString, function (err, client, done) {
+        Y.log(arg);
+        var sql = Y.substitute(
+          "INSERT INTO notes (\"class\", \"id\", \"attr\", \"user\", \"when\", \"text\") VALUES ('diagnostics', '{id}', '{attr}', '{user}', 'now', $1)",
+          {
+            id: arg.id,
+            attr: arg.attr,
+            user: user
+          }
+        );
+
+        if (err) {
+          console.error('could not connect to postgres', err);
+          callback(err);
+        }
+
+        console.log(sql);
+        console.log("$1 = " + arg.text + "'");
+        client.query(
+          sql,
+          [arg.text],
+          function (err, result) {
+            if (err) {
+              callback(err);
+            }
+
             done();
             console.log('create successful');
             console.log(result);

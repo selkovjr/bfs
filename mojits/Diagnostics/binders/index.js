@@ -148,7 +148,6 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
      */
     bind: function (node) {
       var
-        sampleID = Y.one('#sample').get('value'),
         mp = this.mojitProxy,
         tableConfig,
         acOptions,
@@ -165,7 +164,7 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
           noteBody.destroy();
           noteEditorShown = false;
         },
-        render,
+        renderTable,
         autocompleteFilter = function (query, results) {
           query = query.toLowerCase();
           return Y.Array.filter(results, function (result) {
@@ -190,9 +189,10 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
           }
         };
 
-      render = Y.bind(function () {
+      sampleID = mp.pageData.get('sample');
+
+      renderTable = Y.bind(function () {
         self = this;
-        Y.log(['render sample id', sampleID, mp.pageData.get('sample')]);
         if (this.editable) {
           if (sampleID !== '') {
             // Get the list of autocomplete options
@@ -472,12 +472,10 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
                     }).indexOf(attr),
                     cell = table.getCell([0, index]);
 
-                  Y.log(cell);
                   cell.addClass('annotated');
                   cell.annotated = true;
                   cell.id = sampleID;
                   cell.attr = attr;
-                  cell.key = key;
                   cell.notes = attrNotes.sort(function (a, b) {
                     return new Date(a.when) - new Date(b.when);
                   });
@@ -504,15 +502,158 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
                 } else {
                   Y.log('create successful');
                   sampleID = mp.pageData.get('sample');
-                  render();
+                  renderTable();
                 }
               });
             });
           } // render the Create button
         } // editable by this user
-      }, this); // render()
+      }, this); // renderTable()
 
-      Y.on('domready', render, this);
+      Y.on('domready', renderTable, this);
+
+      // Show note editor on mouseenter
+      Y.one('#diagnostics-table').delegate('mousedown', function (e) {
+        var
+          target = e.currentTarget,
+          listItems = [
+            '<li>' +
+            '<div class="annotation-text">' +
+            '<textarea id="annotation-input" rows="4" autofocus="1" placeholder="Add a note here. Meta+Enter to save, Esc to cancel."></textarea>' +
+            '</div>' +
+            '<div><button id="annotation-save">Save</button>' +
+            '</div>' +
+            '</li>'
+          ];
+
+        if (e.metaKey || e.shiftKey) {
+          if (noteEditorShown) {
+            closeNoteEditor();
+          }
+          // Set content
+          if (target.annotated) {
+            Y.log('this cell is annotated');
+            Y.each(target.notes.reverse(), function (note) {
+              note.when = note.when.replace(/T[0-9].+$/, '');
+              listItems.unshift(
+                '<li>' +
+                '<div class="annotation-meta">' +
+                  '<span class="annotation-author">' + note.user + '</span> on ' +
+                  '<span class="annotation-date">' + note.when + '</span>' +
+                '</div>' +
+                '<div class="annotation-text">' + note.text + '</div>' +
+                '</li>'
+              );
+            });
+          }
+          else {
+            Y.log('not annotated');
+          }
+
+          noteHeader = new Y.Overlay({
+            zIndex: 10,
+            visible: false
+          }).plug(Y.Plugin.WidgetAnim);
+          noteHeader.anim.get('animHide').set('duration', 0.01);
+          noteHeader.anim.get('animShow').set('duration', 0.3);
+          noteHeader.render();
+
+          noteBody = new Y.Overlay({
+            zIndex: 10,
+            visible: false
+          }).plug(Y.Plugin.WidgetAnim);
+          noteBody.anim.get('animHide').set('duration', 0.01);
+          noteBody.anim.get('animShow').set('duration', 0.3);
+          noteBody.setStdModContent('body', '<ul>' + listItems.join('') + '</ul>');
+          noteBody.render();
+
+          // While it's still hidden, center the noteHeader over the cell
+          noteHeader.get('contentBox').setStyle('opacity', '0');
+          noteBody.get('contentBox').setStyle('opacity', '0');
+          noteHeader.set(
+            'width',
+            parseInt(target.getComputedStyle('border-left-width'), 10) +
+            parseInt(target.getComputedStyle('padding-left'), 10) +
+            parseInt(target.getComputedStyle('width'), 10) +
+            parseInt(target.getComputedStyle('padding-right'), 10) +
+            parseInt(target.getComputedStyle('border-right-width'), 10)
+          );
+          noteHeader.set(
+            'height',
+            parseInt(target.getComputedStyle('border-top-width'), 10) +
+            parseInt(target.getComputedStyle('padding-top'), 10) +
+            parseInt(target.getComputedStyle('height'), 10) +
+            parseInt(target.getComputedStyle('padding-bottom'), 10) +
+            parseInt(target.getComputedStyle('border-bottom-width'), 10)
+          );
+          noteHeader.set("centered", target);
+
+          noteBody.set("align", {
+            node: noteHeader.get('contentBox'),
+            points: [Y.WidgetPositionAlign.TL, Y.WidgetPositionAlign.BL]
+          });
+
+          noteHeader.get('contentBox').setStyle('opacity', '0.5');
+          noteBody.get('contentBox').setStyle('opacity', '1');
+          noteHeader.show();
+          noteBody.show();
+
+          // Without a delay, focus fails to work except
+          // for the first time the widget is shown.
+          setTimeout(function () {
+            Y.one('#annotation-input').focus();
+          }, 300);
+          noteEditorShown = true;
+
+          // CLose note editor
+          noteSaveFn = function (e) {
+            e.halt();
+            var
+              input = Y.one('#annotation-input').get('value').replace(/^\s+|\s+$/g, ''),
+              record = table.getRecord(target),
+              index = target.getDOMNode().cellIndex,
+              attr = table.get('columns')[index].key,
+              options;
+
+            e.halt();
+
+            if (input) {
+              options = {
+                params: {
+                  body: {
+                    id: sampleID,
+                    attr: attr,
+                    text: input
+                  }
+                },
+                rpc: true
+              };
+              self.mojitProxy.invoke('addNote', options, function (err, data) {
+                if (err) {
+                  Y.log('addNote failed: ' + err);
+                } else {
+                  Y.log('addNote successful');
+                  // refresh
+                  table.data.load(function () {
+                    table.render('#diagnostics-table');
+                  });
+                }
+              });
+            }
+
+            closeNoteEditor();
+          };
+
+          metaEnterListener = Y.one('document').on('key', noteSaveFn, 'enter+meta');
+          closeButtonListener = Y.one('#annotation-save').on('click', noteSaveFn);
+        }
+      }, 'td');
+
+      Y.one('document').on('key', function (e) {
+        if (noteEditorShown) {
+          closeNoteEditor();
+        }
+      }, 'esc');
 
       // Refresh the content when user clicks refresh button.
       Y.one('#diagnostics').delegate('click', function (e) {
@@ -541,7 +682,9 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
     'datasource-jsonschema',
     'gallery-datatable-selection',
     'gallery-datatable-editable',
-    'gallery-datatable-celleditor-inline'
+    'gallery-datatable-celleditor-inline',
+    'overlay',
+    'widget-anim'
   ]
 });
 

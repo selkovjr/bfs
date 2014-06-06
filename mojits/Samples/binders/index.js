@@ -794,8 +794,11 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
             // Mark annotated data cells
             table.data.after('load', function (e) {
+              // It is really quite strange that in this mojit the load event
+              // follows the render event. In Diagnostics, they occur in the
+              // reverse order. As long as it works...
+              //
               var notes = e.details[0].response.notes;
-              Y.log(notes, 'warn');
               Y.each(notes, function (recordNotes, id) {
                 var record = table.getRecord(id);
                 Y.each(recordNotes, function (attrNotes, attr) {

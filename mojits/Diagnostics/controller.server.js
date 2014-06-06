@@ -40,9 +40,6 @@ YUI.add('Diagnostics', function(Y, NAME) {
           data = {};
         }
         data.auth = user.auth.diagnostics;
-        // This is a creepy way to pass an ID through the view, but as long as
-        // it works, I'm not touching it.
-        data.sampleID = ac.params.getFromMerged('id');
         ac.done(data);
       });
     },
@@ -90,6 +87,17 @@ YUI.add('Diagnostics', function(Y, NAME) {
           console.error('error condition');
           ac.error(err);
           return;
+        }
+        ac.done();
+      });
+    },
+
+    addNote: function (ac) {
+      var model = ac.models.get('model');
+      model.addNote(ac.command.params.body, function (err, data) {
+        if (err) {
+          console.error('error condition');
+          ac.error(err);
         }
         ac.done();
       });
