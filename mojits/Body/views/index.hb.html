@@ -1,10 +1,14 @@
 <div id="{{mojit_view_id}}" class="mojit">
-  <div class="bodyStuff yui3-g-r">
-    <div>
+  <div class="page-body  yui3-g-r">
+    <div class="map-link-container">
       <small><a href="https://mapsengine.google.com/map/edit?mid=z4mc9Gs85Qww.kWolK6e4k7Zg">Locations map</a></small>
     </div>
-    {{{samples}}}
-    {{{sampleDetails}}}
+    <div class="query-container">
+      <input type="text" class="query-text" />
+    </div>
+    <div class="table-view-container">
+      {{{samples}}}
+      {{{sampleDetails}}}
     </div>
   </div>
 </div>

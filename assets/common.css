@@ -3,6 +3,29 @@ body {
   padding-left: 8px;
 }
 
+.page-body {
+  overflow: auto;
+}
+
+.map-link-container {
+  float: left;
+}
+
+.query-container {
+  float: right;
+  margin-right: 15px;
+  min-width: 400px;
+}
+
+.query-container input {
+  width: 100%;
+}
+
+.table-view-container {
+  padding-top: 1px;
+  clear: both;
+}
+
 h2 {
   text-shadow: 2px 2px 3px #ccc;
 }
