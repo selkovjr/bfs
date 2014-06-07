@@ -332,7 +332,7 @@ YUI.add('SamplesModel', function (Y, NAME) {
       });
     },
 
-    find: function (arg, callback) {
+    findSample: function (arg, callback) {
       pg.connect(connectionString, function (err, client, done) {
         var sql;
 
@@ -345,8 +345,6 @@ YUI.add('SamplesModel', function (Y, NAME) {
         client.query(
           sql,
           function (err, result) {
-            console.log('-------- find query --------');
-            console.log([err, result]);
             if (err) {
               callback(err);
             }

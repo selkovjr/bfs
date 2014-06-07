@@ -103,9 +103,9 @@ YUI.add('Samples', function (Y, NAME) {
       });
     },
 
-    find: function (ac) {
+    findSample: function (ac) {
       var model = ac.models.get('samples');
-      model.find(ac.command.params.body, function (err, data) {
+      model.findSample(ac.command.params.body, function (err, data) {
         if (err) {
           console.error('error condition');
           ac.error(err);

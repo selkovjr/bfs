@@ -989,7 +989,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           rpc: true
         };
 
-      this.mojitProxy.invoke('find', options, function (err, data) {
+      this.mojitProxy.invoke('findSample', options, function (err, data) {
         if (err) {
           Y.log(err);
           alert('server transaction error: ' + err);
