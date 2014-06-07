@@ -477,11 +477,12 @@ ALTER DATABASE bfs SET datestyle TO "postgres, DMY";
 
 ALTER SEQUENCE location_id_seq RESTART WITH 22;
 
-CREATE VIEW v_samples_birds_cn AS
+CREATE MATERIALIZED VIEW v_samples_birds_locations AS
   SELECT s.id,
          s.emc_id,
          s.date,
          s.type,
+         s.species,
          b.common_name AS bird,
          s.age,
          s.sex,
@@ -489,29 +490,14 @@ CREATE VIEW v_samples_birds_cn AS
          s.clin_st,
          s.vital_st,
          s.capture_method,
-         s.location
-    FROM samples s LEFT OUTER JOIN birds b
-      ON b.id = s.species;
-
-CREATE VIEW v_samples_birds_locations AS
-  SELECT s.id,
-         s.emc_id,
-         s.date,
-         s.type,
-         b.common_name AS bird,
-         s.age,
-         s.sex,
-         s.ring,
-         s.clin_st,
-         s.vital_st,
-         s.capture_method,
-         l.id AS location,
+         s.location,
          l.name AS location_name
     FROM samples s
     LEFT OUTER JOIN birds b
       ON b.id = s.species
     LEFT OUTER JOIN locations l
-      ON l.id = s.location;
+      ON l.id = s.location
+    WITH NO DATA;
 
 -- Provide an audit trigger that logs to
 -- a dedicated audit table for the major relations.
