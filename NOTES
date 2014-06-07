@@ -53,6 +53,7 @@ ln -s ~/src/bfs/mojits .
 ln -s ~/src/bfs/middleware/ .
 
 
+# Note: node-pg requires the ISO datestyle set in the database
 sudo aptitude install postgresql-server-dev-9.3
 npm install pg -g
 npm install passport -g
