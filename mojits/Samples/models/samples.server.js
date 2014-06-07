@@ -97,23 +97,24 @@ YUI.add('SamplesModel', function (Y, NAME) {
       );
 
       pg.connect(connectionString, function (err, client, done) {
+        var countSql;
+
         if (err) {
           console.error('could not connect to postgres', err);
           callback(err);
         }
 
         // get totalItems
-        client.query(
-          Y.substitute('SELECT count(*) FROM "samples"{query}', {
-            query: arg.query ? ' WHERE ' + arg.query : ''
-          }),
-          function (err, result) {
-            if (err) {
-              callback(err);
-            }
-            totalItems = parseInt(result.rows[0].count, 10); // Pg client stringifies numbers. There is an ongoing discussion about that.
+        countSql = Y.substitute('SELECT count(*) FROM "v_samples_birds_locations"{query}', {
+          query: arg.query ? ' WHERE ' + arg.query : ''
+        });
+        console.log(countSql);
+        client.query(countSql, function (err, result) {
+          if (err) {
+            callback(err);
           }
-        );
+          totalItems = parseInt(result.rows[0].count, 10); // Pg client stringifies numbers. There is an ongoing discussion about that.
+        });
 
         console.log(sql);
         client.query(
@@ -130,9 +131,11 @@ YUI.add('SamplesModel', function (Y, NAME) {
               itemIndexStart: itemIndexStart,
               totalItems: totalItems
             };
+            console.log(result);
             // find out about the use of node pg parsers for this
             Y.each(result.rows, function (row) {
               idList.push(row.id);
+              console.log(row.date);
               row.date = Y.DataType.Date.format(row.date, {format: "%Y-%m-%d"});
               Y.each(row, function (v, k) {
                 if (v === null) {
