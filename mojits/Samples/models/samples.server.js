@@ -32,7 +32,7 @@ YUI.add('SamplesModel', function (Y, NAME) {
     /**
      * Method that will be invoked by the mojit controller to obtain data.
      *
-     * @param callback {function(err,data)} The callback function to call when the
+     * @param callback {function(err, data)} The callback function to call when the
      *        data has been retrieved.
      */
     count: function (arg, callback) {
@@ -77,7 +77,7 @@ YUI.add('SamplesModel', function (Y, NAME) {
       }
 
       sql = Y.substitute(
-        'SELECT * FROM "v_samples_birds_locations" ORDER BY {sort_keys} LIMIT {itemsPerPage} OFFSET {itemIndexStart}',
+        'SELECT * FROM "v_samples_birds_locations" {query} ORDER BY {sort_keys} LIMIT {itemsPerPage} OFFSET {itemIndexStart}',
         {
           sort_keys: Y.Array.map(sortKeys, function (k) {
             var key, order;
@@ -91,7 +91,8 @@ YUI.add('SamplesModel', function (Y, NAME) {
             return '"' + key + '" ' + order;
           }).join(', '),
           itemsPerPage: itemsPerPage,
-          itemIndexStart: itemIndexStart
+          itemIndexStart: itemIndexStart,
+          query: arg.query ? 'WHERE ' + arg.query : ''
         }
       );
 
@@ -101,8 +102,11 @@ YUI.add('SamplesModel', function (Y, NAME) {
           callback(err);
         }
 
+        // get totalItems
         client.query(
-          'SELECT count(*) FROM "samples"',
+          Y.substitute('SELECT count(*) FROM "samples"{query}', {
+            query: arg.query ? ' WHERE ' + arg.query : ''
+          }),
           function (err, result) {
             if (err) {
               callback(err);

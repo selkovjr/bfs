@@ -122,10 +122,11 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       //  After the cell editor View is instantiated,
       //    get the INPUT node and plugin the AutoComplete to it
       //---------
-      editorCreated : function (e) {
-        var inputNode = e.inputNode,
-        acConfig = this.get('autocompleteConfig') || {},
-        editor = this;
+      editorCreated: function (e) {
+        var
+          inputNode = e.inputNode,
+          acConfig = this.get('autocompleteConfig') || {},
+          editor = this;
 
         // If input node exists and autocomplete-plugin is available, plug the sucker in!
         if (inputNode && Y.Plugin.AutoComplete) {
@@ -216,14 +217,15 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       // This function is an adapter between mojitProxy and ModelList.
       sampleList.sync = function (action, arg, callback) {
         var
-          options,
-          response;
+          query = Y.one('.query-text').get('value').replace(/^\s\s*/, '').replace(/\s\s*$/, ''),
+          options;
 
         Y.log('sync action: ' + action);
         if (action === 'read') {
           options = {
             params: {
               body: {
+                query: query,
                 itemsPerPage: arg.itemsPerPage,
                 itemIndexStart: arg.itemIndexStart
               }
@@ -235,13 +237,29 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           }
 
           mojitProxy.invoke('data', options, function (err, data) {
+            var
+              selectedCount,
+              total;
+
             if (err) {
               callback('server transaction error: ' + err);
-            } else {
+            }
+            else {
+              selectedCount = data.paging.totalItems;
+              Y.log(Y.one('#sample-count').get('text'));
+              total = parseInt(Y.one('#sample-count').get('text'), 10);
+              Y.log([selectedCount, total]);
+              if (selectedCount < total) {
+                Y.one('#sample-selected-count').set('text', '' + selectedCount + ' of ');
+              }
+              else {
+                Y.one('#sample-selected-count').set('text', '');
+              }
               callback(null, data);
             }
           });
-        } else {
+        }
+        else {
           callback('Unsupported sync action: ' + action);
         }
       };
@@ -422,7 +440,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         mp.invoke('autocomplete', null, function (err, data) {
           if (err) {
             Y.log('server transaction error: ' + err, 'error', 'Samples binder');
-          } else {
+          }
+          else {
             acOptions = Y.JSON.parse(data);
 
             tableConfig.columns[1].editor = 'text'; // emc_id
@@ -643,16 +662,16 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
               }
             });
 
-            table.on('pageUpdate', function (e) {
+            table.on('pageUpdate', function () {
               if (self.editable) {
-                // Updates lose selection
+                // Updates kill selection
                 Y.one('#delete-sample').set('disabled', true);
               }
             });
 
             if (self.editable) {
               // Enable/disable the Add button
-              Y.one('#new-sample-id').on('keyup', function (e) {
+              Y.one('#new-sample-id').on('keyup', function () {
                 if (Y.one('#new-sample-id').get('value').match(/^ *$/)) {
                   Y.one('#add-sample').set('disabled', true);
                 } else {
@@ -683,11 +702,12 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                     rpc: true
                   };
 
-                self.mojitProxy.invoke('delete', options, function (err, data) {
+                self.mojitProxy.invoke('delete', options, function (err) {
                   if (err) {
                     Y.log(err);
                     alert('server transaction error: ' + err);
-                  } else {
+                  }
+                  else {
                     // This makes SampleDetails collapse
                     mp.broadcast('row-deleted', {id: id});
 
@@ -731,7 +751,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                   rpc: true
                 };
                 Y.log('invoke update 1');
-                mp.invoke('update', options, function (err, data) {
+                mp.invoke('update', options, function (err) {
                   if (err) {
                     Y.log('update 1 failed');
                   } else {
@@ -758,7 +778,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                 // object. To prevet this, replace the object with its `name` property.
                 e.record.set('location_name', newVal.name);
                 Y.log('invoke update 2');
-                mp.invoke('update', options, function (err, data) {
+                mp.invoke('update', options, function (err) {
                   if (err) {
                     Y.log('update 2 failed');
                   } else {
@@ -781,7 +801,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                     rpc: true
                   };
                   Y.log('invoke update 3');
-                  mp.invoke('update', options, function (err, data) {
+                  mp.invoke('update', options, function (err) {
                     if (err) {
                       Y.log('update 3 failed');
                     } else {
@@ -828,11 +848,10 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           target = e.currentTarget,
           listItems = [
             '<li>' +
-            '<div class="annotation-text">' +
-            '<textarea id="annotation-input" rows="4" autofocus="1" placeholder="Add a note here. Meta+Enter to save, Esc to cancel."></textarea>' +
-            '</div>' +
-            '<div><button id="annotation-save">Save</button>' +
-            '</div>' +
+              '<div class="annotation-text">' +
+                '<textarea id="annotation-input" rows="4" autofocus="1" placeholder="Add a note here. Meta+Enter to save, Esc to cancel."></textarea>' +
+              '</div>' +
+              '<div><button id="annotation-save">Save</button></div>' +
             '</li>'
           ];
 
@@ -847,11 +866,11 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
               note.when = note.when.replace(/T[0-9].+$/, '');
               listItems.unshift(
                 '<li>' +
-                '<div class="annotation-meta">' +
-                  '<span class="annotation-author">' + note.user + '</span> on ' +
-                  '<span class="annotation-date">' + note.when + '</span>' +
-                '</div>' +
-                '<div class="annotation-text">' + note.text + '</div>' +
+                  '<div class="annotation-meta">' +
+                    '<span class="annotation-author">' + note.user + '</span> on ' +
+                    '<span class="annotation-date">' + note.when + '</span>' +
+                  '</div>' +
+                  '<div class="annotation-text">' + note.text + '</div>' +
                 '</li>'
               );
             });
@@ -993,12 +1012,14 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         if (err) {
           Y.log(err);
           alert('server transaction error: ' + err);
-        } else {
+        }
+        else {
           if (data.rowCount === 0) {
             self.mojitProxy.invoke('create', options, function (err, data) {
               if (err) {
                 Y.log('create failed: ' + err);
-              } else {
+              }
+              else {
                 // The create() method seems to be a better alternative to the above,
                 // but it does not work. It creates empty rows and does not sync.
                 sampleList.remove(0);
@@ -1027,7 +1048,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
                 Y.log('create successful');
               }
             });
-          } else {
+          }
+          else {
             alert('Sample with this ID already exists: ' + id);
           }
         }
