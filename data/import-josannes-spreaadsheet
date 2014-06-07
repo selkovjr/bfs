@@ -142,7 +142,7 @@ my %age = (
 );
 
 my %sample_type = (
-  F => 'freash faeces',
+  F => 'fresh faeces',
   OP => 'oral-pharyngeal',
   COP => 'cloacal/op',
   C => 'cloacal swab',
