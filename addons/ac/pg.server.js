@@ -4,9 +4,15 @@ YUI.add('addon-ac-pg', function(Y, NAME) {
     types = require('pg').types,
     connectionString;
 
+  // All values returned from the server are either NULL or a string.
+  // Details on type parsers at https://github.com/brianc/node-pg-types
+
   types.setTypeParser(20, function (val) {
-    //remember: all values returned from the server are either NULL or a //string
     return val === null ? null : parseInt(val, 10);
+  });
+
+  types.setTypeParser(1082, function (val) {
+    return val === null ? null : Y.DataType.Date.format(val, {format: "%Y-%m-%d"});
   });
 
   function PgAcAddon(command, adapter, ac) {
