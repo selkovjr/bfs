@@ -477,7 +477,7 @@ ALTER DATABASE bfs SET datestyle TO "ISO, DMY";
 
 ALTER SEQUENCE location_id_seq RESTART WITH 22;
 
-CREATE MATERIALIZED VIEW v_samples_birds_locations AS
+CREATE VIEW v_samples_birds_locations AS
   SELECT s.id,
          s.emc_id,
          s.date,
@@ -497,7 +497,7 @@ CREATE MATERIALIZED VIEW v_samples_birds_locations AS
       ON b.id = s.species
     LEFT OUTER JOIN locations l
       ON l.id = s.location
-    WITH NO DATA;
+;
 
 -- Provide an audit trigger that logs to
 -- a dedicated audit table for the major relations.

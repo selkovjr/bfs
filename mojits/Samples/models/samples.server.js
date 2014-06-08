@@ -131,11 +131,9 @@ YUI.add('SamplesModel', function (Y, NAME) {
               itemIndexStart: itemIndexStart,
               totalItems: totalItems
             };
-            console.log(result);
             // find out about the use of node pg parsers for this
             Y.each(result.rows, function (row) {
               idList.push(row.id);
-              console.log(row.date);
               row.date = Y.DataType.Date.format(row.date, {format: "%Y-%m-%d"});
               Y.each(row, function (v, k) {
                 if (v === null) {
