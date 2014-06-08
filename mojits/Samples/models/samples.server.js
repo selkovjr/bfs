@@ -113,13 +113,10 @@ YUI.add('SamplesModel', function (Y, NAME) {
           if (err) {
             callback(err);
           }
-          totalItems = parseInt(result.rows[0].count, 10); // Pg client stringifies numbers. There is an ongoing discussion about that.
-        });
+          totalItems = result.rows[0].count;
 
-        console.log(sql);
-        client.query(
-          sql,
-          function (err, result) {
+          console.log(sql);
+          client.query(sql, function (err, result) {
             var notesQuery;
 
             if (err) {
@@ -131,10 +128,10 @@ YUI.add('SamplesModel', function (Y, NAME) {
               itemIndexStart: itemIndexStart,
               totalItems: totalItems
             };
-            // find out about the use of node pg parsers for this
+            result.notes = {};
+
             Y.each(result.rows, function (row) {
               idList.push(row.id);
-              row.date = Y.DataType.Date.format(row.date, {format: "%Y-%m-%d"});
               Y.each(row, function (v, k) {
                 if (v === null) {
                   row[k] = '';
@@ -142,18 +139,17 @@ YUI.add('SamplesModel', function (Y, NAME) {
               });
             });
 
-            notesQuery = 'SELECT * FROM notes WHERE "class" = \'samples\' AND id IN (' + Y.Array.map(idList, function (arg) {
-              return "'" + arg + "'";
-            }).join(', ') + ')';
 
-            console.log(notesQuery);
-            client.query(
-              notesQuery,
-              function (err, notesResult) {
+            if (idList.length > 0) {
+              notesQuery = 'SELECT * FROM notes WHERE "class" = \'samples\' AND id IN (' + Y.Array.map(idList, function (arg) {
+                return "'" + arg + "'";
+              }).join(', ') + ')';
+
+              console.log(notesQuery);
+              client.query(notesQuery, function (err, notesResult) {
                 if (err) {
                   callback(err);
                 }
-                result.notes = {};
                 Y.each(notesResult.rows, function (note) {
                   if (result.notes[note.id] === undefined) {
                     result.notes[note.id] = {};
@@ -170,14 +166,17 @@ YUI.add('SamplesModel', function (Y, NAME) {
 
                 done();
 
-                console.log(result.notes);
                 callback(null, result);
-              }
-            );
-          }
-        );
-      });
-    },
+              });
+            }
+            else {
+              done();
+              callback(null, result);
+            }
+          });
+        }); // query count
+      }); // connect
+    }, // getData()
 
     autocomplete: function (arg, callback) {
       pg.connect(connectionString, function (err, client, done) {
