@@ -1,7 +1,13 @@
 YUI.add('addon-ac-pg', function(Y, NAME) {
   var
     pg = require('pg'),
+    types = require('pg').types,
     connectionString;
+
+  types.setTypeParser(20, function (val) {
+    //remember: all values returned from the server are either NULL or a //string
+    return val === null ? null : parseInt(val, 10);
+  });
 
   function PgAcAddon(command, adapter, ac) {
     // This function gets called on each request.
@@ -12,7 +18,7 @@ YUI.add('addon-ac-pg', function(Y, NAME) {
     // the "done()", "error()", etc, methods.
     // The "ac" is the ActionContext object to which
     // this addon is about to be attached.
-     connectionString = 'postgres://' + ac.http.getRequest().user.username + ':@localhost/bfs';
+    connectionString = 'postgres://' + ac.http.getRequest().user.username + ':@localhost/bfs';
   }
 
   PgAcAddon.prototype = {
