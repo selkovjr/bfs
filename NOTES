@@ -39,7 +39,7 @@ colordiff routes.json ~/src/bfs/routes.json | less -R
 ln -sf ~/src/bfs/routes.json .
 
 colordiff package.json ~/src/bfs/package.json
-# merge: add  to dependencies:
+# merge: add to dependencies:
 
     "pg": ">=2.11.1",
 
@@ -76,3 +76,11 @@ cd contrib/seg/
 vi seg.c # change Min(n, FLT_DIG) to Min(n, FLT_DIG + 3)
 sudo cp seg.so /usr/lib/postgresql/9.3/lib/seg.so
 sudo service postgresql restart
+
+
+## Upgrading mojito
+#
+# It looks like an app created with mojito always uses its local copy,
+# so to upgrade it,
+cd ~/mojito/bfs
+npm install mojito
