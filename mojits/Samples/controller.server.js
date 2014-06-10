@@ -21,19 +21,23 @@ YUI.add('Samples', function (Y, NAME) {
         model = ac.models.get('samples');
         model.count(null, function (err, data) {
           if (err) {
-            console.error('error condition');
-            ac.error(err);
+            Y.log('error condition', 'error', NAME + '.index');
+            ac.error(err); // The error is logged in the model
           }
-          ac.assets.addCss('./index.css');
-          ac.done({
-            title: "Samples",
-            nsamples: data,
-            auth: user.auth.samples
-          });
+          else {
+            ac.assets.addCss('./index.css');
+            ac.done({
+              title: "Samples",
+              nsamples: data.count,
+              auth: user.auth.samples
+            });
+          }
         });
       }
       else {
-        ac.done({});
+        Y.log('undefined user', 'err', NAME + '.index');
+        // ac.error({});
+        ac.error('undefined user');
       }
     },
 
@@ -41,10 +45,12 @@ YUI.add('Samples', function (Y, NAME) {
       var model = ac.models.get('samples');
       model.getData(ac.command.params.body, function (err, data) {
         if (err) {
-          console.error('error condition');
+          Y.log('error condition', 'error', NAME + '.data');
           ac.error(err);
         }
-        ac.done(data, 'json');
+        else {
+          ac.done(data, 'json');
+        }
       });
     },
 
@@ -52,10 +58,12 @@ YUI.add('Samples', function (Y, NAME) {
       var model = ac.models.get('samples');
       model.autocomplete(ac.command.params.body, function (err, data) {
         if (err) {
-          console.error('error condition');
+          Y.log('error condition', 'error', NAME + '.autocomplete');
           ac.error(err);
         }
-        ac.done(Y.JSON.stringify(data), 'json');
+        else {
+          ac.done(Y.JSON.stringify(data), 'json');
+        }
       });
     },
 
@@ -63,10 +71,12 @@ YUI.add('Samples', function (Y, NAME) {
       var model = ac.models.get('samples');
       model.bird(ac.command.params.url, function (err, data) {
         if (err) {
-          console.error('error condition');
+          Y.log('error condition', 'error', NAME + '.bird');
           ac.error(err);
         }
-        ac.done(data, 'json');
+        else {
+          ac.done(data, 'json');
+        }
       });
     },
 
@@ -74,10 +84,12 @@ YUI.add('Samples', function (Y, NAME) {
       var model = ac.models.get('samples');
       model.create(ac.command.params.body, function (err, data) {
         if (err) {
-          console.error('error condition');
+          Y.log('error condition', 'error', NAME + '.create');
           ac.error(err);
         }
-        ac.done();
+        else {
+          ac.done();
+        }
       });
     },
 
@@ -85,10 +97,12 @@ YUI.add('Samples', function (Y, NAME) {
       var model = ac.models.get('samples');
       model.update(ac.command.params.body, function (err, data) {
         if (err) {
-          console.error('error condition');
+          Y.log('error condition', 'error', NAME + '.update');
           ac.error(err);
         }
-        ac.done();
+        else {
+          ac.done();
+        }
       });
     },
 
@@ -96,10 +110,12 @@ YUI.add('Samples', function (Y, NAME) {
       var model = ac.models.get('samples');
       model['delete'](ac.command.params.body, function (err, data) {
         if (err) {
-          console.error('error condition');
+          Y.log('error condition', 'error', NAME + '.delete');
           ac.error(err);
         }
-        ac.done();
+        else {
+          ac.done();
+        }
       });
     },
 
@@ -107,10 +123,12 @@ YUI.add('Samples', function (Y, NAME) {
       var model = ac.models.get('samples');
       model.findSample(ac.command.params.body, function (err, data) {
         if (err) {
-          console.error('error condition');
+          Y.log('error condition', 'error', NAME + '.findSimple');
           ac.error(err);
         }
-        ac.done(data, 'json');
+        else {
+          ac.done(data, 'json');
+        }
       });
     },
 
@@ -118,10 +136,12 @@ YUI.add('Samples', function (Y, NAME) {
       var model = ac.models.get('samples');
       model.addNote(ac.command.params.body, function (err, data) {
         if (err) {
-          console.error('error condition');
+          Y.log('error condition', 'error', NAME + '.addNote');
           ac.error(err);
         }
-        ac.done();
+        else {
+          ac.done();
+        }
       });
     }
   };

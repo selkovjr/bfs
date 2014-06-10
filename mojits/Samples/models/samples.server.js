@@ -53,7 +53,6 @@ YUI.add('SamplesModel', function (Y, NAME) {
             return;
           }
           done();
-          console.log(result);
           callback(null, result.rows[0]);
         });
       });

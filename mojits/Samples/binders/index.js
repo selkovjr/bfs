@@ -838,6 +838,11 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
               });
             });
 
+            table.data.on('error', function (e) {
+              Y.log('load error');
+              Y.log(e.error.toString(), 'error');
+            });
+
           } // got autocomplete options
         }); // invoke autocomplete data
       }, this)); // on domready

@@ -31,6 +31,7 @@ YUI.add('Diagnostics', function(Y, NAME) {
         console.log('Diagnostics model called from controller index');
 
         if (err) {
+          Y.log('error condition', 'error', NAME + '.index');
           ac.error(err);
           return;
         }
@@ -48,7 +49,7 @@ YUI.add('Diagnostics', function(Y, NAME) {
       var model = ac.models.get('model');
       model.getData(ac.command.params.body, function (err, data) {
         if (err) {
-          console.error('error condition');
+          Y.log('error condition', 'error', NAME + '.data');
           ac.error(err);
           return;
         }
@@ -60,7 +61,7 @@ YUI.add('Diagnostics', function(Y, NAME) {
       var model = ac.models.get('model');
       model.autocomplete(ac.command.params.body, function (err, data) {
         if (err) {
-          console.error('error condition');
+          Y.log('error condition', 'error', NAME + '.autocomplete');
           ac.error(err);
           return;
         }
@@ -72,7 +73,7 @@ YUI.add('Diagnostics', function(Y, NAME) {
       var model = ac.models.get('model');
       model.update(ac.command.params.body, function (err, data) {
         if (err) {
-          console.error('error condition');
+          Y.log('error condition', 'error', NAME + '.update');
           ac.error(err);
           return;
         }
@@ -84,7 +85,7 @@ YUI.add('Diagnostics', function(Y, NAME) {
       var model = ac.models.get('model');
       model.create(ac.command.params.body, function (err, data) {
         if (err) {
-          console.error('error condition');
+          Y.log('error condition', 'error', NAME + '.create');
           ac.error(err);
           return;
         }
@@ -96,8 +97,9 @@ YUI.add('Diagnostics', function(Y, NAME) {
       var model = ac.models.get('model');
       model.addNote(ac.command.params.body, function (err, data) {
         if (err) {
-          console.error('error condition');
+          Y.log('error condition', 'error', NAME + '.addNote');
           ac.error(err);
+          return;
         }
         ac.done();
       });
