@@ -69,10 +69,12 @@
                         "config": {
                           "children": {
                             "location": {
-                              "type":"Locations"
+                              "type":"Locations",
+                              "propagateFailure": true
                             },
                             "diagnostics": {
-                              "type":"Diagnostics"
+                              "type":"Diagnostics",
+                              "propagateFailure": true
                             }
                           }
                         }
