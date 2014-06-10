@@ -31,7 +31,7 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
     /**
      * Method that will be invoked by the mojit controller to obtain data.
      *
-     * @param callback {function(err,data)} The callback function to call when the
+     * @param callback {function(err, data)} The callback function to call when the
      *        data has been retrieved.
      */
     getData: function (arg, callback) {
@@ -46,67 +46,66 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
 
       pg.connect(connectionString, function (err, client, done) {
         if (err) {
-          console.error('could not connect to postgres', err);
+          Y.log(err, 'error', NAME + '.getData.connect');
           callback(err);
+          return;
         }
         console.log(sql);
-        client.query(
-          sql,
-          function (err, result) {
-            var
-              data,
-              notesQuery;
+        client.query(sql, function (err, result) {
+          var
+            data,
+            notesQuery;
 
-            if (err) {
-              console.error('could not run diagnostics query: ' + err);
-              callback(err);
+          if (err) {
+            Y.log(err, 'error', NAME + '.getData.data.query');
+            callback(err);
+            return;
+          }
+
+          data = result.rows[0];
+          Y.each(data, function (v, k) {
+            if (v === null) {
+              data[k] = '';
             }
+            else if (k === 'date' || k === 'rec_date') {
+              data[k] = Y.DataType.Date.format(data[k], {format: "%Y-%m-%d"});
+            }
+          });
 
-            data = result.rows[0];
-            Y.each(data, function (v, k) {
-              if (v === null) {
-                data[k] = '';
+          notesQuery = 'SELECT * FROM notes WHERE "class" = \'diagnostics\' AND id = \'' + arg.id + '\'';
+
+          console.log(notesQuery);
+          client.query(notesQuery, function (err, notesResult) {
+            if (err) {
+              Y.log(err, 'error', NAME + '.getData.notes.query');
+              callback(err);
+              return;
+            }
+            result.notes = {};
+            Y.each(notesResult.rows, function (note) {
+              if (result.notes[note.attr] === undefined) {
+                result.notes[note.attr] = [];
               }
-              else if (k === 'date' || k === 'rec_date') {
-                data[k] = Y.DataType.Date.format(data[k], {format: "%Y-%m-%d"});
-              }
+              result.notes[note.attr].push({
+                user: note.user,
+                when: note.when,
+                text: note.text
+              });
             });
 
-            notesQuery = 'SELECT * FROM notes WHERE "class" = \'diagnostics\' AND id = \'' + arg.id + '\'';
-
-            console.log(notesQuery);
-            client.query(
-              notesQuery,
-              function (err, notesResult) {
-                if (err) {
-                  callback(err);
-                }
-                result.notes = {};
-                Y.each(notesResult.rows, function (note) {
-                  if (result.notes[note.attr] === undefined) {
-                    result.notes[note.attr] = [];
-                  }
-                  result.notes[note.attr].push({
-                    user: note.user,
-                    when: note.when,
-                    text: note.text
-                  });
-                });
-
-                done();
-                callback(null, result);
-              }
-            );
-          }
-        );
-      });
-    },
+            done();
+            callback(null, result);
+          });
+        }); // diagnostics-by-sample query
+      }); // connect
+    }, // getData()
 
     autocomplete: function (arg, callback) {
       pg.connect(connectionString, function (err, client, done) {
         if (err) {
-          console.error('could not connect to postgres', err);
+          Y.log(err, 'error', NAME + '.autocomplete.connect');
           callback(err);
+          return;
         }
         client.query(
           'SELECT "attr", "val", "desc" FROM "ac" WHERE "class" = \'diagnostics\' ORDER BY "ord"',
@@ -114,7 +113,9 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
             var ac = {};
 
             if (err) {
+              Y.log(err, 'error', NAME + '.autocomplete.query');
               callback(err);
+              return;
             }
 
             done();
@@ -136,8 +137,9 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
         var sql;
 
         if (err) {
-          console.error('could not connect to postgres', err);
+          Y.log(err, 'error', NAME + '.update.connect');
           callback(err);
+          return;
         }
 
         if (arg.value !== '' && arg.value !== null && arg.value !== undefined) {
@@ -149,7 +151,9 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
           sql,
           function (err, result) {
             if (err) {
+              Y.log(err, 'error', NAME + '.update.query');
               callback(err);
+              return;
             }
             done();
             console.log('update successful');
@@ -165,8 +169,9 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
         var sql = Y.substitute("INSERT into diagnostics (sample) VALUES ('{id}')", arg);
 
         if (err) {
-          console.error('could not connect to postgres', err);
+          Y.log(err, 'error', NAME + '.create.connect');
           callback(err);
+          return;
         }
 
         console.log(sql);
@@ -174,7 +179,9 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
           sql,
           function (err, result) {
             if (err) {
+              Y.log(err, 'error', NAME + '.create.query');
               callback(err);
+              return;
             }
             done();
             console.log('create successful');
@@ -198,8 +205,9 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
         );
 
         if (err) {
-          console.error('could not connect to postgres', err);
+          Y.log(err, 'error', NAME + '.addNote.connect');
           callback(err);
+          return;
         }
 
         console.log(sql);
@@ -209,7 +217,9 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
           [arg.text],
           function (err, result) {
             if (err) {
+              Y.log(err, 'error', NAME + '.addNote.connect');
               callback(err);
+              return;
             }
 
             done();

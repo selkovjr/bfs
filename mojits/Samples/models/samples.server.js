@@ -36,21 +36,26 @@ YUI.add('SamplesModel', function (Y, NAME) {
      *        data has been retrieved.
      */
     count: function (arg, callback) {
+      var sql = 'SELECT count(*) FROM "samples"';
+
       pg.connect(connectionString, function (err, client, done) {
         if (err) {
-          console.error('could not connect to postgres', err);
+          Y.log(err, 'error', NAME + '.count.connect');
           callback(err);
+          return;
         }
-        client.query(
-          'SELECT count(*) FROM "samples"',
-          function (err, result) {
-            done();
-            if (err) {
-              callback(err);
-            }
-            callback(null, parseInt(result.rows[0].count, 10)); // Pg client stringifies numbers. There is an ongoing discussion about that.
+
+        console.log(sql);
+        client.query(sql, function (err, result) {
+          if (err) {
+            Y.log(err, 'error', NAME + '.count.query');
+            callback(err);
+            return;
           }
-        );
+          done();
+          console.log(result);
+          callback(null, result.rows[0]);
+        });
       });
     },
 
@@ -77,7 +82,7 @@ YUI.add('SamplesModel', function (Y, NAME) {
       }
 
       sql = Y.substitute(
-        'SELECT * FROM "v_samples_birds_locations" {query} ORDER BY {sort_keys} LIMIT {itemsPerPage} OFFSET {itemIndexStart}',
+        'selECT * FROM "v_samples_birds_locations" {query} ORDER BY {sort_keys} LIMIT {itemsPerPage} OFFSET {itemIndexStart}',
         {
           sort_keys: Y.Array.map(sortKeys, function (k) {
             var key, order;
@@ -100,8 +105,9 @@ YUI.add('SamplesModel', function (Y, NAME) {
         var countSql;
 
         if (err) {
-          console.error('could not connect to postgres', err);
+          Y.log(err, 'error', NAME + '.getData.connect');
           callback(err);
+          return;
         }
 
         // get totalItems
@@ -111,7 +117,9 @@ YUI.add('SamplesModel', function (Y, NAME) {
         console.log(countSql);
         client.query(countSql, function (err, result) {
           if (err) {
+            Y.log(err, 'error', NAME + '.getData.count.query');
             callback(err);
+            return;
           }
           totalItems = result.rows[0].count;
 
@@ -120,7 +128,9 @@ YUI.add('SamplesModel', function (Y, NAME) {
             var notesQuery;
 
             if (err) {
+              Y.log(err, 'error', NAME + '.getData.data.query');
               callback(err);
+              return;
             }
 
             result.paging = {
@@ -139,7 +149,6 @@ YUI.add('SamplesModel', function (Y, NAME) {
               });
             });
 
-
             if (idList.length > 0) {
               notesQuery = 'SELECT * FROM notes WHERE "class" = \'samples\' AND id IN (' + Y.Array.map(idList, function (arg) {
                 return "'" + arg + "'";
@@ -148,8 +157,11 @@ YUI.add('SamplesModel', function (Y, NAME) {
               console.log(notesQuery);
               client.query(notesQuery, function (err, notesResult) {
                 if (err) {
+                  Y.log(err, 'error', NAME + '.getData.notes.query');
                   callback(err);
+                  return;
                 }
+
                 Y.each(notesResult.rows, function (note) {
                   if (result.notes[note.id] === undefined) {
                     result.notes[note.id] = {};
@@ -166,12 +178,12 @@ YUI.add('SamplesModel', function (Y, NAME) {
 
                 done();
 
-                callback(null, result);
+                callback(null, result); // result with notes
               });
             }
             else {
               done();
-              callback(null, result);
+              callback(null, result); // result without notes
             }
           });
         }); // query count
@@ -181,8 +193,9 @@ YUI.add('SamplesModel', function (Y, NAME) {
     autocomplete: function (arg, callback) {
       pg.connect(connectionString, function (err, client, done) {
         if (err) {
-          console.error('could not connect to postgres', err);
+          Y.log(err, 'error', NAME + '.autocomplete.connect');
           callback(err);
+          return;
         }
         client.query(
           'SELECT "attr", "val", "desc" FROM "ac" WHERE "class" = \'samples\' ORDER BY "ord"',
@@ -190,7 +203,9 @@ YUI.add('SamplesModel', function (Y, NAME) {
             var ac = {};
             done();
             if (err) {
+              Y.log(err, 'error', NAME + '.autocomplete.query');
               callback(err);
+              return;
             }
             Y.each(result.rows, function (option) {
               if (ac[option.attr] === undefined) {
@@ -221,15 +236,19 @@ YUI.add('SamplesModel', function (Y, NAME) {
 
       pg.connect(connectionString, function (err, client, done) {
         if (err) {
-          console.error('could not connect to postgres', err);
+          Y.log(err, 'error', NAME + '.bird.connect');
           callback(err);
+          return;
         }
         client.query(
           sql,
           function (err, result) {
             if (err) {
+              Y.log(err, 'error', NAME + '.bird.query');
               callback(err);
+              return;
             }
+
             done();
             if (result) {
               callback(null, result.rows);
@@ -247,8 +266,9 @@ YUI.add('SamplesModel', function (Y, NAME) {
         var sql = Y.substitute("INSERT INTO samples (id) VALUES ('{id}')", arg);
 
         if (err) {
-          console.error('could not connect to postgres', err);
+          Y.log(err, 'error', NAME + '.create.connect');
           callback(err);
+          return;
         }
 
         console.log(sql);
@@ -256,7 +276,9 @@ YUI.add('SamplesModel', function (Y, NAME) {
           sql,
           function (err, result) {
             if (err) {
+              Y.log(err, 'error', NAME + '.create.query');
               callback(err);
+              return;
             }
 
             done();
@@ -273,8 +295,9 @@ YUI.add('SamplesModel', function (Y, NAME) {
         var sql = Y.substitute("DELETE FROM samples WHERE id = '{id}'", arg);
 
         if (err) {
-          console.error('could not connect to postgres', err);
+          Y.log(err, 'error', NAME + '.delete.connect');
           callback(err);
+          return;
         }
 
         console.log(sql);
@@ -282,7 +305,9 @@ YUI.add('SamplesModel', function (Y, NAME) {
           sql,
           function (err, result) {
             if (err) {
+              Y.log(err, 'error', NAME + '.delete.query');
               callback(err);
+              return;
             }
 
             done();
@@ -303,8 +328,9 @@ YUI.add('SamplesModel', function (Y, NAME) {
         var sql;
 
         if (err) {
-          console.error('could not connect to postgres', err);
+          Y.log(err, 'error', NAME + '.update.connect');
           callback(err);
+          return;
         }
 
         if (arg.value !== '' && arg.value !== null && arg.value !== undefined) {
@@ -313,26 +339,22 @@ YUI.add('SamplesModel', function (Y, NAME) {
           sql = Y.substitute("UPDATE samples SET {attr} = NULL WHERE id = '{id}'", arg);
         }
         console.log(sql);
-        client.query(
-          sql,
-          function (err, result) {
-            console.log('-------- update query --------');
-            console.log([err, result]);
-            done();
-            if (err) {
-              callback(err);
-            }
-            else {
-              if (result.rowCount) {
-                console.log('update successful');
-                callback(null, result);
-              } else {
-                console.log('update error');
-                callback('UPDATE: no rows matching "' + arg.id  + '"');
-              }
-            }
+        client.query(sql, function (err, result) {
+          if (err) {
+            Y.log(err, 'error', NAME + '.update.query');
+            callback(err);
+            return;
           }
-        );
+
+          done();
+          if (result.rowCount) {
+            console.log('update successful');
+            callback(null, result);
+          } else {
+            console.log('update error');
+            callback('UPDATE: no rows matching "' + arg.id  + '"');
+          }
+        });
       });
     },
 
@@ -341,28 +363,27 @@ YUI.add('SamplesModel', function (Y, NAME) {
         var sql;
 
         if (err) {
-          console.error('could not connect to postgres', err);
+          Y.log(err, 'error', NAME + '.findSample.connect');
           callback(err);
+          return;
         }
 
         sql = Y.substitute("SELECT * FROM samples WHERE id = '{id}'", arg);
-        client.query(
-          sql,
-          function (err, result) {
-            if (err) {
-              callback(err);
-            }
-
-            done();
-            callback(null, result);
+        client.query(sql, function (err, result) {
+          if (err) {
+            Y.log(err, 'error', NAME + '.findSample.query');
+            callback(err);
+            return;
           }
-        );
+
+          done();
+          callback(null, result);
+        });
       });
     },
 
     addNote: function (arg, callback) {
       pg.connect(connectionString, function (err, client, done) {
-        Y.log(arg);
         var sql = Y.substitute(
           "INSERT INTO notes (\"class\", \"id\", \"attr\", \"user\", \"when\", \"text\") VALUES ('samples', '{id}', '{attr}', '{user}', 'now', $1)",
           {
@@ -373,8 +394,9 @@ YUI.add('SamplesModel', function (Y, NAME) {
         );
 
         if (err) {
-          console.error('could not connect to postgres', err);
+          Y.log(err, 'error', NAME + '.addNote.connect');
           callback(err);
+          return;
         }
 
         console.log(sql);
@@ -384,7 +406,9 @@ YUI.add('SamplesModel', function (Y, NAME) {
           [arg.text],
           function (err, result) {
             if (err) {
+              Y.log(err, 'error', NAME + '.addNote.query');
               callback(err);
+              return;
             }
 
             done();
@@ -396,4 +420,4 @@ YUI.add('SamplesModel', function (Y, NAME) {
       });
     }
   };
-}, '0.0.1', {requires: ['mojito', 'mojito-rest-lib', 'json', 'substitute']});
+}, '0.0.1', {requires: ['mojito', 'json', 'substitute']});
