@@ -11,6 +11,11 @@ YUI.add('addon-ac-pg', function(Y, NAME) {
     return val === null ? null : parseInt(val, 10);
   });
 
+  // Replace postgres's escaped quotes.
+  types.setTypeParser(25, function (val) {
+    return val === null ? null : val.replace(/''/g, "'");
+  });
+
   types.setTypeParser(1082, function (val) {
     return val === null ? null : Y.DataType.Date.format(val, {format: "%Y-%m-%d"});
   });
