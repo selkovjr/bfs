@@ -321,11 +321,35 @@ to NULL in the earlier EMC set.
 We have later decided to replace all `U`'s with NULLs and now there is a
 perfect match.
 
+### Diagnostics
+
+#### rec_date
+
+```sql
+SELECT d.sample, d.rec_date, j.* FROM diagnostics d, j_diagnostics j WHERE j.sample = d.sample AND d.rec_date <> j.rec_date;
+```
+sample  |  rec_date  | sample  |  rec_date  | date | pool | ma_status | ma_ct | h5_status | h5_ct | h5_pt | h7_status | h7_ct | h7_pt | h9_status | h9_ct | ndv_status | ndv_ct
+---------|------------|---------|------------|------|------|-----------|-------|-----------|-------|-------|-----------|-------|-------|-----------|-------|------------|--------
+217-586 | 2010-02-18 | 217-586 | 2006-02-17 |      |      | -         |       |           |       |       |           |       |       |           |       |            |
+217-587 | 2010-02-18 | 217-587 | 2006-02-17 |      |      | -         |       |           |       |       |           |       |       |           |       |            |
+217-588 | 2010-02-18 | 217-588 | 2006-02-17 |      |      | -         |       |           |       |       |           |       |       |           |       |            |
+
+Broken date; no useful data; discard these records.
+
+There are no other records with broken dates.
+
+The rest of the data in Josanne's table is a subset of the of old EMC set with matching IDs. It is safe to merge the non-matching records.
+
+```sql
+SELECT d.sample, d.ma_status, j.* FROM diagnostics d, j_diagnostics j WHERE j.sample = d.sample AND d.ma_status <> j.ma_status;
+```
+
 
 ## Merging
 
 ```sql
 INSERT INTO samples SELECT * FROM j_samples WHERE id NOT IN (SELECT id FROM samples);
+INSERT INTO diagnostics SELECT * FROM j_diagnostics WHERE sample NOT IN (SELECT sample FROM diagnostics);
 ```
 
 
