@@ -243,4 +243,43 @@ samples	217-2107-a	id	selkovjr	2014-06-11 04:14:22	Merge conflict. This is one o
 samples	217-2107-b	id	selkovjr	2014-06-11 04:14:22	Merge conflict. This is one of the pair of duplicate keys in Josanne''s table to be merged with 217-2107. The other duplicate is 217-2107-a. <a href="https://rawgit.com/selkovjr/bfs/master/data/diff-217-2107.html">See the diff of the duplicates</a>.
 \.
 
+-- Duplicate IDs
+
+INSERT INTO notes (class, id, attr, "user", "when", text)
+  SELECT
+    'samples',
+    id,
+    'id',
+    'selkovjr',
+    'now',
+    'Duplicate ID (one of 4). Search for <code>id ~ ''^217-2618-[a-d]$''</code> to see all'
+  FROM samples
+  WHERE regexp_replace(id, '-?[a-z]$', '') = '217-2618';
+
+INSERT INTO notes (class, id, attr, "user", "when", text)
+  SELECT
+    'samples',
+    id,
+    'id',
+    'selkovjr',
+    'now',
+    'Duplicate ID (one of 3). Search for <code>id ~ ''' || regexp_replace(id, '-?[a-z]$', '') || '-?[a-d]$''</code> to see all'
+  FROM samples
+  WHERE regexp_replace(id, '-?[a-z]$', '') IN (
+    SELECT key from (SELECT count(*), regexp_replace(id, '-?[a-z]$', '') AS key FROM j_samples GROUP BY key ORDER BY count DESC) AS multiple WHERE count = 3
+  );
+
+INSERT INTO notes (class, id, attr, "user", "when", text)
+  SELECT
+    'samples',
+    id,
+    'id',
+    'selkovjr',
+    'now',
+    'Duplicate ID (one of 2). Search for <code>id ~ ''' || regexp_replace(id, '-?[a-z]$', '') || '-?[a-d]$''</code> to see all'
+  FROM samples
+  WHERE regexp_replace(id, '-?[a-z]$', '') IN (
+    SELECT key from (SELECT count(*), regexp_replace(id, '-?[a-z]$', '') AS key FROM j_samples GROUP BY key ORDER BY count DESC) AS multiple WHERE count = 2
+  );
+
 END TRANSACTION;
