@@ -211,4 +211,12 @@ INSERT INTO notes (class, id, attr, "user", "when", text)
 UPDATE samples SET location = '6'
  WHERE samples.id IN ('217-2028', '217-2029');
 
+-- 4. Duplicate keys in Josanne's table
+
+COPY notes (class, id, attr, "user", "when", text) FROM stdin;
+samples	217-1404	id	owner	2014-06-11 04:09:38.340475	Merge conflict: duplicate keys in Josanne''s table, 217-1404-a and 217-1404-b. Neither record was merged.\n\n<a href="https://rawgit.com/selkovjr/bfs/master/data/diff-217-1404.html">See the diff</a>.
+samples	217-1404-a	id	owner	2014-06-11 04:14:22.653901	Merge conflict. This is one of the pair of duplicate keys in Josanne''s table to be merged with 217-1404. The other duplicate is 217-1404-b.\n\n<a href="https://rawgit.com/selkovjr/bfs/master/data/diff-217-1404.html">See the diff of the duplicates</a>.
+samples	217-1404-b	id	owner	2014-06-11 04:14:22.653901	Merge conflict. This is one of the pair of duplicate keys in Josanne''s table to be merged with 217-1404. The other duplicate is 217-1404-a.\n\n<a href="https://rawgit.com/selkovjr/bfs/master/data/diff-217-1404.html">See the diff of the duplicates</a>.
+\.
+
 END TRANSACTION;
