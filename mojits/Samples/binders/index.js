@@ -287,8 +287,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         closeNoteEditor = function () {
           metaEnterListener.detach();
           closeButtonListener.detach();
-          noteHeader.destroy();
-          noteBody.destroy();
+          noteHeader.destroy(true);
+          noteBody.destroy(true);
           noteEditorShown = false;
         },
         sizeSyncMethod = '_syncPaginatorSize',
