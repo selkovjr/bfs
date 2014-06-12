@@ -1,13 +1,17 @@
 # First-time installation on a new server
 
+sudo aptitude install git build-essential nginx colordiff sp libgraphviz-perl
+
 sudo useradd -d /home/bfs -m bfs
 
 sudo su - bfs
 
 cat > .bashrc
 export PS1="\[\033[01;31m\]\u\[\033[01;34m\]@\[\033[01;32m\]\h\[\033[01;34m\] \w \$\[\033[00m\] "
-export PATH=/home/bfs/bin:/usr/local/bin:/usr/bin:/bin
 export NODE_PATH="./node_modules:$HOME/lib/node_modules:/usr/local/lib/node:/usr/local/lib/node_modules"
+export PATH=$HOME/bin:$PATH
+alias ack="ack-grep"
+alias vi=vim
 
 mkdir -p src
 cd src
@@ -15,9 +19,10 @@ git clone https://github.com/joyent/node.git
 cd node/
 git checkout v0.10.27 # currently stable version
 ./configure --prefix=$HOME
+make install
 
-npm install mojito-cli
-npm install mojito-cli-create
+npm install -g mojito-cli
+npm install -g mojito-cli-create
 
 cd ~/src
 git clone https://github.com/selkovjr/bfs.git
@@ -28,7 +33,7 @@ cd mojito
 mojito create app bfs
 cd bfs
 
-# look for novelties
+# look for novelties, otherwise just link the source files
 colordiff app.js ~/src/bfs/app.js | less -R
 ln -sf ~/src/bfs/app.js .
 
@@ -50,6 +55,7 @@ ln -s ~/src/bfs/assets .
 rm -rf mojits/
 ln -s ~/src/bfs/mojits .
 
+ln -s ~/src/bfs/addons/ .
 ln -s ~/src/bfs/middleware/ .
 
 
@@ -60,12 +66,14 @@ npm install passport -g
 npm install passport-local -g
 npm install connect-session -g
 
+# make sure server_name is correct
 sudo cp ~bfs/src/bfs/config-scripts/bfs.nginx /etc/nginx/sites-available/bfs.observercentral.net
 cd /etc/nginx/sites-enabled
-ln -s ../sites-available/bfs.observercentral.net .
+sudo ln -s ../sites-available/bfs.observercentral.net .
+sudo service nginx restart
 
 # allow postgres to show extra digits in seg
-cd src/
+cd ~/src/
 wget http://ftp.postgresql.org/pub/source/v9.3.4/postgresql-9.3.4.tar.gz
 tar zxf postgresql-9.3.4.tar.gz
 rm postgresql-9.3.4.tar.gz
@@ -74,8 +82,20 @@ cd postgresql-9.3.4/
 make
 cd contrib/seg/
 vi seg.c # change Min(n, FLT_DIG) to Min(n, FLT_DIG + 3)
-sudo cp seg.so /usr/lib/postgresql/9.3/lib/seg.so
+make
+sudo cp ~bfs/src/postgresql-9.3.4/contrib/seg/seg.so /usr/lib/postgresql/9.3/lib/seg.so
+
+# disable password authentication
+local   all         all                               trust
+host    all             all             127.0.0.1/32            trust
+host    all             all             ::1/128                 trust
+
 sudo service postgresql restart
+sudo su - postgres
+createuser -s user # powerful user
+
+## Loading data
+cd ~bfs/src/bfs/ # as a powerful user
 
 
 ## Upgrading mojito
