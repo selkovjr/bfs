@@ -21,7 +21,6 @@ YUI.add('LoginBinderIndex', function (Y, NAME) {
      * have been constructed.
      */
     init: function (mojitProxy) {
-      console.log('init');
       this.mojitProxy = mojitProxy;
     },
 
@@ -32,10 +31,13 @@ YUI.add('LoginBinderIndex', function (Y, NAME) {
      * @param node {Node} The DOM node to which this mojit is attached.
      */
     bind: function (node) {
-      Y.one('body').on('key', function () {
-        Y.log('enter');
-        Y.one('#login-form').submit();
-      }, 'enter');
+      Y.on("domready", function () {
+        Y.one('#loading-indicator').hide();
+        Y.one('#login-form-container').show();
+        Y.one('body').on('key', function () {
+          Y.one('#login-form').submit();
+        }, 'enter');
+      });
     }
   };
 }, '0.0.1', {requires: ['node', 'event', 'event-key', 'mojito-client']});

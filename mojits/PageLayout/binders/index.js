@@ -32,7 +32,7 @@ YUI.add('PageLayoutBinderIndex', function(Y, NAME) {
       var me = this;
       this.node = node;
 
-      Y.on("domready", function(){
+      Y.on("domready", function () {
         Y.one("body").addClass("yui3-skin-sam");
         Y.log('domready', 'warn', NAME);
       });
