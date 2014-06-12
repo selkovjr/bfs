@@ -217,7 +217,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
       // This function is an adapter between mojitProxy and ModelList.
       sampleList.sync = function (action, arg, callback) {
         var
-          query = Y.one('.query-text').get('value').replace(/^\s\s*/, '').replace(/\s\s*$/, ''),
+          query = Y.one('.query-input').get('value').replace(/^\s\s*/, '').replace(/\s\s*$/, ''),
           options;
 
         Y.log('sync action: ' + action);
@@ -991,9 +991,22 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
       // Refresh the content when user clicks refresh button.
       Y.one('#samples').delegate('click', function (e) {
-        e.halt();
         table.processPageRequest(table.pagModel.get('page'));
       }, 'a.refresh');
+
+      // Also do so on keydown in query input
+      Y.one('.query-input').on('key', function (e) {
+        table.processPageRequest(table.pagModel.get('page'));
+      }, 'enter');
+
+      Y.one('.query-input').getDOMNode().onsearch = function (e) {
+        var text = Y.one('.query-input').get('value');
+
+        Y.log(['search', text, e]);
+        if (text === '') {
+          table.processPageRequest(table.pagModel.get('page'));
+        }
+      };
 
       Y.on('windowresize', function (e) {
         table.set('width', Y.one('#samples').getComputedStyle('width'));
