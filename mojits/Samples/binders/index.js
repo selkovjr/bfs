@@ -284,9 +284,11 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         noteSaveFn,
         metaEnterListener,
         closeButtonListener,
+        clickListener,
         closeNoteEditor = function () {
           metaEnterListener.detach();
           closeButtonListener.detach();
+          clickListener.detach();
           noteHeader.destroy(true);
           noteBody.destroy(true);
           noteEditorShown = false;
@@ -849,6 +851,8 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
       // Show note editor on mouseenter
       Y.one('#samples-table').delegate('mousedown', function (e) {
+        // Can't halt this event because the dismissal of the notes overlay
+        // depends on it.
         var
           target = e.currentTarget,
           listItems = [
@@ -936,12 +940,16 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           // for the first time the widget is shown.
           setTimeout(function () {
             Y.one('#annotation-input').focus();
+            clickListener = Y.one('document').on('mousedown', function (e) {
+              if (!noteBody.get('contentBox').contains(e.target)) {
+                closeNoteEditor();
+              }
+            });
           }, 300);
           noteEditorShown = true;
 
           // CLose note editor
           noteSaveFn = function (e) {
-            e.halt();
             Y.log(['noteSaveFn', noteEditorShown]);
             var
               input = Y.one('#annotation-input').get('value').replace(/^\s+|\s+$/g, ''),
@@ -979,7 +987,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
 
           metaEnterListener = Y.one('document').on('key', noteSaveFn, 'enter+meta');
           closeButtonListener = Y.one('#annotation-save').on('click', noteSaveFn);
-        }
+        } // e.metaKey
       }, 'td');
 
       Y.one('document').on('key', function (e) {
