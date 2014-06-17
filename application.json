@@ -102,6 +102,7 @@
       }
     }
   },
+
   {
     "settings": [ "runtime:client" ]
   },
@@ -113,6 +114,24 @@
     },
     "viewEngine": {
       "cacheTemplates": false
+    }
+  },
+
+  {
+    "settings": [ "environment:production" ],
+    "staticHandling": {
+      "forceUpdate": false
+    },
+    "viewEngine": {
+      "cacheTemplates": true
+    },
+    "yui": {
+      "config": {
+        "debug": "false",
+        "logLevel": "none",
+        "combine": true,
+        "filter": "min"
+      }
     }
   }
 ]

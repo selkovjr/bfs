@@ -16,9 +16,10 @@ app.set('port', process.env.PORT || 3300);
 // Create a new Mojito instance and attach it to `app`.
 // Options can be passed to `extend`.
 libmojito.extend(app, {
-    context: {
-        environment: "development"
-    }
+  context: {
+    // environment: "development"
+    environment: "production"
+  }
 });
 
 // Load the built-in middleware or any middleware
@@ -49,8 +50,7 @@ app.mojito.attachRoutes();
 app.get('/:mojit/:action', libmojito.dispatch("{mojit}.{action}"));
 
 app.listen(app.get('port'), function () {
-    console.log('Server listening on port ' + app.get('port') + ' ' +
-                   'in ' + app.get('env') + ' mode');
+  console.log('Server listening on port ' + app.get('port') + ' ' + 'in ' + app.get('env') + ' mode');
 });
 
 
