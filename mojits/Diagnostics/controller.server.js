@@ -41,6 +41,7 @@ YUI.add('Diagnostics', function(Y, NAME) {
           data = {};
         }
         data.auth = user.auth.diagnostics;
+	data.sample = (data.rows && data.rows[0]) ? data.rows[0].sample : undefined; // to make it easier on the template
         ac.done(data);
       });
     },
