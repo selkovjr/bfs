@@ -283,10 +283,12 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
         noteEditorShown = false,
         noteSaveFn,
         metaEnterListener,
+        shiftEnterListener,
         closeButtonListener,
         clickListener,
         closeNoteEditor = function () {
           metaEnterListener.detach();
+          shiftEnterListener.detach();
           closeButtonListener.detach();
           clickListener.detach();
           noteHeader.destroy(true);
@@ -986,6 +988,7 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
           };
 
           metaEnterListener = Y.one('document').on('key', noteSaveFn, 'enter+meta');
+          shiftEnterListener = Y.one('document').on('key', noteSaveFn, 'enter+shift');
           closeButtonListener = Y.one('#annotation-save').on('click', noteSaveFn);
         } // e.metaKey
       }, 'td');
