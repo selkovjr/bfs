@@ -64,13 +64,14 @@ var users = [
   {
     id: 6,
     username: 'zura',
-    password: 'd663f408947a01a651c3d54986186764',
+    password: '600a7b121f26a0cb5ce2b9a093e86186',
     name: 'Zura Javakhishvili',
     em: ['zurab.javakhishvili.1'],
     ail: ['iliauni.edu.ge'],
     org: 'Ilia State University',
     auth: {
-      samples: true
+      samples: true,
+      diagnostics: true
     }
   },
   {

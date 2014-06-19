@@ -193,8 +193,10 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
       sampleID = mp.pageData.get('sample');
 
       renderTable = Y.bind(function () {
+        console.trace();
         self = this;
         if (this.editable) {
+          Y.log(['editable', this.editable, sampleID], 'warn');
           if (sampleID !== '') {
             // Get the list of autocomplete options
             mp.invoke('autocomplete', null, function (err, data) {
@@ -494,6 +496,7 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
             }); // invoke autocomplete data
           } // sampleID non-null
           else {
+            Y.log('no record');
             // No diagnostics record exists; offer a button to create one.
             Y.one('#diagnostics-na').append('<button id="diagnostics-create" type="button">Create</button>');
             createListener = Y.one('#diagnostics-create').on('click', function (e) {
