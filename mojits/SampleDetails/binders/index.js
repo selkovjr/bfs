@@ -1,4 +1,5 @@
-/*jslint anon:true, sloppy:true, nomen:true*/
+/*jslint anon:true, sloppy:true, nomen:true */
+/*global YUI */
 YUI.add('SampleDetailsBinderIndex', function(Y, NAME) {
 /**
  * The SampleDetailsBinderIndex module.
@@ -26,10 +27,10 @@ YUI.add('SampleDetailsBinderIndex', function(Y, NAME) {
      */
     bind: function(node) {
       this.mojitProxy.listen('row-selected', Y.bind(function (e) {
+        Y.log('broadcast event received: row-selected', 'info', NAME);
         if (!this.processing) {
-          Y.log('refreshView begin');
+          Y.log('refreshView begin', 'info', NAME);
           this.processing = true;
-          Y.log('broadcast event received in SampleDetails', 'info', NAME);
 
           if (node.one('#sample-details').hasClass('collapse')) {
             node.one('#sample-details').removeClass('collapse');
@@ -37,7 +38,7 @@ YUI.add('SampleDetailsBinderIndex', function(Y, NAME) {
 
           node.one('#sample-details-message').setContent('Loading data...');
 
-          console.log('refresh view');
+          Y.log('refresh view', 'info', NAME);
           this.mojitProxy.refreshView({
             params: {
               body: {
@@ -49,7 +50,7 @@ YUI.add('SampleDetailsBinderIndex', function(Y, NAME) {
           });
         }
         else {
-          Y.log('*********** refreshView prevented ************');
+          Y.log('*********** refreshView prevented ************', 'info', NAME);
         }
       }, this));
 
@@ -68,10 +69,10 @@ YUI.add('SampleDetailsBinderIndex', function(Y, NAME) {
     },
 
     onRefreshView: function () {
-      Y.log('refreshView done');
+      Y.log('refreshView done', 'info', NAME);
       this.processing = false;
     }
 
   };
 
-}, '0.0.1', {requires: ['event-mouseenter', 'mojito-client']});
+}, '0.0.1', {requires: ['mojito-client']});
