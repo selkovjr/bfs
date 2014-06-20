@@ -67,8 +67,12 @@
           </td>
   {{/unless}}
 {{else}}
-          <td id="diagnostics-na" class="diagnostics-na">
+          <td id="diagnostics-status" class="diagnostics-status">
+  {{#if auth}}
+            looking up...
+  {{else}}
             no data
+  {{/if}}
           </td>
 {{/if}}
         </tr>
