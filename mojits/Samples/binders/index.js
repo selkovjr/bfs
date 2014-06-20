@@ -659,11 +659,15 @@ YUI.add('SamplesBinderIndex', function (Y, NAME) {
             table.processPageRequest(1);
 
             table.on('selection', function (e) {
-              mp.pageData.set('sample',  e.rows[0].record.get('id'));
-              mp.broadcast('row-selected', {row: e.rows[0]});
-              if (self.editable) {
-                Y.one('#delete-sample').set('disabled', false);
+              // Prevent the same row from being selected another time.
+              if (self.selectedRow === undefined || self.selectedRow !== e.rows[0].recordIndex) {
+                mp.pageData.set('sample',  e.rows[0].record.get('id'));
+                mp.broadcast('row-selected', {row: e.rows[0]});
+                if (self.editable) {
+                  Y.one('#delete-sample').set('disabled', false);
+                }
               }
+              self.selectedRow = e.rows[0].recordIndex;
             });
 
             table.on('pageUpdate', function () {
