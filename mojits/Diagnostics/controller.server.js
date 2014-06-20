@@ -25,32 +25,47 @@ YUI.add('Diagnostics', function(Y, NAME) {
     index: function(ac) {
       var user = ac.http.getRequest().user;
 
-      console.log("Diagnostics - controller.server.js index called");
-      console.log(ac.command.params.body);
-      ac.models.get('model').getData(ac.command.params.body, function (err, data) {
-        console.log('Diagnostics model called from controller index');
-
-        if (err) {
-          Y.log('error condition', 'error', NAME + '.index');
-          ac.error(err);
-          return;
+      if (ac.command.params.body.id === undefined) {
+        ac.done();
+      }
+      else {
+        Y.log(ac.command.params.body, 'info', NAME + '.controller.index');
+        if (user.auth.diagnostics) {
+          // Don't render HTML for authorised users; their DataTable will fetch data
+          ac.assets.addCss('./index.css');
+          ac.done({
+            auth: user.auth.diagnostics
+          });
         }
+        else {
+          ac.models.get('model').getData(ac.command.params.body, function (err, data) {
+            Y.log('getData callback (1)', 'info', NAME + '.controller.index');
 
-        ac.assets.addCss('./index.css');
-        if (!data) {
-          data = {};
+            if (err) {
+              Y.log('error condition', 'error', NAME + '.controller.index');
+              ac.error(err);
+              return;
+            }
+
+            ac.assets.addCss('./index.css');
+            if (!data) {
+              data = {};
+            }
+            data.auth = user.auth.diagnostics;
+            data.sample = (data.rows && data.rows[0]) ? data.rows[0].sample : undefined; // to make it easier on the template
+            ac.done(data);
+          });
         }
-        data.auth = user.auth.diagnostics;
-	data.sample = (data.rows && data.rows[0]) ? data.rows[0].sample : undefined; // to make it easier on the template
-        ac.done(data);
-      });
+      }
     },
 
     data: function (ac) {
       var model = ac.models.get('model');
+      Y.log(['data', ac.command.params.body], 'info', NAME + '.controller.data');
       model.getData(ac.command.params.body, function (err, data) {
+        Y.log('getData callback (2)', 'info', NAME + '.controller.data');
         if (err) {
-          Y.log('error condition', 'error', NAME + '.data');
+          Y.log('error condition', 'error', NAME + '.controller.data');
           ac.error(err);
           return;
         }
@@ -62,7 +77,7 @@ YUI.add('Diagnostics', function(Y, NAME) {
       var model = ac.models.get('model');
       model.autocomplete(ac.command.params.body, function (err, data) {
         if (err) {
-          Y.log('error condition', 'error', NAME + '.autocomplete');
+          Y.log('error condition', 'error', NAME + '.controller' + '.autocomplete');
           ac.error(err);
           return;
         }
@@ -74,7 +89,7 @@ YUI.add('Diagnostics', function(Y, NAME) {
       var model = ac.models.get('model');
       model.update(ac.command.params.body, function (err, data) {
         if (err) {
-          Y.log('error condition', 'error', NAME + '.update');
+          Y.log('error condition', 'error', NAME + '.controller' + '.update');
           ac.error(err);
           return;
         }
@@ -86,7 +101,7 @@ YUI.add('Diagnostics', function(Y, NAME) {
       var model = ac.models.get('model');
       model.create(ac.command.params.body, function (err, data) {
         if (err) {
-          Y.log('error condition', 'error', NAME + '.create');
+          Y.log('error condition', 'error', NAME + '.controller' + '.create');
           ac.error(err);
           return;
         }
@@ -98,7 +113,7 @@ YUI.add('Diagnostics', function(Y, NAME) {
       var model = ac.models.get('model');
       model.addNote(ac.command.params.body, function (err, data) {
         if (err) {
-          Y.log('error condition', 'error', NAME + '.addNote');
+          Y.log('error condition', 'error', NAME + '.controller' + '.addNote');
           ac.error(err);
           return;
         }

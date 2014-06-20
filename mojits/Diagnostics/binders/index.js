@@ -138,6 +138,8 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
       };
 
       this.editable = !Y.one('#diagnostics').hasClass('read-only');
+      this.diagnosticsExist = (Y.one('#diagnostics-na') !== undefined);
+      Y.log(['init', this.diagnosticsExist]);
     }, // init()
 
     /**
@@ -190,6 +192,10 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
           }
         };
 
+        this.mojitProxy.listen('row-selected', Y.bind(function (e) {
+          Y.log('broadcast event received: row-selected', 'info', NAME);
+        }));
+
       sampleID = mp.pageData.get('sample');
 
       renderTable = Y.bind(function () {
@@ -197,7 +203,31 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
         self = this;
         if (this.editable) {
           Y.log(['editable', this.editable, sampleID], 'warn');
-          if (sampleID !== '') {
+          if (!this.diagnosticsExist) {
+            Y.log('no record');
+            // No diagnostics record exists; offer a button to create one.
+            Y.one('#diagnostics-na').append('<button id="diagnostics-create" type="button">Create</button>');
+            createListener = Y.one('#diagnostics-create').on('click', function (e) {
+              var options = {
+                params: {
+                  body: {
+                    id: mp.pageData.get('sample')
+                  }
+                },
+                rpc: true
+              };
+              mp.invoke('create', options, function (err, data) {
+                if (err) {
+                  Y.log('create failed');
+                } else {
+                  Y.log('create successful');
+                  sampleID = mp.pageData.get('sample');
+                  renderTable();
+                }
+              });
+            });
+          } // no diagnostics record for this sample
+          else {
             // Get the list of autocomplete options
             mp.invoke('autocomplete', null, function (err, data) {
               if (err) {
@@ -494,31 +524,7 @@ YUI.add('DiagnosticsBinderIndex', function (Y, NAME) {
               });
 
             }); // invoke autocomplete data
-          } // sampleID non-null
-          else {
-            Y.log('no record');
-            // No diagnostics record exists; offer a button to create one.
-            Y.one('#diagnostics-na').append('<button id="diagnostics-create" type="button">Create</button>');
-            createListener = Y.one('#diagnostics-create').on('click', function (e) {
-              var options = {
-                params: {
-                  body: {
-                    id: mp.pageData.get('sample')
-                  }
-                },
-                rpc: true
-              };
-              mp.invoke('create', options, function (err, data) {
-                if (err) {
-                  Y.log('create failed');
-                } else {
-                  Y.log('create successful');
-                  sampleID = mp.pageData.get('sample');
-                  renderTable();
-                }
-              });
-            });
-          } // render the Create button
+          } // diagnostics record exists
         } // editable by this user
       }, this); // renderTable()
 

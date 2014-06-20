@@ -9,13 +9,15 @@
         "fetchCSS": true,
         "combine": false,
         "throwFail": true,
+        "logExclude": {
+          "mojito-dispatcher": true,
+          "mojito-client": true
+        },
         "filter": "raw",
         "filters": {
-          "mojito-client": "raw",
-          "mojito-dispatcher": "raw",
           "datatasource": "debug",
           "datatasource-io": "debug",
-          "datatable-core": "debug",
+          "datatable-core": "raw",
           "datatable-body": "debug",
           "datatable-table": "debug",
           "datatable-base": "debug",

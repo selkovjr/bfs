@@ -1,4 +1,4 @@
-/*global YUI, console */
+/*global YUI */
 /*jslint sloppy: true, nomen: true, indent: 2 */
 YUI.add('DiagnosticsModel', function (Y, NAME) {
 
@@ -35,7 +35,7 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
      *        data has been retrieved.
      */
     getData: function (arg, callback) {
-      console.log(['diagnostics.model.getData', arg]);
+      Y.log(arg, 'warn', NAME + '.getData');
       var
         sql;
 
@@ -50,7 +50,7 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
           callback(err);
           return;
         }
-        console.log(sql);
+        Y.log(sql, 'warn', NAME + '.getData');
         client.query(sql, function (err, result) {
           var
             data,
@@ -74,7 +74,7 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
 
           notesQuery = 'SELECT * FROM notes WHERE "class" = \'diagnostics\' AND id = \'' + arg.id + '\'';
 
-          console.log(notesQuery);
+          Y.log(notesQuery, 'warn', NAME + '.getData');
           client.query(notesQuery, function (err, notesResult) {
             if (err) {
               Y.log(err, 'error', NAME + '.getData.notes.query');
@@ -156,8 +156,8 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
               return;
             }
             done();
-            console.log('update successful');
-            console.log(result);
+            Y.log('update successful');
+            Y.log(result);
             callback(null, result);
           }
         );
@@ -174,7 +174,7 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
           return;
         }
 
-        console.log(sql);
+        Y.log(sql);
         client.query(
           sql,
           function (err, result) {
@@ -184,8 +184,8 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
               return;
             }
             done();
-            console.log('create successful');
-            console.log(result);
+            Y.log('create successful');
+            Y.log(result);
             callback(null, result);
           }
         );
@@ -210,8 +210,8 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
           return;
         }
 
-        console.log(sql);
-        console.log("$1 = " + arg.text + "'");
+        Y.log(sql);
+        Y.log("$1 = " + arg.text + "'");
         client.query(
           sql,
           [arg.text],
@@ -223,8 +223,8 @@ YUI.add('DiagnosticsModel', function (Y, NAME) {
             }
 
             done();
-            console.log('create successful');
-            console.log(result);
+            Y.log('create successful');
+            Y.log(result);
             callback(null, result);
           }
         );

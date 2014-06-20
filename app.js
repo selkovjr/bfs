@@ -17,8 +17,8 @@ app.set('port', process.env.PORT || 3300);
 // Options can be passed to `extend`.
 libmojito.extend(app, {
   context: {
-    // environment: "development"
-    environment: "production"
+    environment: "development"
+    // environment: "production"
   }
 });
 
