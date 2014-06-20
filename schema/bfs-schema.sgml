@@ -489,6 +489,7 @@ CREATE VIEW v_samples_birds_locations AS
          s.ring,
          s.clin_st,
          s.vital_st,
+         s.tos,
          s.capture_method,
          s.location,
          l.name AS location_name
