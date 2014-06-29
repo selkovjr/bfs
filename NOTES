@@ -7,12 +7,20 @@ sudo useradd -d /home/bfs -m bfs
 sudo su - bfs
 
 # make sure the user's shell is bash
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 cat > .bashrc
 export PS1="\[\033[01;31m\]\u\[\033[01;34m\]@\[\033[01;32m\]\h\[\033[01;34m\] \w \$\[\033[00m\] "
 export NODE_PATH="./node_modules:$HOME/lib/node_modules:/usr/local/lib/node:/usr/local/lib/node_modules"
 export PATH=$HOME/bin:$PATH
 alias ack="ack-grep"
 alias vi=vim
+
+function settitle {
+  LASTCMD=$(history 1 | sed "s/^[ ]*[0-9]*[ ]*//g");
+  echo -ne "\033]0;${USER}@${HOSTNAME}: ${PWD} ${LASTCMD}\007";
+}
+trap 'settitle' DEBUG
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 mkdir -p src
 cd src
